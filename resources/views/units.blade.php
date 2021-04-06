@@ -1,0 +1,253 @@
+<x-app-layout>
+    <div class="container">
+        <div class="alert alert-primary position-fixed bottom-1 right-1" role="alert">Вы внесли:<br><strong id="counter">{{ $counter }}</strong> подразделений</div>
+        <div class="alert alert-success" style="display: none" role="alert" id="success-message">Подразделение успешно добавлено.</div>
+        <div class="alert alert-warning" style="display: none" role="alert" id="error-global-message">Ошибка! Некоторые поля заполненны не верно.</div>
+        <div class="alert alert-warning" style="display: none" role="alert" id="error-limit-message">Ошибка! Лимит на данную таблицу превышен, для увидичения лимита свяжитесь с системным администратором.</div>
+        <div class="alert alert-danger" style="display: none" role="alert" id="error-message">Ошибка сервера, свяжитесь с системным администратором.</div>
+        <form enctype="multipart/form-data" id="addUnitForm" class="addUnitForm mt-5">
+            <h1 class="h1">Добавление подразделения</h1>
+            <div class="my-4">
+                <h2 class="h2 mb-4">Общая информация</h2>
+                <div class="mb-3">
+                    <div class="row mb-1">
+                        <span class="offset-3 col-9"><small>Название подразделения должно быть уникальным, иначе данное поле будет выделено красным</small></span>
+                    </div>
+                    <div class="row">
+                        <label for="fullUnitName" class="col-sm-3 col-form-label">Полное название подразделения*</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="fullUnitName" placeholder="Полное название подразделения" data-field form-field autocomplete="off">
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="shortUnitName" class="col-sm-3 col-form-label">Сокращенное название подразделения</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" id="shortUnitName" placeholder="Сокращенное название подразделения" data-field form-field autocomplete="off">
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="typeUnit" class="col-sm-3 col-form-label">Тип подразделения</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" id="typeUnit" placeholder="Тип подразделения" data-field form-field autocomplete="off">
+                    </div>
+                </div>
+                <div class="form-group mb-3 row">
+                    <label for="creationDate" class="col-3 col-form-label">Дата создания</label>
+                    <div class="col-sm-9">
+                        <input class="form-control" type="date" id="creationDate" data-field form-field>
+                    </div>
+                </div>
+                <div class="form-group mb-3 row">
+                    <label for="terminationDate" class="col-3 col-form-label">Дата прекращения</label>
+                    <div class="col-sm-9">
+                        <input class="form-control" type="date" id="terminationDate" data-field form-field>
+                    </div>
+                </div>
+                <div class="form-group mb-3 row">
+                    <label for="description" class="col-3 col-form-label">Описание</label>
+                    <div class="col-sm-9">
+                        <textarea class="form-control border border-secondary rounded-0" id="description" rows="7" placeholder="Описание" data-field form-field></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="my-4">
+                <hr>
+                <h2 class="h2 my-4">Фотографии</h2>
+                <p class="mb-4">Для добавления фотографии нажмите кнопку <strong>добавить</strong></p>
+                <ul id="photoList">
+                </ul>
+                <button class="btn btn-primary" type="button" id="addPhoto">Добавить</button>
+            </div>
+            <div class="my-4">
+                <hr>
+                <h2 class="h2 my-4">Видео</h2>
+                <p class="mb-4">Для добавления видео нажмите кнопку <strong>добавить</strong></p>
+                <ul id="videoList">
+                </ul>
+                <button class="btn btn-primary" type="button" id="addVideo">Добавить</button>
+            </div>
+            <hr>
+            <div class="form-group mt-4">
+                <button class="btn btn-danger mb-4" type="button" id="reset">Сбросить</button>
+                <button class="btn btn-primary mb-4" type="submit">Сохранить</button>
+            </div>
+        </form>
+    </div>
+</x-app-layout>
+<script>
+    $(document).ready(function(){
+        var photoCount = 0;
+        var videoCount = 0;
+
+        $(".addUnitForm").delegate(".delete", "click", function(){
+            var $parent = $(this).parent();
+            $parent.slideUp(300, function(){ $(this).remove()});
+        });
+
+        $(".addUnitForm").delegate("input", "click", function(){
+            $(this).removeClass("errorField");
+        });
+
+        //Фотографии
+        $("#addPhoto").on("click", function(){
+            $("#photoList").append('<li class="my-4 photoBlock" style="display: none" id="photoBlock_'+ photoCount +'">'
+                + '<div class="mb-3">'
+                    + '<div class="row mb-1">'
+                        +   '<span class="offset-3 col-9"><small>Максимальный вес файла: {{ $photo_size }} КБ</small></span>'
+                        + '</div>'
+                    + '<div class="row">'
+                    + '<label for="photo_'+ photoCount +'" class="col-sm-3 col-form-label">Фото*</label>'
+                    + '<div class="col-sm-9">'
+                        + '<input type="file" name="photo" id="photo_'+ photoCount +'" class="photo">'
+                    + '</div>'
+                    + '</div>'
+                + '</div>'
+                + '<div class="form-group mb-3 row">'
+                + '<label for="photoName_'+ photoCount +'" class="col-3 col-form-label">Название фотографии</label>'
+                    + '<div class="col-sm-9">'
+                        + '<input class="form-control photoName" type="text" id="photoName_'+ photoCount +'" placeholder="Название фотографии" autocomplete="off">'
+                    + '</div>'
+                + '</div>'
+                + '<div class="form-group mb-3 row">'
+                + '<label for="photoDate_'+ photoCount +'" class="col-3 col-form-label">Дата фотографии</label>'
+                    + '<div class="col-sm-9">'
+                        + '<input class="form-control photoDate" type="date" id="photoDate_'+ photoCount +'" placeholder="Дата фотографии">'
+                    + '</div>'
+                + '</div>'
+                + '<button class="btn btn-danger delete" type="button">Удалить</button>'
+            + '</li>');
+            $("#photoBlock_" + photoCount).slideDown(300);
+            photoCount++;
+        });
+
+        //Видео
+        $("#addVideo").on("click", function(){
+            $("#videoList").append('<li class="my-4 videoBlock" style="display: none" id="videoBlock_'+ videoCount +'">'
+                + '<div class="mb-3">'
+                    + '<div class="row mb-1">'
+                        +   '<span class="offset-3 col-9"><small>Максимальный вес файла: {{ $video_size }} КБ</small></span>'
+                        + '</div>'
+                    + '<div class="row">'
+                    + '<label for="video_'+ videoCount +'" class="col-sm-3 col-form-label">Видео*</label>'
+                    + '<div class="col-sm-9">'
+                        + '<input type="file" id="video_'+ videoCount +'" class="video">'
+                    + '</div>'
+                    + '</div>'
+                + '</div>'
+                + '<div class="form-group mb-3 row">'
+                + '<label for="videoName_'+ videoCount +'" class="col-3 col-form-label">Название видео</label>'
+                    + '<div class="col-sm-9">'
+                        + '<input class="form-control videoName" type="text" id="videoName_'+ videoCount +'" placeholder="Название видео" autocomplete="off">'
+                    + '</div>'
+                + '</div>'
+                + '<div class="form-group mb-3 row">'
+                + '<label for="videoDate_'+ videoCount +'" class="col-3 col-form-label">Дата видео</label>'
+                    + '<div class="col-sm-9">'
+                        + '<input class="form-control videoDate" type="date" id="videoDate_'+ videoCount +'" placeholder="Дата видео">'
+                    + '</div>'
+                + '</div>'
+                + '<button class="btn btn-danger delete" type="button">Удалить</button>'
+            + '</li>');
+            $("#videoBlock_" + videoCount).slideDown(300);
+            videoCount++;
+        });
+
+        /*$("#addUnitForm input").click(function(){
+            $(this).removeClass("errorField");
+        });*/
+
+        $("#addUnitForm").submit(function(event){
+            startLoading();
+            let formData = new FormData();
+            var photo = [];
+            var video = [];
+
+            //Начадл добавления данных о фото
+            $(".photoBlock").each(function(i, ell){
+                photo.push({
+                    "photoDate": $(this).find(".photoDate").val(),
+                    "photoName": $(this).find(".photoName").val(),
+                    "id": ell.id.replace("photoBlock_", "")
+                });
+                formData.append("photo_" + i, $(this).find(".photo")[0].files[0]);
+            });
+            formData.append("photo", JSON.stringify(photo));
+            //Конец добавления данных о фото
+
+            //Начадл добавления данных о видео
+            $(".videoBlock").each(function(i, ell){
+                video.push({
+                    "videoDate": $(this).find(".videoDate").val(),
+                    "videoName": $(this).find(".videoName").val(),
+                    "id": ell.id.replace("videoBlock_", "")
+                });
+                formData.append("video_" + i, $(this).find(".video")[0].files[0]);
+            });
+            formData.append("video", JSON.stringify(video));
+            //Конец добавления данных о видео
+            
+            $('[data-field]').each(function(i, ell){
+                formData.append(ell.id, $(this).val());
+            });
+
+            let res = $.ajax({
+                type: "POST",
+                url: "{{ route('add_unit') }}",
+                cache: false,
+                contentType: false,
+                processData: false,
+                data: formData,
+                tataType: 'json',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(data){
+                    stopLoading();
+                    if (data.success) {
+                        $('#success-message').fadeIn(300).delay(2000).fadeOut(300);
+                        $('#counter').text(Number($('#counter').text()) + 1);
+                        resetForm();
+                    } else if(data.errors){
+                        if(data.errors.indexOf('limit') == -1){
+                            $('#error-global-message').fadeIn(300).delay(2000).fadeOut(300);
+                            data.errors.forEach(function(ell){
+                                $("#" + ell).addClass("errorField");
+                            });
+                        }else{
+                            $('#error-limit-message').fadeIn(300).delay(3500).fadeOut(300);
+                        }
+                    }else{
+                        $('#error-message').fadeIn(300).delay(2000).fadeOut(300);
+                    }
+                },
+                error: function(data){
+                    stopLoading();
+                    $('#error-message').fadeIn(300).delay(2000).fadeOut(300);
+                }
+            });
+            if(res.status == 0){
+                $('#error-message').fadeIn(300).delay(2000).fadeOut(300);
+            }
+            scrollTop();
+            event.preventDefault();
+        });
+
+        $("#reset").on("click", function(){
+            resetForm();
+            scrollTop();
+            });
+
+        function resetForm(){
+            $("[form-field]").each(function(){
+                $(this).removeClass("errorField");
+                $(this).val("");
+            });
+            $(".photoBlock").slideUp(300, function(){ $(this).remove()});
+            $(".videoBlock").slideUp(300, function(){ $(this).remove()});
+
+            photoCount = 0;
+            videoCount = 0;
+        }
+    });
+</script>

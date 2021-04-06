@@ -1,0 +1,23 @@
+.moreGraduateForm, .addEmpForm, .editEmpForm, .addUnitForm, .editUnitForm, .addGraduateForm{
+    margin: 0 auto;
+    width: 650px;
+}
+
+.errorField{
+    background: rgba(255, 173, 173, 0.5);
+}
+
+.alert-success, .alert-warning, .alert-danger{
+    z-index: 9999;
+    position: fixed;
+    top: 25px;
+    left:50%;
+    transform:translate(-50%);
+}
+
+.dbList{
+    margin: 0 auto;
+}
+.recordRow{
+    cursor: pointer;
+}
