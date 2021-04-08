@@ -14,7 +14,7 @@ return [
         | Here you can specify how big the chunk should be.
         |
         */
-        'chunk_size'             => 1000,
+        'chunk_size'             => 3000,
 
         /*
         |--------------------------------------------------------------------------
@@ -97,7 +97,7 @@ return [
         | ignored by enabling the setting ignore_empty to true.
         |
         */
-        'ignore_empty' => false,
+        'ignore_empty' => true,
 
         /*
         |--------------------------------------------------------------------------
@@ -109,7 +109,8 @@ return [
         |
         */
         'heading_row' => [
-            'formatter' => 'slug',
+            'formatter' => 'custom',
+            //'formatter' => 'slug',
         ],
 
         /*
