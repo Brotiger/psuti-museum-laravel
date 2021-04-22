@@ -5,7 +5,6 @@ namespace App\Imports;
 use App\Models\Graduate;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Carbon\Carbon;
-use Maatwebsite\Excel\Concerns\WithValidation;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
@@ -17,26 +16,13 @@ HeadingRowFormatter::extend('custom', function($value) {
 
 HeadingRowFormatter::default('custom');
 
-class GraduatesImport implements ToModel, WithValidation, WithHeadingRow
+class GraduatesImport implements ToModel, WithHeadingRow
 {
     /**
     * @param array $row
     *
     * @return \Illuminate\Database\Eloquent\Model|null
     */
-    public function rules(): array
-    {
-        return [
-            'Регистрационный номер' => 'unique:graduates,registrationNumber',
-        ];
-    }
-
-    public function customValidationMessages()
-    {
-        return [
-            'Регистрационный номер.unique' => 'Данные из этого файла были импортированы ранее.',
-        ];
-    }
     public function headingRow(): int
     {
         return 1;
@@ -44,8 +30,8 @@ class GraduatesImport implements ToModel, WithValidation, WithHeadingRow
 
     public function model(array $row)
     {
-
-        if(!empty($row['Серия документа']) && !empty($row['Номер документа']) && !empty($row['Фамилия получателя']) && !empty($row['Имя получателя'])){
+        $registrationExist = (!empty($row['Регистрационный номер']) && Graduate::where('registrationNumber', $row['Регистрационный номер'])->get()->count()) ? true : false;
+        if(!empty($row['Серия документа']) && !empty($row['Номер документа']) && !empty($row['Фамилия получателя']) && !empty($row['Имя получателя']) && !$registrationExist){
 
             $confirmDelete = null;
 
