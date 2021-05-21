@@ -26,11 +26,24 @@
                 <div class="mt-4">
                     <x-jet-label for="terms">
                         <div class="flex items-center">
-                            <x-jet-checkbox name="terms" id="terms"/>
+                            <x-jet-checkbox name="terms_1" id="terms_1"/>
 
                             <div class="ml-2">
-                                {!! __('Я принимаю :privacy_policy', [
-                                        'privacy_policy' => '<a target="_blank" href="/files/privacy_policy.pdf" class="underline text-sm text-gray-600 hover:text-gray-900">'.__('политику конфиденциальности').'</a>',
+                                {!! __('Я принимаю условия :privacy_agreement', [
+                                        'privacy_agreement' => '<a target="_blank" href="/files/privacy_agreement.pdf" class="underline text-sm text-gray-600 hover:text-gray-900">'.__('соглашения о конфиденциальности').'</a>',
+                                ]) !!}
+                            </div>
+                        </div>
+                    </x-jet-label>
+                </div>
+                <div class="mt-4">
+                    <x-jet-label for="terms">
+                        <div class="flex items-center">
+                            <x-jet-checkbox name="terms_2" id="terms_2"/>
+
+                            <div class="ml-2">
+                                {!! __('Я принимаю условия :personal_data_processing_agreement', [
+                                        'personal_data_processing_agreement' => '<a target="_blank" href="/files/personal_data_processing_agreement.pdf" class="underline text-sm text-gray-600 hover:text-gray-900">'.__('соглашения на обработку персольных данных').'</a>',
                                 ]) !!}
                             </div>
                         </div>
