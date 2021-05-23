@@ -33,6 +33,7 @@ return array(
     'App\\Models\\Degree' => $baseDir . '/app/Models/Degree.php',
     'App\\Models\\Education' => $baseDir . '/app/Models/Education.php',
     'App\\Models\\Employee' => $baseDir . '/app/Models/Employee.php',
+    'App\\Models\\FileExt' => $baseDir . '/app/Models/FileExt.php',
     'App\\Models\\FileSize' => $baseDir . '/app/Models/FileSize.php',
     'App\\Models\\Graduate' => $baseDir . '/app/Models/Graduate.php',
     'App\\Models\\PersonalFile' => $baseDir . '/app/Models/PersonalFile.php',

@@ -14,6 +14,7 @@ use App\Models\Video;
 use App\Models\Unit;
 use App\Models\User;
 use App\Models\FileSize;
+use App\Models\FileExt;
 use App\Models\UnitEmployee;
 use App\Models\PersonalFile;
 use App\Models\AutobiographyFile;
@@ -31,6 +32,10 @@ class EmployeeController extends Controller
         $photo_size = FileSize::where('name', 'photo')->exists()? FileSize::where('name', 'photo')->first()['size'] : 0;
         $video_size = FileSize::where('name', 'video')->exists()? FileSize::where('name', 'video')->first()['size'] : 0;
 
+        $photo_ext = FileExt::where('name', 'photo')->exists() && FileExt::where('name', 'photo')->first()['ext'] ? explode(', ', FileExt::where('name', 'photo')->first()['ext']) : null;
+        $video_ext = FileExt::where('name', 'video')->exists() && FileExt::where('name', 'video')->first()['ext'] ? explode(', ', FileExt::where('name', 'video')->first()['ext']) : null;
+        $file_ext = FileExt::where('name', 'file')->exists() && FileExt::where('name', 'file')->first()['ext'] ? explode(', ', FileExt::where('name', 'file')->first()['ext']) : null;
+
         $units = Unit::orderBy('fullUnitName')->get();
         $counter = Employee::where('addUserId', Auth::user()->id)->get()->count();
         $params = [
@@ -38,7 +43,10 @@ class EmployeeController extends Controller
             'counter' => $counter,
             'file_size' => $file_size,
             'photo_size' => $photo_size,
-            'video_size' => $video_size
+            'video_size' => $video_size,
+            'file_ext' => $file_ext? implode(', ', $file_ext) : 'любые',
+            'photo_ext' => $photo_ext? implode(', ', $photo_ext) : 'любые',
+            'video_ext' => $video_ext? implode(', ', $video_ext) : 'любые'
         ];
 
         return view('employees', $params);
@@ -49,6 +57,10 @@ class EmployeeController extends Controller
         $photo_size = FileSize::where('name', 'photo')->exists()? FileSize::where('name', 'photo')->first()['size'] : 0;
         $video_size = FileSize::where('name', 'video')->exists()? FileSize::where('name', 'video')->first()['size'] : 0;
 
+        $photo_ext = FileExt::where('name', 'photo')->exists() && FileExt::where('name', 'photo')->first()['ext'] ? explode(', ', FileExt::where('name', 'photo')->first()['ext']) : null;
+        $video_ext = FileExt::where('name', 'video')->exists() && FileExt::where('name', 'video')->first()['ext'] ? explode(', ', FileExt::where('name', 'video')->first()['ext']) : null;
+        $file_ext = FileExt::where('name', 'file')->exists() && FileExt::where('name', 'file')->first()['ext'] ? explode(', ', FileExt::where('name', 'file')->first()['ext']) : null;
+
         $units = Unit::orderBy('fullUnitName')->get();
         $counter = Employee::where('addUserId', Auth::user()->id)->get()->count();
         $params = [
@@ -57,7 +69,10 @@ class EmployeeController extends Controller
             'id' => $id,
             'file_size' => $file_size,
             'photo_size' => $photo_size,
-            'video_size' => $video_size
+            'video_size' => $video_size,
+            'file_ext' => $file_ext? implode(', ', $file_ext) : 'любые',
+            'photo_ext' => $photo_ext? implode(', ', $photo_ext) : 'любые',
+            'video_ext' => $video_ext? implode(', ', $video_ext) : 'любые'
         ];
         if(isset($id)){
             $employee = Employee::where([
@@ -127,6 +142,10 @@ class EmployeeController extends Controller
             $photo_size = FileSize::where('name', 'photo')->exists()? FileSize::where('name', 'photo')->first()['size'] : 0;
             $video_size = FileSize::where('name', 'video')->exists()? FileSize::where('name', 'video')->first()['size'] : 0;
 
+            $photo_ext = FileExt::where('name', 'photo')->exists() && FileExt::where('name', 'photo')->first()['ext'] ? explode(', ', FileExt::where('name', 'photo')->first()['ext']) : null;
+            $video_ext = FileExt::where('name', 'video')->exists() && FileExt::where('name', 'video')->first()['ext'] ? explode(', ', FileExt::where('name', 'video')->first()['ext']) : null;
+            $file_ext = FileExt::where('name', 'file')->exists() && FileExt::where('name', 'file')->first()['ext'] ? explode(', ', FileExt::where('name', 'file')->first()['ext']) : null;
+
             if(Employee::where([
                 ['firstName',  $request->input("firstName")],
                 ['lastName', $request->input("lastName")],
@@ -138,7 +157,25 @@ class EmployeeController extends Controller
                 $errors[] = "secondName";
                 $errors[] = "dateBirthday";
             }
-            if($request->file("image") && (filesize($request->file("image")) < $photo_size * 1024) != 1) $errors[] = "empImg";
+            
+            if($request->file("image")){
+                if(!is_null($photo_ext)){
+                    $ext = $request->file('image')->getClientOriginalExtension();
+                    $extError = true;
+                    foreach($photo_ext as $value){
+                        if($ext == $value){
+                            $extError = false;
+                        }
+                    }
+
+                    if($extError){
+                        $errors[] = "empImg";
+                    }
+                }
+                if((filesize($request->file("image")) < $photo_size * 1024) != 1){
+                    $errors[] = "empImg";
+                }
+            }
 
             if(!trim($request->input("firstName"))) $errors[] = "firstName";
             if(!trim($request->input("lastName"))) $errors[] = "lastName";
@@ -226,6 +263,20 @@ class EmployeeController extends Controller
                 
                 $photoCountCheck = 0;
                 foreach($photos as $photo){
+                    
+                    if(!is_null($photo_ext)){
+                        $ext = $request->file('photo_'.$photoCountCheck)->getClientOriginalExtension();
+                        $extError = true;
+                        foreach($photo_ext as $value){
+                            if($ext == $value){
+                                $extError = false;
+                            }
+                        }
+
+                        if($extError){
+                            $errors[] = "photo_" . $photo["id"];
+                        }
+                    }
 
                     if(Str::of($photo["id"])->trim()->isEmpty()) continue;
                     if(!$request->file("photo_" . $photoCountCheck) || (filesize($request->file("photo_" . $photoCountCheck)) < $photo_size * 1024) != 1) $errors[] = "photo_" . $photo["id"];
@@ -241,6 +292,20 @@ class EmployeeController extends Controller
                 $videoCountCheck = 0;
                 foreach($videos as $video){
 
+                    if(!is_null($video_ext)){
+                        $ext = $request->file('video_'.$videoCountCheck)->getClientOriginalExtension();
+                        $extError = true;
+                        foreach($video_ext as $value){
+                            if($ext == $value){
+                                $extError = false;
+                            }
+                        }
+
+                        if($extError){
+                            $errors[] = "video_" . $video["id"];
+                        }
+                    }
+
                     if(Str::of($video["id"])->trim()->isEmpty()) continue;
                     if(!$request->file("video_" . $videoCountCheck) || (filesize($request->file("video_" . $videoCountCheck)) < $video_size * 1024) != 1) $errors[] = "video_" . $video["id"];
                     if($video["videoName"] && Str::of($video["videoName"])->trim()->isEmpty()) $errors[] = "videoName_" . $video["id"];
@@ -255,13 +320,44 @@ class EmployeeController extends Controller
                 $autobiographyCountCheck = 0;
                 foreach($autobiographys as $autobiography){
 
+                    if(!is_null($file_ext)){
+                        $ext = $request->file('autobiography_'.$autobiographyCountCheck)->getClientOriginalExtension();
+                        $extError = true;
+                        foreach($file_ext as $value){
+                            if($ext == $value){
+                                $extError = false;
+                            }
+                        }
+
+                        if($extError){
+                            $errors[] = "autobiography_" . $autobiography["id"];
+                        }
+                    }
+
                     if(Str::of($autobiography["id"])->trim()->isEmpty()) continue;
                     if(!$request->file("autobiography_" . $autobiographyCountCheck) || (filesize($request->file("autobiography_" . $autobiographyCountCheck)) < $file_size * 1024) != 1) $errors[] = "autobiography_" . $autobiography["id"];
                     $autobiographyCountCheck++;
                 }
             }
 
-            if($request->file("titlePersonalFile") && (filesize($request->file("titlePersonalFile")) < $file_size * 1024) != 1) $errors[] = "titlePersonalFile";
+            if($request->file("titlePersonalFile")){
+                if(!is_null($file_ext)){
+                    $ext = $request->file('titlePersonalFile')->getClientOriginalExtension();
+                    $extError = true;
+                    foreach($file_ext as $value){
+                        if($ext == $value){
+                            $extError = false;
+                        }
+                    }
+
+                    if($extError){
+                        $errors[] = "titlePersonalFile";
+                    }
+                }
+                if((filesize($request->file("titlePersonalFile")) < $file_size * 1024) != 1){
+                    $errors[] = "titlePersonalFile";
+                }
+            }
 
             #Если поля вальдны, сохраняем их в бд
             if(empty($errors)){
@@ -441,6 +537,7 @@ class EmployeeController extends Controller
     }
 
     public function update_employee(Request $request){
+
         $response = [
             "errors" => false,
             "success" => false 
@@ -453,6 +550,10 @@ class EmployeeController extends Controller
         $file_path = null;
 
         if(isset($request)){
+            $photo_ext = FileExt::where('name', 'photo')->exists() && FileExt::where('name', 'photo')->first()['ext'] ? explode(', ', FileExt::where('name', 'photo')->first()['ext']) : null;
+            $video_ext = FileExt::where('name', 'video')->exists() && FileExt::where('name', 'video')->first()['ext'] ? explode(', ', FileExt::where('name', 'video')->first()['ext']) : null;
+            $file_ext = FileExt::where('name', 'file')->exists() && FileExt::where('name', 'file')->first()['ext'] ? explode(', ', FileExt::where('name', 'file')->first()['ext']) : null;
+
             $file_size = FileSize::where('name', 'file')->exists()? FileSize::where('name', 'file')->first()['size'] : 0;
             $photo_size = FileSize::where('name', 'photo')->exists()? FileSize::where('name', 'photo')->first()['size'] : 0;
             $video_size = FileSize::where('name', 'video')->exists()? FileSize::where('name', 'video')->first()['size'] : 0;
@@ -466,7 +567,24 @@ class EmployeeController extends Controller
                 return redirect(route('employees_list'));
             }
 
-            if($request->file("image") && (filesize($request->file("image")) < $photo_size * 1024) != 1) $errors[] = "empImg";
+            if($request->file("image")){
+                if(!is_null($photo_ext)){
+                    $ext = $request->file('image')->getClientOriginalExtension();
+                    $extError = true;
+                    foreach($photo_ext as $value){
+                        if($ext == $value){
+                            $extError = false;
+                        }
+                    }
+
+                    if($extError){
+                        $errors[] = "empImg";
+                    }
+                }
+                if((filesize($request->file("image")) < $photo_size * 1024) != 1){
+                    $errors[] = "empImg";
+                }
+            }
 
             if(!trim($request->input("firstName"))) $errors[] = "firstName";
             if(!trim($request->input("lastName"))) $errors[] = "lastName";
@@ -485,6 +603,107 @@ class EmployeeController extends Controller
                     if(Str::of($education["university"])->trim()->isEmpty()) $errors[] = "university_" . $education["id"];
                     if($education["specialty"] && Str::of($education["specialty"])->trim()->isEmpty()) $errors[] = "specialty_" . $education["id"];
                     if($education["expirationDate"] && Str::of($education["expirationDate"])->trim()->isEmpty()) $errors[] = "expirationDate_" . $education["id"];
+                }
+            }
+
+            if($request->input("photo")){
+                $photos = json_decode($request->input("photo"), true);
+                
+                $photoCountCheck = 0;
+                foreach($photos as $photo){
+
+                    if(!is_null($photo_ext)){
+                        $ext = $request->file('photo_'.$photoCountCheck)->getClientOriginalExtension();
+                        $extError = true;
+                        foreach($photo_ext as $value){
+                            if($ext == $value){
+                                $extError = false;
+                            }
+                        }
+
+                        if($extError){
+                            $errors[] = "photo_" . $photo["id"];
+                        }
+                    }
+
+                    if(Str::of($photo["id"])->trim()->isEmpty()) continue;
+                    if(!$request->file("photo_" . $photoCountCheck) || (filesize($request->file("photo_" . $photoCountCheck)) < $photo_size * 1024) != 1) $errors[] = "photo_" . $photo["id"];
+                    if($photo["photoName"] && Str::of($photo["photoName"])->trim()->isEmpty()) $errors[] = "photoName_" . $photo["id"];
+                    if($photo["photoDate"] && Str::of($photo["photoDate"])->trim()->isEmpty()) $errors[] = "photoDate_" . $photo["id"];
+                    $photoCountCheck++;
+                }
+            }
+
+            if($request->input("video")){
+                $videos = json_decode($request->input("video"), true);
+                
+                $videoCountCheck = 0;
+                foreach($videos as $video){
+
+                    if(!is_null($video_ext)){
+                        $ext = $request->file('video_'.$videoCountCheck)->getClientOriginalExtension();
+                        $extError = true;
+                        foreach($video_ext as $value){
+                            if($ext == $value){
+                                $extError = false;
+                            }
+                        }
+
+                        if($extError){
+                            $errors[] = "video_" . $video["id"];
+                        }
+                    }
+
+                    if(Str::of($video["id"])->trim()->isEmpty()) continue;
+                    if(!$request->file("video_" . $videoCountCheck) || (filesize($request->file("video_" . $videoCountCheck)) < $video_size * 1024) != 1) $errors[] = "video_" . $video["id"];
+                    if($video["videoName"] && Str::of($video["videoName"])->trim()->isEmpty()) $errors[] = "videoName_" . $video["id"];
+                    if($video["videoDate"] && Str::of($video["videoDate"])->trim()->isEmpty()) $errors[] = "videoDate_" . $video["id"];
+                    $videoCountCheck++;
+                }
+            }
+
+            if($request->input("photoToDelete")){
+                $photoToDelete = explode(',',$request->input("photoToDelete"));
+
+                #Сохраняем каждую запись о образовании
+                foreach($photoToDelete as $index => $photo){
+                    $photoTmp = Photo::where('id', $photo);
+
+                    if($photoTmp->exists()){
+                        if($photoTmp->first()->employee->addUserId != Auth::user()->id){
+                            return; // в случае не санкционированного изменения просто прерывать процесс
+                        }
+                    }
+                }
+            }
+
+            if($request->input("videoToDelete")){
+                $videoToDelete = explode(',',$request->input("videoToDelete"));
+
+                #Сохраняем каждую запись о образовании
+                foreach($videoToDelete as $index => $video){
+                    $videoTmp = Video::where('id', $video);
+
+                    if($videoTmp->exists()){
+                        if($videoTmp->first()->employee->addUserId != Auth::user()->id){
+                            return; // в случае не санкционированного изменения просто прерывать процесс
+                        }
+                    }
+                }
+            }
+
+            if($request->input("autobiographyToDelete")){
+                $autobiographyToDelete = explode(',',$request->input("autobiographyToDelete"));
+
+                #Сохраняем каждую запись о образовании
+                foreach($autobiographyToDelete as $index => $autobiography){
+                    $autobiographyTmp = AutobiographyFile::where('id', $autobiography);
+
+                    if($autobiographyTmp->exists()){
+                        if($autobiographyTmp->first()->employee->addUserId != Auth::user()->id){
+                            return; // в случае не санкционированного изменения просто прерывать процесс
+                        }
+                    }
                 }
             }
 
@@ -549,7 +768,49 @@ class EmployeeController extends Controller
                 }
             }
 
-            if($request->file("titlePersonalFile") && (filesize($request->file("titlePersonalFile")) < $file_size * 1024) != 1) $errors[] = "titlePersonalFile";
+            if($request->input("autobiography")){
+                $autobiographys = json_decode($request->input("autobiography"), true);
+                
+                $autobiographyCountCheck = 0;
+                foreach($autobiographys as $autobiography){
+                    if(!is_null($file_ext)){
+                        $ext = $request->file('autobiography_'.$autobiographyCountCheck)->getClientOriginalExtension();
+                        $extError = true;
+                        foreach($file_ext as $value){
+                            if($ext == $value){
+                                $extError = false;
+                            }
+                        }
+
+                        if($extError){
+                            $errors[] = "autobiography_" . $autobiography["id"];
+                        }
+                    }
+
+                    if(Str::of($autobiography["id"])->trim()->isEmpty()) continue;
+                    if(!$request->file("autobiography_" . $autobiographyCountCheck) || (filesize($request->file("autobiography_" . $autobiographyCountCheck)) < $file_size * 1024) != 1) $errors[] = "autobiography_" . $autobiography["id"];
+                    $autobiographyCountCheck++;
+                }
+            }
+
+            if($request->file("titlePersonalFile")){
+                if(!is_null($file_ext)){
+                    $ext = $request->file('titlePersonalFile')->getClientOriginalExtension();
+                    $extError = true;
+                    foreach($file_ext as $value){
+                        if($ext == $value){
+                            $extError = false;
+                        }
+                    }
+
+                    if($extError){
+                        $errors[] = "titlePersonalFile";
+                    }
+                }
+                if((filesize($request->file("titlePersonalFile")) < $file_size * 1024) != 1){
+                    $errors[] = "titlePersonalFile";
+                }
+            }
 
             #Если поля вальдны, сохраняем их в бд
             if(empty($errors)){
@@ -588,6 +849,47 @@ class EmployeeController extends Controller
                             $newEducation->university = trim($education["university"]);
                             if(Str::of($education["specialty"])->trim()->isNotEmpty()) $newEducation->specialty = trim($education["specialty"]);
                             $newEducation->save();
+                        }
+                    }
+
+                    if($request->input("photoToDelete")){
+                        $photoToDelete = explode(',',$request->input("photoToDelete"));
+
+                        #Сохраняем каждую запись о образовании
+                        foreach($photoToDelete as $index => $photo){
+                            $oldPhoto = Photo::where('id', $photo);
+                            if($oldPhoto->exists()){
+                                Storage::disk('public')->delete($oldPhoto->first()->photo);
+                                $oldPhoto->delete();
+                            }
+                        }
+                    }
+
+                    if($request->input("videoToDelete")){
+                        $videoToDelete = explode(',',$request->input("videoToDelete"));
+
+                        #Сохраняем каждую запись о образовании
+                        foreach($videoToDelete as $index => $video){
+
+                            $oldVideo = Video::where('id', $video);
+                            if($oldVideo->exists()){
+                                Storage::disk('public')->delete($oldVideo->first()->video);
+                                $oldVideo->delete();
+                            }
+                        }
+                    }
+
+                    if($request->input("autobiographyToDelete")){
+                        $autobiographyToDelete = explode(',',$request->input("autobiographyToDelete"));
+
+                        #Сохраняем каждую запись о образовании
+                        foreach($autobiographyToDelete as $index => $autobiography){
+
+                            $oldAutobiographyFile = AutobiographyFile::where('id', $autobiography);
+                            if($oldAutobiographyFile->exists()){
+                                Storage::disk('public')->delete($oldAutobiographyFile->first()->file);
+                                $oldAutobiographyFile->delete();
+                            }
                         }
                     }
 
@@ -650,6 +952,40 @@ class EmployeeController extends Controller
                         }
                     }
 
+                    if($request->input("photo")){
+                        $photos = json_decode($request->input("photo"), true);
+
+                        $photoCountData = 0;
+
+                        foreach($photos as $photo){
+                            $photoPath = $request->file("photo_" . $photoCountData)->store('uploads/emp/photo', 'public');
+                            $newPhoto = new Photo;
+                            $newPhoto->employee_id = $editEmployee->first()->id;
+                            $newPhoto->photo = $photoPath;
+                            if(Str::of($photo["photoDate"])->trim()->isNotEmpty()) $newPhoto->photoDate = trim($photo["photoDate"]);
+                            if(Str::of($photo["photoName"])->trim()->isNotEmpty()) $newPhoto->photoName = trim($photo["photoName"]);
+                            $newPhoto->save();
+                            $photoCountData++;
+                        }
+                    }
+
+                    if($request->input("video")){
+                        $videos = json_decode($request->input("video"), true);
+
+                        $videoCountData = 0;
+
+                        foreach($videos as $video){
+                            $videoPath = $request->file("video_" . $videoCountData)->store('uploads/emp/video', 'public');
+                            $newVideo = new Video;
+                            $newVideo->employee_id = $editEmployee->first()->id;
+                            $newVideo->video = $videoPath;
+                            if(Str::of($video["videoDate"])->trim()->isNotEmpty()) $newVideo->videoDate = trim($video["videoDate"]);
+                            if(Str::of($video["videoName"])->trim()->isNotEmpty()) $newVideo->videoName = trim($video["videoName"]);
+                            $newVideo->save();
+                            $videoCountData++;
+                        }
+                    }
+
                     if($request->input("unit")){
                         $units = json_decode($request->input("unit"), true);
 
@@ -662,6 +998,21 @@ class EmployeeController extends Controller
                             if(Str::of($unit["post"])->trim()->isNotEmpty()) $newUnitEmployee->post = trim($unit["post"]);
                             if(Str::of($unit["recruitmentDate"])->trim()->isNotEmpty()) $newUnitEmployee->recruitmentDate = trim($unit["recruitmentDate"]);
                             $newUnitEmployee->save();
+                        }
+                    }
+
+                    if($request->input("autobiography")){
+                        $autobiographys = json_decode($request->input("autobiography"), true);
+
+                        $autobiographyCountData = 0;
+
+                        foreach($autobiographys as $autobiography){
+                            $autobiographyPath = $request->file("autobiography_" . $autobiographyCountData)->store('uploads/emp/autobiography', 'public');
+                            $newAutobiography = new AutobiographyFile;
+                            $newAutobiography->employee_id = $editEmployee->first()->id;
+                            $newAutobiography->file = $autobiographyPath;
+                            $newAutobiography->save();
+                            $autobiographyCountData++;
                         }
                     }
 
@@ -680,6 +1031,20 @@ class EmployeeController extends Controller
                         $personalFile->save();
                     }
                 });
+
+            $employee = Employee::where("id", $request->input("id"))->first();
+
+            $response['photos'] = view('ajax.photos', [
+                'employee' => $employee
+            ])->render();
+
+            $response['videos'] = view('ajax.videos', [
+                'employee' => $employee
+            ])->render();
+
+            $response['autobiographys'] = view('ajax.autobiographys', [
+                'employee' => $employee
+            ])->render();
             #Проверка успешно ли прошла транзакция
             if($exception){
                 $response['success'] = false;
@@ -690,6 +1055,7 @@ class EmployeeController extends Controller
             }else{
                 $response['errors'] = $errors;
             }
+
             return $response;
         }
     }

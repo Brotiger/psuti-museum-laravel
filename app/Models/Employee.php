@@ -14,7 +14,7 @@ class Employee extends Model
     }
 
     public function photos(){
-        return $this->hasMany('App\Models\Photos');
+        return $this->hasMany('App\Models\Photo');
     }
 
     public function autobiographys(){

@@ -696,6 +696,7 @@ class ComposerStaticInit5ff96a96f1d2ecf3c6cf6d1364879b02
         'App\\Models\\Degree' => __DIR__ . '/../..' . '/app/Models/Degree.php',
         'App\\Models\\Education' => __DIR__ . '/../..' . '/app/Models/Education.php',
         'App\\Models\\Employee' => __DIR__ . '/../..' . '/app/Models/Employee.php',
+        'App\\Models\\FileExt' => __DIR__ . '/../..' . '/app/Models/FileExt.php',
         'App\\Models\\FileSize' => __DIR__ . '/../..' . '/app/Models/FileSize.php',
         'App\\Models\\Graduate' => __DIR__ . '/../..' . '/app/Models/Graduate.php',
         'App\\Models\\PersonalFile' => __DIR__ . '/../..' . '/app/Models/PersonalFile.php',

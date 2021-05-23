@@ -11,7 +11,7 @@
                 <h2 class="h2 mb-4">Персональная информация</h2>
                 <div class="mb-3">
                     <div class="row mb-1">
-                        <span class="offset-3 col-9"><small>Максимальный вес файла: {{ $photo_size }} КБ</small></span>
+                        <span class="offset-3 col-9"><small>Максимальный вес файла: {{ $photo_size }} КБ. Допустимые расширения: {{ $photo_ext }}</small></span>
                     </div>
                     <div class="row">
                         <label for="empImg" class="col-sm-3 col-form-label">Фото</label>
@@ -135,7 +135,7 @@
                 <h2 class="h2 my-4">Личное дело</h2>
                 <div class="mb-3">
                     <div class="row mb-1">
-                        <span class="offset-3 col-9"><small>Максимальный вес файла: {{ $file_size }} КБ</small></span>
+                        <span class="offset-3 col-9"><small>Максимальный вес файла: {{ $file_size }} КБ. Допустимые расширения: {{ $file_ext }}</small></span>
                     </div>
                     <div class="mb row">
                         <label for="titlePersonalFile" class="col-sm-3 col-form-label">Титульный лист</label>
@@ -338,7 +338,7 @@
             $("#photoList").append('<li class="my-4 photoBlock" style="display: none" id="photoBlock_'+ photoCount +'">'
                 + '<div class="mb-3">'
                     + '<div class="row mb-1">'
-                    +   '<span class="offset-3 col-9"><small>Максимальный вес файла: {{ $photo_size }} КБ</small></span>'
+                    +   '<span class="offset-3 col-9"><small>Максимальный вес файла: {{ $photo_size }} КБ. Допустимые расширения: {{ $photo_ext }}</small></span>'
                     + '</div>'
                     + '<div class="row">'
                     + '<label for="photo_'+ photoCount +'" class="col-sm-3 col-form-label">Фото*</label>'
@@ -369,7 +369,7 @@
             $("#videoList").append('<li class="my-4 videoBlock" style="display: none" id="videoBlock_'+ videoCount +'">'
                 + '<div class="mb-3">'
                     + '<div class="row mb-1">'
-                        +   '<span class="offset-3 col-9"><small>Максимальный вес файла: {{ $video_size }} КБ</small></span>'
+                        +   '<span class="offset-3 col-9"><small>Максимальный вес файла: {{ $video_size }} КБ. Допустимые расширения: {{ $video_ext }}</small></span>'
                         + '</div>'
                     + '<div class="row">'
                     + '<label for="video_'+ videoCount +'" class="col-sm-3 col-form-label">Видео*</label>'
@@ -400,7 +400,7 @@
             $("#autobiographyList").append('<li class="my-4 autobiographyBlock" style="display: none" id="autobiographyBlock_'+ autobiographyCount +'">'
                 + '<div class="mb-3">'
                     + '<div class="row mb-1">'
-                        +   '<span class="offset-3 col-9"><small>Максимальный вес файла: {{ $file_size }} КБ</small></span>'
+                        +   '<span class="offset-3 col-9"><small>Максимальный вес файла: {{ $file_size }} КБ. Допустимые расширения: {{ $file_ext }}</small></span>'
                         + '</div>'
                     + '<div class="row">'
                     + '<label for="autobiography_'+ autobiographyCount +'" class="col-sm-3 col-form-label">Лист</label>'

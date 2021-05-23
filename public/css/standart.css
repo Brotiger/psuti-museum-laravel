@@ -21,3 +21,7 @@
 .recordRow{
     cursor: pointer;
 }
+
+.video{
+    outline: none;
+}

@@ -7,6 +7,7 @@ use App\Models\Unit;
 use App\Models\UnitPhoto;
 use App\Models\UnitVideo;
 use App\Models\FileSize;
+use App\Models\FileExt;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -19,13 +20,20 @@ class UnitController extends Controller
         $photo_size = FileSize::where('name', 'photo')->exists()? FileSize::where('name', 'photo')->first()['size'] : 0;
         $video_size = FileSize::where('name', 'video')->exists()? FileSize::where('name', 'video')->first()['size'] : 0;
 
+        $photo_ext = FileExt::where('name', 'photo')->exists() && FileExt::where('name', 'photo')->first()['ext'] ? explode(', ', FileExt::where('name', 'photo')->first()['ext']) : null;
+        $video_ext = FileExt::where('name', 'video')->exists() && FileExt::where('name', 'video')->first()['ext'] ? explode(', ', FileExt::where('name', 'video')->first()['ext']) : null;
+        $file_ext = FileExt::where('name', 'file')->exists() && FileExt::where('name', 'file')->first()['ext'] ? explode(', ', FileExt::where('name', 'file')->first()['ext']) : null;
+
         $counter = Unit::where('addUserId', Auth::user()->id)->get()->count();
         $params = [
             'counter' => $counter,
             'id' => $id,
             'file_size' => $file_size,
             'photo_size' => $photo_size,
-            'video_size' => $video_size
+            'video_size' => $video_size,
+            'file_ext' => $file_ext? implode(', ', $file_ext) : 'любые',
+            'photo_ext' => $photo_ext? implode(', ', $photo_ext) : 'любые',
+            'video_ext' => $video_ext? implode(', ', $video_ext) : 'любые'
         ];
         if(isset($id)){
             $unit = Unit::where([
@@ -75,12 +83,19 @@ class UnitController extends Controller
         $photo_size = FileSize::where('name', 'photo')->exists()? FileSize::where('name', 'photo')->first()['size'] : 0;
         $video_size = FileSize::where('name', 'video')->exists()? FileSize::where('name', 'video')->first()['size'] : 0;
 
+        $photo_ext = FileExt::where('name', 'photo')->exists() && FileExt::where('name', 'photo')->first()['ext'] ? explode(', ', FileExt::where('name', 'photo')->first()['ext']) : null;
+        $video_ext = FileExt::where('name', 'video')->exists() && FileExt::where('name', 'video')->first()['ext'] ? explode(', ', FileExt::where('name', 'video')->first()['ext']) : null;
+        $file_ext = FileExt::where('name', 'file')->exists() && FileExt::where('name', 'file')->first()['ext'] ? explode(', ', FileExt::where('name', 'file')->first()['ext']) : null;
+
         $counter = Unit::where('addUserId', Auth::user()->id)->get()->count();
         return view('units', [
             'counter' => $counter,
             'file_size' => $file_size,
             'photo_size' => $photo_size,
-            'video_size' => $video_size
+            'video_size' => $video_size,
+            'file_ext' => $file_ext? implode(', ', $file_ext) : 'любые',
+            'photo_ext' => $photo_ext? implode(', ', $photo_ext) : 'любые',
+            'video_ext' => $video_ext? implode(', ', $video_ext) : 'любые'
         ]);
     }
 
@@ -105,6 +120,10 @@ class UnitController extends Controller
             $photo_size = FileSize::where('name', 'photo')->exists()? FileSize::where('name', 'photo')->first()['size'] : 0;
             $video_size = FileSize::where('name', 'video')->exists()? FileSize::where('name', 'video')->first()['size'] : 0;
 
+            $photo_ext = FileExt::where('name', 'photo')->exists() && FileExt::where('name', 'photo')->first()['ext'] ? explode(', ', FileExt::where('name', 'photo')->first()['ext']) : null;
+            $video_ext = FileExt::where('name', 'video')->exists() && FileExt::where('name', 'video')->first()['ext'] ? explode(', ', FileExt::where('name', 'video')->first()['ext']) : null;
+            $file_ext = FileExt::where('name', 'file')->exists() && FileExt::where('name', 'file')->first()['ext'] ? explode(', ', FileExt::where('name', 'file')->first()['ext']) : null;
+
             if(!trim($request->input("fullUnitName")) ||  Unit::where('fullUnitName', $request->input("fullUnitName"))->exists()) $errors[] = "fullUnitName";
             if($request->input("shortUnitName") && Str::of($request->input("shortUnitName"))->trim()->isEmpty()) $errors[] = "shortUnitName";
             if($request->input("unitType") && Str::of($request->input("unitType"))->trim()->isEmpty()) $errors[] = "unitType";
@@ -116,6 +135,20 @@ class UnitController extends Controller
                 
                 $photoCountCheck = 0;
                 foreach($photos as $photo){
+
+                    if(!is_null($photo_ext)){
+                        $ext = $request->file('photo_'.$photoCountCheck)->getClientOriginalExtension();
+                        $extError = true;
+                        foreach($photo_ext as $value){
+                            if($ext == $value){
+                                $extError = false;
+                            }
+                        }
+
+                        if($extError){
+                            $errors[] = "photo_" . $photo["id"];
+                        }
+                    }
 
                     if(Str::of($photo["id"])->trim()->isEmpty()) continue;
                     if(!$request->file("photo_" . $photoCountCheck) || (filesize($request->file("photo_" . $photoCountCheck)) < $photo_size * 1024) != 1) $errors[] = "photo_" . $photo["id"];
@@ -130,6 +163,19 @@ class UnitController extends Controller
                 
                 $videoCountCheck = 0;
                 foreach($videos as $video){
+                    if(!is_null($video_ext)){
+                        $ext = $request->file('video_'.$videoCountCheck)->getClientOriginalExtension();
+                        $extError = true;
+                        foreach($video_ext as $value){
+                            if($ext == $value){
+                                $extError = false;
+                            }
+                        }
+
+                        if($extError){
+                            $errors[] = "video_" . $video["id"];
+                        }
+                    }
 
                     if(Str::of($video["id"])->trim()->isEmpty()) continue;
                     if(!$request->file("video_" . $videoCountCheck) || (filesize($request->file("video_" . $videoCountCheck)) < $video_size * 1024) != 1) $errors[] = "video_" . $video["id"];
@@ -215,6 +261,14 @@ class UnitController extends Controller
 
         $errors = [];
 
+        $file_size = FileSize::where('name', 'file')->exists()? FileSize::where('name', 'file')->first()['size'] : 0;
+        $photo_size = FileSize::where('name', 'photo')->exists()? FileSize::where('name', 'photo')->first()['size'] : 0;
+        $video_size = FileSize::where('name', 'video')->exists()? FileSize::where('name', 'video')->first()['size'] : 0;
+
+        $photo_ext = FileExt::where('name', 'photo')->exists() && FileExt::where('name', 'photo')->first()['ext'] ? explode(', ', FileExt::where('name', 'photo')->first()['ext']) : null;
+        $video_ext = FileExt::where('name', 'video')->exists() && FileExt::where('name', 'video')->first()['ext'] ? explode(', ', FileExt::where('name', 'video')->first()['ext']) : null;
+        $file_ext = FileExt::where('name', 'file')->exists() && FileExt::where('name', 'file')->first()['ext'] ? explode(', ', FileExt::where('name', 'file')->first()['ext']) : null;
+
         $user = User::where("id", Auth::user()->id)->get()->first();
 
         if(isset($request)){
@@ -232,6 +286,91 @@ class UnitController extends Controller
             if($request->input("creationDate") && !preg_match('~^[0-9]{4}-[0-9]{2}-[0-9]{2}$~', $request->input("creationDate"))) $errors[] = "creationDate";
             if($request->input("terminationDate") && !preg_match('~^[0-9]{4}-[0-9]{2}-[0-9]{2}$~', $request->input("terminationDate"))) $errors[] = "terminationDate";
 
+            if($request->input("photo")){
+                $photos = json_decode($request->input("photo"), true);
+                
+                $photoCountCheck = 0;
+                foreach($photos as $photo){
+
+                    if(!is_null($photo_ext)){
+                        $ext = $request->file('photo_'.$photoCountCheck)->getClientOriginalExtension();
+                        $extError = true;
+                        foreach($photo_ext as $value){
+                            if($ext == $value){
+                                $extError = false;
+                            }
+                        }
+
+                        if($extError){
+                            $errors[] = "photo_" . $photo["id"];
+                        }
+                    }
+
+                    if(Str::of($photo["id"])->trim()->isEmpty()) continue;
+                    if(!$request->file("photo_" . $photoCountCheck) || (filesize($request->file("photo_" . $photoCountCheck)) < $photo_size * 1024) != 1) $errors[] = "photo_" . $photo["id"];
+                    if($photo["photoName"] && Str::of($photo["photoName"])->trim()->isEmpty()) $errors[] = "photoName_" . $photo["id"];
+                    if($photo["photoDate"] && Str::of($photo["photoDate"])->trim()->isEmpty()) $errors[] = "photoDate_" . $photo["id"];
+                    $photoCountCheck++;
+                }
+            }
+
+            if($request->input("video")){
+                $videos = json_decode($request->input("video"), true);
+                
+                $videoCountCheck = 0;
+                foreach($videos as $video){
+                    if(!is_null($video_ext)){
+                        $ext = $request->file('video_'.$videoCountCheck)->getClientOriginalExtension();
+                        $extError = true;
+                        foreach($video_ext as $value){
+                            if($ext == $value){
+                                $extError = false;
+                            }
+                        }
+
+                        if($extError){
+                            $errors[] = "video_" . $video["id"];
+                        }
+                    }
+
+                    if(Str::of($video["id"])->trim()->isEmpty()) continue;
+                    if(!$request->file("video_" . $videoCountCheck) || (filesize($request->file("video_" . $videoCountCheck)) < $video_size * 1024) != 1) $errors[] = "video_" . $video["id"];
+                    if($video["videoName"] && Str::of($video["videoName"])->trim()->isEmpty()) $errors[] = "videoName_" . $video["id"];
+                    if($video["videoDate"] && Str::of($video["videoDate"])->trim()->isEmpty()) $errors[] = "videoDate_" . $video["id"];
+                    $videoCountCheck++;
+                }
+            }
+
+            if($request->input("photoToDelete")){
+                $photoToDelete = explode(',',$request->input("photoToDelete"));
+
+                #Сохраняем каждую запись о образовании
+                foreach($photoToDelete as $index => $photo){
+                    $photoTmp = UnitPhoto::where('id', $photo);
+
+                    if($photoTmp->exists()){
+                        if($photoTmp->first()->unit->addUserId != Auth::user()->id){
+                            return; // в случае не санкционированного изменения просто прерывать процесс
+                        }
+                    }
+                }
+            }
+
+            if($request->input("videoToDelete")){
+                $videoToDelete = explode(',',$request->input("videoToDelete"));
+
+                #Сохраняем каждую запись о образовании
+                foreach($videoToDelete as $index => $video){
+                    $videoTmp = UnitVideo::where('id', $video);
+
+                    if($videoTmp->exists()){
+                        if($videoTmp->first()->unit->addUserId != Auth::user()->id){
+                            return; // в случае не санкционированного изменения просто прерывать процесс
+                        }
+                    }
+                }
+            }
+
             #Если поля вальдны, сохраняем их в бд
             if(empty($errors)){
                 $exception = DB::transaction(function() use ($request){
@@ -245,8 +384,79 @@ class UnitController extends Controller
                     if(Str::of($request->input("creationDate"))->trim()->isNotEmpty()) $newUnitInfo['creationDate'] = trim($request->input("creationDate"));
                     if(Str::of($request->input("terminationDate"))->trim()->isNotEmpty()) $newUnitInfo['terminationDate'] = trim($request->input("terminationDate"));
 
+                    if($request->input("photo")){
+                        $photos = json_decode($request->input("photo"), true);
+
+                        $photoCountData = 0;
+
+                        foreach($photos as $photo){
+                            $photoPath = $request->file("photo_" . $photoCountData)->store('uploads/unit/photo', 'public');
+                            $newPhoto = new UnitPhoto;
+                            $newPhoto->unit_id = $editUnit->first()->id;
+                            $newPhoto->photo = $photoPath;
+                            if(Str::of($photo["photoDate"])->trim()->isNotEmpty()) $newPhoto->photoDate = trim($photo["photoDate"]);
+                            if(Str::of($photo["photoName"])->trim()->isNotEmpty()) $newPhoto->photoName = trim($photo["photoName"]);
+                            $newPhoto->save();
+                            $photoCountData++;
+                        }
+                    }
+
+                    if($request->input("video")){
+                        $videos = json_decode($request->input("video"), true);
+
+                        $videoCountData = 0;
+
+                        foreach($videos as $video){
+                            $videoPath = $request->file("video_" . $videoCountData)->store('uploads/unit/video', 'public');
+                            $newVideo = new UnitVideo;
+                            $newVideo->unit_id = $editUnit->first()->id;
+                            $newVideo->video = $videoPath;
+                            if(Str::of($video["videoDate"])->trim()->isNotEmpty()) $newVideo->videoDate = trim($video["videoDate"]);
+                            if(Str::of($video["videoName"])->trim()->isNotEmpty()) $newVideo->videoName = trim($video["videoName"]);
+                            $newVideo->save();
+                            $videoCountData++;
+                        }
+                    }
+
+                    if($request->input("photoToDelete")){
+                        $photoToDelete = explode(',',$request->input("photoToDelete"));
+
+                        #Сохраняем каждую запись о образовании
+                        foreach($photoToDelete as $index => $photo){
+                            $oldPhoto = UnitPhoto::where('id', $photo);
+                            if($oldPhoto->exists()){
+                                Storage::disk('public')->delete($oldPhoto->first()->photo);
+                                $oldPhoto->delete();
+                            }
+                        }
+                    }
+
+                    if($request->input("videoToDelete")){
+                        $videoToDelete = explode(',',$request->input("videoToDelete"));
+
+                        #Сохраняем каждую запись о образовании
+                        foreach($videoToDelete as $index => $video){
+                            $oldVideo = UnitVideo::where('id', $video);
+                            if($oldVideo->exists()){
+                                Storage::disk('public')->delete($oldVideo->first()->video);
+                                $oldVideo->delete();
+                            }
+                        }
+                    }
+
                     $editUnit->update($newUnitInfo);
                 });
+
+            $unit = Unit::where("id", $request->input("id"))->first();
+
+            $response['photos'] = view('ajax.unitPhotos', [
+                'unit' => $unit
+            ])->render();
+
+            $response['videos'] = view('ajax.unitVideos', [
+                'unit' => $unit
+            ])->render();
+
             #Проверка успешно ли прошла транзакция
             if($exception){
                 $response['success'] = false;
