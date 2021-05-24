@@ -25,3 +25,7 @@
 .video{
     outline: none;
 }
+
+img{
+    max-height: 300px;
+}

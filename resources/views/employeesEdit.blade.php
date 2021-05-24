@@ -14,7 +14,13 @@
                     </div>
                     <div class="row">
                         <label for="empImg" class="col-sm-3 col-form-label">Фото</label>
-                        <div class="col-sm-9">
+                        <div class="col-sm-9" id="imgEmp">
+                            @if($employee->img)
+                                <div class="mb-2">
+                                    <img src="{{ '/storage/'.$employee->img }}" class="mb-1">
+                                    <button class="btn btn-danger delete" type="button" id="deleteImg">Удалить</button>
+                                </div>
+                            @endif
                             <input type="file" name="image" id="empImg" form-field>
                         </div>
                     </div>
@@ -333,7 +339,13 @@
                     </div>
                     <div class="mb row">
                         <label for="titlePersonalFile" class="col-sm-3 col-form-label">Титульный лист</label>
-                        <div class="col-sm-9">
+                        <div class="col-sm-9" id="personalFile">
+                            @if($personals)
+                                <div class="mb-2">
+                                    <img src="{{ '/storage/'.$personals }}" class="mb-1">
+                                    <button class="btn btn-danger delete" type="button" id="deletePersonalFile">Удалить</button>
+                                </div>
+                            @endif
                             <input type="file" id="titlePersonalFile" form-field>
                         </div>
                     </div>
@@ -374,10 +386,12 @@
         var unitCount = {{ !empty($employee)? $employee->units->count(): 0}};
         var photoCount = {{ !empty($employee)? $employee->photos->count(): 0}};
         var videoCount = {{ !empty($employee)? $employee->videos->count(): 0}};
-        var autobiographyCount = {{ !empty($employee)? $employee->autobiographys->count(): 0}};;
+        var autobiographyCount = {{ !empty($employee)? $employee->autobiographys->count(): 0}};
         var photoToDelete = [];
         var videoToDelete = [];
         var autobiographyToDelete = [];
+        var deleteImg = false;
+        var deletePersonalFile = false;
 
         $(".editEmpForm").delegate(".delete", "click", function(){
             if($(this).attr('photo-id')){
@@ -388,6 +402,14 @@
             }
             if($(this).attr('autobiography-id')){
                 autobiographyToDelete.push($(this).attr('autobiography-id'));
+            }
+
+            if($(this).attr('id') == 'deleteImg'){
+                deleteImg = true;
+            }
+
+            if($(this).attr('id') == 'deletePersonalFile'){
+                deletePersonalFile = true;
             }
             
             var $parent = $(this).parent();
@@ -768,6 +790,12 @@
             formData.append('photoToDelete', photoToDelete);
             formData.append('videoToDelete', videoToDelete);
             formData.append('autobiographyToDelete', autobiographyToDelete);
+            if(deleteImg){
+                formData.append('deleteImg', true);
+            }
+            if(deletePersonalFile){
+                formData.append('deletePersonalFile', true);
+            }
 
             formData.append('id', '{{ $id }}');
             
@@ -788,14 +816,18 @@
                 },
                 success: function(data){
                     $('#photoList').html(data.photos);
+                    $('#imgEmp').html(data.imgEmp);
                     $('#videoList').html(data.videos);
                     $('#autobiographyList').html(data.autobiographys);
+                    $('#personalFile').html(data.personalFile);
                     stopLoading();
                     if (data.success) {
                         $('#success-message').fadeIn(300).delay(2000).fadeOut(300);
                         photoToDelete = [];
                         videoToDelete = [];
                         autobiographyToDelete = [];
+                        deleteImg = false;
+                        deletePersonalFile = false;
                     } else if(data.errors){
                         $('#error-global-message').fadeIn(300).delay(2000).fadeOut(300);
                         data.errors.forEach(function(ell){

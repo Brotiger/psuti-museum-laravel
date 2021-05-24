@@ -79,9 +79,14 @@ class EmployeeController extends Controller
                 ['id', $id],
                 ['addUserId', Auth::user()->id]
             ]);
+            $personals = $employee->first()->personals->first();
+            if($personals){
+                $personals = $personals->file;
+            }
             if($employee->exists()){
                 $params['id'] = $id;
                 $params['employee'] = $employee->get()->first();
+                $params['personals'] = $personals;
             }else{
                 return redirect(route('employees_list'));
             }
@@ -855,13 +860,18 @@ class EmployeeController extends Controller
                     $newEmpInfo = [];
                     
                     #Дописать удаление фотографии в случае не удачно транзакции
+                    if($request->input("deleteImg")){
+                        Storage::disk('public')->delete($editEmployee->first()->img);
+                        $newEmpInfo['img'] = null;
+                    }
+
                     if($request->file("image"))
                     {
                         Storage::disk('public')->delete($editEmployee->first()->img);
                         $file_path = $request->file("image")->store('uploads/emp/personal', 'public');
                         $newEmpInfo['img'] = $file_path;
                     }
-
+                    
                     if(Str::of($request->input("firstName"))->trim()->isNotEmpty()) $newEmpInfo['firstName'] = trim($request->input("firstName"));
                     if(Str::of($request->input("lastName"))->trim()->isNotEmpty()) $newEmpInfo['lastName'] = trim($request->input("lastName"));
                     if(Str::of($request->input("secondName"))->trim()->isNotEmpty()) $newEmpInfo['secondName'] = trim($request->input("secondName"));
@@ -900,7 +910,7 @@ class EmployeeController extends Controller
                             }
                         }
                     }
-
+                    
                     if($request->input("videoToDelete")){
                         $videoToDelete = explode(',',$request->input("videoToDelete"));
 
@@ -1052,6 +1062,14 @@ class EmployeeController extends Controller
                         }
                     }
 
+                    if($request->input("deletePersonalFile")){
+                        $oldPersonalFile = PersonalFile::where('employee_id', $editEmployee->first()->id);
+                        if($oldPersonalFile->exists()){
+                            Storage::disk('public')->delete($oldPersonalFile->first()->file);
+                            $oldPersonalFile->delete();
+                        }
+                    }
+
                     if($request->file("titlePersonalFile"))
                     {
                         $oldPersonalFile = PersonalFile::where('employee_id', $editEmployee->first()->id);
@@ -1080,6 +1098,19 @@ class EmployeeController extends Controller
 
             $response['autobiographys'] = view('ajax.autobiographys', [
                 'employee' => $employee
+            ])->render();
+
+            $response['imgEmp'] = view('ajax.imgEmp', [
+                'employee' => $employee
+            ])->render();
+
+            $personals = $employee->personals->first();
+            if($personals){
+                $personals = $personals->file;
+            }
+
+            $response['personalFile'] = view('ajax.personalFile', [
+                'personals' => $personals
             ])->render();
             #Проверка успешно ли прошла транзакция
             if($exception){
