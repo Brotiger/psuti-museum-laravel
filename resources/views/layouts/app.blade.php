@@ -25,7 +25,7 @@
         <!-- Scripts -->
         <script src="{{ mix('js/app.js') }}" defer></script>
     </head>
-    <body class="font-sans antialiased loaded_hiding loaded">
+    <body class="font-sans antialiased">
         <!-- Прелоадер -->
         <div class="preloader">
             <svg class="preloader__image" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
@@ -62,5 +62,10 @@
         @livewireScripts
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
         <script src="/js/scrollTop.js"></script>
+        <script>
+            $(document).ready(function(){
+                stopLoading();
+            });
+        </script>
     </body>
 </html>

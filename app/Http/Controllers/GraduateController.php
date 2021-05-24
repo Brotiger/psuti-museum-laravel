@@ -52,17 +52,70 @@ class GraduateController extends Controller
         if($request->input("exitYearFrom") != null) $filter[] = ["exitYear", ">=", $request->input("exitYearFrom")];
         if($request->input("exitYearTo") != null) $filter[] = ["exitYear", "<", $request->input("exitYearTo")];
 
-        $graduates = Graduate::where($filter)->orderBy("firstName")->get();
         $counter = User::where("id", Auth::user()->id)->get()->first()->graduateCount;
 
-        if($request->ajax()){
-            return view('filters.graduatesList', [
-                'graduates' => $graduates
-            ])->render();
+        $filter = [
+            ['addUserId', Auth::user()->id]
+        ];
+        $next_query = [
+            'firstName' => '',
+            'lastName' => '',
+            'registrationNumber' => '',
+            'secondName' => '',
+            'dateBirthdayFrom' => '',
+            'dateBirthdayTo' => '',
+            'enteredYearFrom' => '',
+            'enteredYearTo' => '',
+            'exitYearFrom' => '',
+            'exitYearTo' => '',
+        ];
+
+        if($request->input("firstName") != null){
+            $filter[] = ["firstName", "like", '%' . $request->input("firstName") . '%'];
+            $next_query['firstName'] = $request->input("firstName");
         }
+        if($request->input("lastName") != null){
+            $filter[] = ["lastName", "like", '%' . $request->input("lastName") . '%'];
+            $next_query['lastName'] = $request->input("lastName");
+        }
+        if($request->input("registrationNumber") != null){
+            $filter[] = ["registrationNumber", "like", '%' . $request->input("registrationNumber") . '%'];
+            $next_query['registrationNumber'] = $request->input("registrationNumber");
+        }
+        if($request->input("secondName") != null){
+            $filter[] = ["secondName", "like", '%' . $request->input("secondName") . '%'];
+            $next_query['secondName'] = $request->input("secondName");
+        }
+        if($request->input("dateBirthdayFrom") != null){
+            $filter[] = ["dateBirthday", ">=", $request->input("dateBirthdayFrom")];
+            $next_query['dateBirthdayFrom'] = $request->input("dateBirthdayFrom");
+        }
+        if($request->input("dateBirthdayTo") != null){
+            $filter[] = ["dateBirthday", "<", $request->input("dateBirthdayTo")];
+            $next_query['dateBirthdayTo'] = $request->input("dateBirthdayTo");
+        }
+        if($request->input("enteredYearFrom") != null){
+            $filter[] = ["enteredYear", ">=", $request->input("enteredYearFrom")];
+            $next_query['enteredYearFrom'] = $request->input("enteredYearFrom");
+        }
+        if($request->input("enteredYearTo") != null){
+            $filter[] = ["enteredYear", "<", $request->input("enteredYearTo")];
+            $next_query['enteredYearTo'] = $request->input("enteredYearTo");
+        }
+        if($request->input("exitYearFrom") != null){
+            $filter[] = ["exitYear", ">=", $request->input("exitYearFrom")];
+            $next_query['exitYearFrom'] = $request->input("exitYearFrom");
+        }
+        if($request->input("exitYearTo") != null){
+            $filter[] = ["exitYear", "<", $request->input("exitYearTo")];
+            $next_query['exitYearTo'] = $request->input("exitYearTo");
+        }
+
+        $graduates = Graduate::where($filter)->orderBy("firstName")->paginate(50);
 
         return view('graduatesList', [
             'graduates' => $graduates,
+            'next_query' => $next_query,
             'counter' => $counter
         ]);
     }

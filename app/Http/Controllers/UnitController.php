@@ -52,28 +52,56 @@ class UnitController extends Controller
     }
 
     public function units_list(Request $request){
+
+        $counter = Unit::where('addUserId', Auth::user()->id)->get()->count();
+
         $filter = [
             ['addUserId', Auth::user()->id]
         ];
-        if($request->input("fullUnitName") != null) $filter[] = ["fullUnitName", "like", '%' . $request->input("fullUnitName") . '%'];
-        if($request->input("shortUnitName") != null) $filter[] = ["shortUnitName", "like", '%' . $request->input("shortUnitName") . '%'];
-        if($request->input("typeUnit") != null) $filter[] = ["typeUnit", "like", '%' . $request->input("typeUnit") . '%'];
-        if($request->input("creationDateFrom") != null) $filter[] = ["creationDate", ">=", $request->input("creationDateFrom")];
-        if($request->input("creationDateTo") != null) $filter[] = ["creationDate", "<", $request->input("creationDateTo")];
-        if($request->input("terminationDateFrom") != null) $filter[] = ["terminationDate", ">=", $request->input("terminationDateFrom")];
-        if($request->input("terminationDateTo") != null) $filter[] = ["terminationDate", "<", $request->input("terminationDateTo")];
+        $next_query = [
+            'fullUnitName' => '',
+            'shortUnitName' => '',
+            'typeUnit' => '',
+            'creationDateFrom' => '',
+            'creationDateTo' => '',
+            'terminationDateFrom' => '',
+            'terminationDateTo' => '',
+        ];
 
-        $units = Unit::where($filter)->orderBy("fullUnitName")->get();
-        $counter = Unit::where('addUserId', Auth::user()->id)->get()->count();
-
-        if($request->ajax()){
-            return view('filters.unitsList', [
-                'units' => $units
-            ])->render();
+        if($request->input("fullUnitName") != null){
+            $filter[] = ["fullUnitName", "like", '%' . $request->input("fullUnitName") . '%'];
+            $next_query['fullUnitName'] = $request->input("fullUnitName");
         }
+        if($request->input("shortUnitName") != null){
+            $filter[] = ["shortUnitName", "like", '%' . $request->input("shortUnitName") . '%'];
+            $next_query['shortUnitName'] = $request->input("shortUnitName");
+        }
+        if($request->input("typeUnit") != null){
+            $filter[] = ["typeUnit", "like", '%' . $request->input("typeUnit") . '%'];
+            $next_query['typeUnit'] = $request->input("typeUnit");
+        }
+        if($request->input("creationDateFrom") != null){
+            $filter[] = ["creationDate", ">=", $request->input("creationDateFrom")];
+            $next_query['creationDateFrom'] = $request->input("creationDateFrom");
+        }
+        if($request->input("creationDateTo") != null){
+            $filter[] = ["creationDate", "<", $request->input("creationDateTo")];
+            $next_query['creationDateTo'] = $request->input("creationDateTo");
+        }
+        if($request->input("terminationDateFrom") != null){
+            $filter[] = ["terminationDate", ">=", $request->input("terminationDateFrom")];
+            $next_query['terminationDateFrom'] = $request->input("terminationDateFrom");
+        }
+        if($request->input("terminationDateTo") != null){
+            $filter[] = ["terminationDate", "<", $request->input("terminationDateTo")];
+            $next_query['terminationDateTo'] = $request->input("terminationDateTo");
+        }
+
+        $units = Unit::where($filter)->orderBy("fullUnitName")->paginate(50);
 
         return view('unitsList', [
             'units' => $units,
+            'next_query' => $next_query,
             'counter' => $counter
         ]);
     }

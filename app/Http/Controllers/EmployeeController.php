@@ -91,30 +91,66 @@ class EmployeeController extends Controller
     }
 
     public function employees_list(Request $request){
+        $counter = Employee::where('addUserId', Auth::user()->id)->get()->count();
+
         $filter = [
             ['addUserId', Auth::user()->id]
         ];
-        if($request->input("firstName") != null) $filter[] = ["firstName", "like", '%' . $request->input("firstName") . '%'];
-        if($request->input("lastName") != null) $filter[] = ["lastName", "like", '%' . $request->input("lastName") . '%'];
-        if($request->input("secondName") != null) $filter[] = ["secondName", "like", '%' . $request->input("secondName") . '%'];
-        if($request->input("dateBirthdayFrom") != null) $filter[] = ["dateBirthday", ">=", $request->input("dateBirthdayFrom")];
-        if($request->input("dateBirthdayTo") != null) $filter[] = ["dateBirthday", "<", $request->input("dateBirthdayTo")];
-        if($request->input("firedFrom") != null) $filter[] = ["fired", ">=", $request->input("firedFrom")];
-        if($request->input("firedTo") != null) $filter[] = ["fired", "<", $request->input("firedTo")];
-        if($request->input("hiredFrom") != null) $filter[] = ["hired", ">=", $request->input("hiredFrom")];
-        if($request->input("hiredTo") != null) $filter[] = ["hired", "<", $request->input("hiredTo")];
 
-        $employees = Employee::where($filter)->orderBy("firstName")->get();
-        $counter = Employee::where('addUserId', Auth::user()->id)->get()->count();
+        $next_query = [
+            'lastName' => '',
+            'firstName' => '',
+            'secondName' => '',
+            'firedFrom' => '',
+            'firedTo' => '',
+            'hiredFrom' => '',
+            'hiredTo' => '',
+            'dateBirthdayFrom' => '',
+            'dateBirthdayTo' => ''
+        ];
 
-        if($request->ajax()){
-            return view('filters.employeesList', [
-                'employees' => $employees
-            ])->render();
+        if($request->input("lastName") != null){
+            $filter[] = ["lastName", "like", '%' . $request->input("lastName") . '%'];
+            $next_query['lastName'] = $request->input("lastName");
         }
+        if($request->input("firstName") != null){
+            $filter[] = ["firstName", "like", '%' . $request->input("firstName") . '%'];
+            $next_query['firstName'] = $request->input("firstName");
+        }
+        if($request->input("secondName") != null){
+            $filter[] = ["secondName", "like", '%' . $request->input("secondName") . '%'];
+            $next_query['secondName'] = $request->input("secondName");
+        }
+        if($request->input("firedFrom") != null){
+            $filter[] = ["fired", ">=", $request->input("firedFrom")];
+            $next_query['firedFrom'] = $request->input("firedFrom");
+        }
+        if($request->input("firedTo") != null){
+            $filter[] = ["fired", "<", $request->input("firedTo")];
+            $next_query['firedTo'] = $request->input("firedTo");
+        }
+        if($request->input("hiredFrom") != null){
+            $filter[] = ["hired", ">=", $request->input("hiredFrom")];
+            $next_query['hiredFrom'] = $request->input("hiredFrom");
+        }
+        if($request->input("hiredTo") != null){
+            $filter[] = ["hired", "<", $request->input("hiredTo")];
+            $next_query['hiredTo'] = $request->input("hiredTo");
+        }
+        if($request->input("dateBirthdayFrom") != null){
+            $filter[] = ["dateBirthday", ">=", $request->input("dateBirthdayFrom")];
+            $next_query['dateBirthdayFrom'] = $request->input("dateBirthdayFrom");
+        }
+        if($request->input("dateBirthdayTo") != null){
+            $filter[] = ["dateBirthday", "<", $request->input("dateBirthdayTo")];
+            $next_query['dateBirthdayTo'] = $request->input("dateBirthdayTo");
+        }
+
+        $employees = Employee::where($filter)->orderBy("firstName")->paginate(50);
 
         return view('employeesList', [
             'employees' => $employees,
+            'next_query' => $next_query,
             'counter' => $counter
         ]);
     }

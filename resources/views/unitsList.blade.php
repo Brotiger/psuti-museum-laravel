@@ -4,7 +4,6 @@
         <div class="alert alert-danger" style="display: none" role="alert" id="error-message">Ошибка сервера, свяжитесь с системным администратором.</div>
         <div class="mt-5 dbList">
             <h1 class="h1">Список добавленных вами подразделений</h1>
-            @if($units->count() > 0)
             <div class="row mb-1">
                 <span class="col-9"><small>Для того что бы отредактировать информацию о подразделении нажмите на него</small></span>
             </div>
@@ -18,14 +17,17 @@
                         <th colspan="2">Дата прекращения</th>
                     </tr>
                     <tr>
-                        <th><input type="text" class="form-control" placeholder="Полное название подразделения" filter-field id="fullUnitName" autocomplete="off"></th>
-                        <th><input type="text" class="form-control" placeholder="Сокращенное название подразделения" filter-field id="shortUnitName" autocomplete="off"></th>
-                        <th><input type="text" class="form-control" placeholder="Тип подразделения" filter-field id="typeUnit" autocomplete="off"></th>
-                        <th><input type="date" class="form-control mb-1" placeholder="С:" filter-field id="creationDateFrom"><input type="date" class="form-control" placeholder="По:" filter-field id="creationDateTo"></th>
-                        <th><input type="date" class="form-control mb-1" placeholder="С:" filter-field id="terminationDateFrom"><input type="date" class="form-control" placeholder="По:" filter-field id="terminationDateTo"></th>
-                        <th><button class="form-control btn btn-danger mb-1" id="reset"><i class="bi bi-arrow-counterclockwise"></i></button><button class="form-control btn btn-primary" id="search"><i class="bi bi-search"></i></button></th>
+                        <form method="GET" action="{{route('units_list')}}">
+                            <th><input type="text" class="form-control" placeholder="Полное название подразделения" filter-field id="fullUnitName" autocomplete="off" name="fullUnitName" value="{{ request()->input('fullUnitName') }}"></th>
+                            <th><input type="text" class="form-control" placeholder="Сокращенное название подразделения" filter-field id="shortUnitName" autocomplete="off" name="shortUnitName" value="{{ request()->input('shortUnitName') }}"></th>
+                            <th><input type="text" class="form-control" placeholder="Тип подразделения" filter-field id="typeUnit" autocomplete="off" name="typeUnit" value="{{ request()->input('typeUnit') }}"></th>
+                            <th><input type="date" class="form-control mb-1" placeholder="С:" filter-field id="creationDateFrom" name="creationDateFrom" value="{{ request()->input('creationDateFrom') }}"><input type="date" class="form-control" placeholder="По:" filter-field id="creationDateTo" name="creationDateTo" value="{{ request()->input('CreationDateTo') }}"></th>
+                            <th><input type="date" class="form-control mb-1" placeholder="С:" filter-field id="terminationDateFrom" name="terminationDateFrom" value="{{ request()->input('terminationDateFrom') }}"><input type="date" class="form-control" placeholder="По:" filter-field id="terminationDateTo" name="terminationDateTo" value="{{ request()->input('terminationDateTo') }}"></th>
+                            <th><button class="form-control btn btn-danger mb-1" id="reset"><i class="bi bi-arrow-counterclockwise"></i></button><button class="form-control btn btn-primary" id="search"><i class="bi bi-search"></i></button></th>
+                        </form>
                     </tr>
                 </thead>
+                @if($units->count() > 0)
                 <tbody id="unitsTable">
                     @foreach($units as $unit)
                         <tr class="recordRow" unit-id="{{ $unit->id }}">
@@ -37,13 +39,15 @@
                         </tr>
                     @endforeach
                 </tbody>
+                @endif
             </table>
-            @else
+            @if($units->count() == 0)
             <p>
-                Здесь будет отображаться список добавленных вами подразделений, что бы добавить подразделение перейдите на подвкладку <strong>добавить подразделение</strong>
+                Ничего не найдено
             </p>
             @endif
         </div>
+        {{ $units->appends($next_query)->links() }}
     </div>
 </x-app-layout>
 <script>
@@ -53,50 +57,10 @@
             window.location.href = 'edit_unit' + '/' + unitId;
         });
 
-        $('#search').on('click', function(){
-            startLoading();
-            var formData = {};
-
-            $('[filter-field]').each(function(i, ell){
-                formData[ell.id] = $(this).val();
-            });
-
-            let res = $.ajax({
-                url: "{{route('units_list')}}",
-                type: "GET",
-                processData: true,
-                contentType: false,
-                data: formData,
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(data){
-                    stopLoading();
-                    let positionParameters = location.pathname.indexOf('?');
-                    let url = location.pathname.substring(positionParameters, location.pathname.length);
-                    let newUrl = url + '?';
-                    for(key in formData){
-                        if(formData[key]){
-                            newUrl += key + "=" + formData[key] + "&";
-                        }
-                    }
-                    newUrl = newUrl.slice(0, -1);
-                    history.pushState({}, '', newUrl);
-
-                    $('#unitsTable').html(data)
-                },
-                error: function(data){
-                    stopLoading();
-                    $('#error-message').fadeIn(300).delay(2000).fadeOut(300);
-                }
-            });
-        });
-
         $('#reset').on('click', function(){
             $("[filter-field]").each(function(){
-                $(this).val("");
+                $(this).attr("value", "");
             });
-            $('#search').click();
         });
     });
 </script>
