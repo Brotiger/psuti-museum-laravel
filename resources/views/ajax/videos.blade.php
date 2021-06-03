@@ -4,9 +4,7 @@
         <div class="row">
             <label for="video_'+ videoCount +'" class="col-sm-3 col-form-label">Видео</label>
             <div class="col-sm-9">
-                <video controls="controls" class="user-video">
-                    <source src="{{ '/storage/'.$video->video }}">
-                </video>
+                <iframe width="481" height="315" src="{{ 'https://www.youtube.com/embed/'.$video->video }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </div>
         </div>
     </div>

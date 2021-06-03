@@ -14,7 +14,7 @@
                         <span class="offset-3 col-9"><small>Название события должно быть уникальным, иначе данное поле будет выделено красным</small></span>
                     </div>
                     <div class="row">
-                        <label for="name" class="col-sm-3 col-form-label">Название события</label>
+                        <label for="name" class="col-sm-3 col-form-label">Название события*</label>
                         <div class="col-sm-9">
                             <input type="text" class="form-control" id="name" placeholder="Название события" data-field form-field autocomplete="off">
                         </div>

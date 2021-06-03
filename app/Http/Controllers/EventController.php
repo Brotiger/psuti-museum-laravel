@@ -37,6 +37,41 @@ class EventController extends Controller
         return view('event', $params);
     }
 
+    public function events_list(Request $request){
+
+        $counter = Event::where('addUserId', Auth::user()->id)->get()->count();
+
+        $filter = [
+            ['addUserId', Auth::user()->id]
+        ];
+        $next_query = [
+            'name' => '',
+            'dateFrom' => '',
+            'dateTo' => '',
+        ];
+
+        if($request->input("name") != null){
+            $filter[] = ["name", "like", '%' . $request->input("name") . '%'];
+            $next_query['name'] = $request->input("name");
+        }
+        if($request->input("dateFrom") != null){
+            $filter[] = ["date", ">=", $request->input("dateFrom")];
+            $next_query['dateFrom'] = $request->input("dateFrom");
+        }
+        if($request->input("dateTo") != null){
+            $filter[] = ["date", "<", $request->input("dateTo")];
+            $next_query['dateTo'] = $request->input("dateTo");
+        }
+
+        $events = Event::where($filter)->orderBy("name")->paginate(50);
+
+        return view('eventsList', [
+            'events' => $events,
+            'next_query' => $next_query,
+            'counter' => $counter
+        ]);
+    }
+
     public function add_event(Request $request){
         $response = [
             "errors" => false,
@@ -104,7 +139,7 @@ class EventController extends Controller
                     if(Str::of($video["id"])->trim()->isEmpty()) continue;
                     if($video["videoName"] && Str::of($video["videoName"])->trim()->isEmpty()) $errors[] = "videoName_" . $video["id"];
                     if($video["videoDate"] && Str::of($video["videoDate"])->trim()->isEmpty()) $errors[] = "videoDate_" . $video["id"];
-                    if(!$video["video"] || Str::of($video["video"])->trim()->isEmpty() || !preg_match('~^https://www.youtube.com/watch\?v=([a-zA-Z]+)$~', $video["video"])) $errors[] = "video_" . $video["id"];
+                    if(!$video["video"] || Str::of($video["video"])->trim()->isEmpty() || !preg_match('~^https:\/\/www.youtube.com\/watch\?v=([a-zA-Z0-9\-\_]+)~', $video["video"])) $errors[] = "video_" . $video["id"];
                     $videoCountCheck++;
                 }
             }
@@ -148,7 +183,7 @@ class EventController extends Controller
                         foreach($videos as $video){
                             $newVideo = new EventVideo;
                             $newVideo->event_id = $newEvent->id;
-                            preg_match('~^https://www.youtube.com/watch\?v=([a-zA-Z]+)$~', $video['video'], $matches);
+                            preg_match('~^https:\/\/www.youtube.com\/watch\?v=([a-zA-Z0-9\-\_]+)~', $video['video'], $matches);
                             $newVideo->video = $matches[1];
                             if(Str::of($video["videoDate"])->trim()->isNotEmpty()) $newVideo->videoDate = trim($video["videoDate"]);
                             if(Str::of($video["videoName"])->trim()->isNotEmpty()) $newVideo->videoName = trim($video["videoName"]);

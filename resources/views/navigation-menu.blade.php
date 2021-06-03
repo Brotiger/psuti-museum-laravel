@@ -26,7 +26,7 @@
                 <div class="dropdown">
                     <button class="dropbtn">События</button>
                     <div class="dropdown-content">
-                        <a href="{{ route('graduates_list') }}">Список событий</a>
+                        <a href="{{ route('events_list') }}">Список событий</a>
                         <a href="{{ route('event') }}">Добавить событие</a>
                     </div>
                 </div>

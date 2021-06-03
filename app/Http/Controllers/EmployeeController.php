@@ -328,7 +328,7 @@ class EmployeeController extends Controller
                     if(Str::of($video["id"])->trim()->isEmpty()) continue;
                     if($video["videoName"] && Str::of($video["videoName"])->trim()->isEmpty()) $errors[] = "videoName_" . $video["id"];
                     if($video["videoDate"] && Str::of($video["videoDate"])->trim()->isEmpty()) $errors[] = "videoDate_" . $video["id"];
-                    if(!$video["video"] || Str::of($video["video"])->trim()->isEmpty() || !preg_match('~^https://www.youtube.com/watch\?v=([a-zA-Z]+)$~', $video["video"])) $errors[] = "video_" . $video["id"];
+                    if(!$video["video"] || Str::of($video["video"])->trim()->isEmpty() || !preg_match('~^https:\/\/www.youtube.com\/watch\?v=([a-zA-Z0-9\-\_]+)~', $video["video"])) $errors[] = "video_" . $video["id"];
                     $videoCountCheck++;
                 }
             }
@@ -491,7 +491,7 @@ class EmployeeController extends Controller
                         foreach($videos as $video){
                             $newVideo = new Video;
                             $newVideo->employee_id = $newEmployee->id;
-                            preg_match('~^https://www.youtube.com/watch\?v=([a-zA-Z]+)$~', $video['video'], $matches);
+                            preg_match('~^https:\/\/www.youtube.com\/watch\?v=([a-zA-Z0-9\-\_]+)~', $video['video'], $matches);
                             $newVideo->video = $matches[1];
                             if(Str::of($video["videoDate"])->trim()->isNotEmpty()) $newVideo->videoDate = trim($video["videoDate"]);
                             if(Str::of($video["videoName"])->trim()->isNotEmpty()) $newVideo->videoName = trim($video["videoName"]);
@@ -659,7 +659,7 @@ class EmployeeController extends Controller
                     if(Str::of($video["id"])->trim()->isEmpty()) continue;
                     if($video["videoName"] && Str::of($video["videoName"])->trim()->isEmpty()) $errors[] = "videoName_" . $video["id"];
                     if($video["videoDate"] && Str::of($video["videoDate"])->trim()->isEmpty()) $errors[] = "videoDate_" . $video["id"];
-                    if(!$video["video"] || Str::of($video["video"])->trim()->isEmpty() || !preg_match('~^https://www.youtube.com/watch\?v=([a-zA-Z]+)$~', $video["video"])) $errors[] = "video_" . $video["id"];
+                    if(!$video["video"] || Str::of($video["video"])->trim()->isEmpty() || !preg_match('~^https:\/\/www.youtube.com\/watch\?v=([a-zA-Z0-9\-\_]+)~', $video["video"])) $errors[] = "video_" . $video["id"];
                     $videoCountCheck++;
                 }
             }
@@ -983,7 +983,7 @@ class EmployeeController extends Controller
                         foreach($videos as $video){
                             $newVideo = new Video;
                             $newVideo->employee_id = $editEmployee->first()->id;
-                            preg_match('~^https://www.youtube.com/watch\?v=([a-zA-Z]+)$~', $video['video'], $matches);
+                            preg_match('~^https:\/\/www.youtube.com\/watch\?v=([a-zA-Z0-9\-\_]+)~', $video['video'], $matches);
                             $newVideo->video = $matches[1];
                             if(Str::of($video["videoDate"])->trim()->isNotEmpty()) $newVideo->videoDate = trim($video["videoDate"]);
                             if(Str::of($video["videoName"])->trim()->isNotEmpty()) $newVideo->videoName = trim($video["videoName"]);

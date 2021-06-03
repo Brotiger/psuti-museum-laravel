@@ -19,10 +19,10 @@ class CreateEventsTable extends Migration
             $table->bigInteger("addUserId")->unsigned()->nullable();
             $table->foreign("addUserId")
             ->references("id")
-            ->on("users");;
+            ->on("users");
             $table->string('name');
-            $table->string('description');
-            $table->date('date');
+            $table->string('description')->nullable();
+            $table->date('date')->nullable();
         });
     }
 
