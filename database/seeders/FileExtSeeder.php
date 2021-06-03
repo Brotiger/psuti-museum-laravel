@@ -20,11 +20,6 @@ class FileExtSeeder extends Seeder
         ]);
 
         DB::table("file_exts")->insert([
-            'name' => 'video',
-            'ext' => implode(', ', ['mp4','avi'])
-        ]);
-
-        DB::table("file_exts")->insert([
             'name' => 'file',
             'ext' => implode(', ', ['jpg','png','svg'])
         ]);

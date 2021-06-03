@@ -30,10 +30,8 @@ class EmployeeController extends Controller
     public function index(){
         $file_size = FileSize::where('name', 'file')->exists()? FileSize::where('name', 'file')->first()['size'] : 0;
         $photo_size = FileSize::where('name', 'photo')->exists()? FileSize::where('name', 'photo')->first()['size'] : 0;
-        $video_size = FileSize::where('name', 'video')->exists()? FileSize::where('name', 'video')->first()['size'] : 0;
 
         $photo_ext = FileExt::where('name', 'photo')->exists() && FileExt::where('name', 'photo')->first()['ext'] ? explode(', ', FileExt::where('name', 'photo')->first()['ext']) : null;
-        $video_ext = FileExt::where('name', 'video')->exists() && FileExt::where('name', 'video')->first()['ext'] ? explode(', ', FileExt::where('name', 'video')->first()['ext']) : null;
         $file_ext = FileExt::where('name', 'file')->exists() && FileExt::where('name', 'file')->first()['ext'] ? explode(', ', FileExt::where('name', 'file')->first()['ext']) : null;
 
         $units = Unit::orderBy('fullUnitName')->get();
@@ -43,10 +41,8 @@ class EmployeeController extends Controller
             'counter' => $counter,
             'file_size' => $file_size,
             'photo_size' => $photo_size,
-            'video_size' => $video_size,
             'file_ext' => $file_ext? implode(', ', $file_ext) : 'любые',
             'photo_ext' => $photo_ext? implode(', ', $photo_ext) : 'любые',
-            'video_ext' => $video_ext? implode(', ', $video_ext) : 'любые'
         ];
 
         return view('employees', $params);
@@ -55,10 +51,8 @@ class EmployeeController extends Controller
     public function edit_employee($id = null){
         $file_size = FileSize::where('name', 'file')->exists()? FileSize::where('name', 'file')->first()['size'] : 0;
         $photo_size = FileSize::where('name', 'photo')->exists()? FileSize::where('name', 'photo')->first()['size'] : 0;
-        $video_size = FileSize::where('name', 'video')->exists()? FileSize::where('name', 'video')->first()['size'] : 0;
 
         $photo_ext = FileExt::where('name', 'photo')->exists() && FileExt::where('name', 'photo')->first()['ext'] ? explode(', ', FileExt::where('name', 'photo')->first()['ext']) : null;
-        $video_ext = FileExt::where('name', 'video')->exists() && FileExt::where('name', 'video')->first()['ext'] ? explode(', ', FileExt::where('name', 'video')->first()['ext']) : null;
         $file_ext = FileExt::where('name', 'file')->exists() && FileExt::where('name', 'file')->first()['ext'] ? explode(', ', FileExt::where('name', 'file')->first()['ext']) : null;
 
         $units = Unit::orderBy('fullUnitName')->get();
@@ -69,10 +63,8 @@ class EmployeeController extends Controller
             'id' => $id,
             'file_size' => $file_size,
             'photo_size' => $photo_size,
-            'video_size' => $video_size,
             'file_ext' => $file_ext? implode(', ', $file_ext) : 'любые',
             'photo_ext' => $photo_ext? implode(', ', $photo_ext) : 'любые',
-            'video_ext' => $video_ext? implode(', ', $video_ext) : 'любые'
         ];
         if(isset($id)){
             $employee = Employee::where([
@@ -181,10 +173,8 @@ class EmployeeController extends Controller
         if(isset($request)){
             $file_size = FileSize::where('name', 'file')->exists()? FileSize::where('name', 'file')->first()['size'] : 0;
             $photo_size = FileSize::where('name', 'photo')->exists()? FileSize::where('name', 'photo')->first()['size'] : 0;
-            $video_size = FileSize::where('name', 'video')->exists()? FileSize::where('name', 'video')->first()['size'] : 0;
 
             $photo_ext = FileExt::where('name', 'photo')->exists() && FileExt::where('name', 'photo')->first()['ext'] ? explode(', ', FileExt::where('name', 'photo')->first()['ext']) : null;
-            $video_ext = FileExt::where('name', 'video')->exists() && FileExt::where('name', 'video')->first()['ext'] ? explode(', ', FileExt::where('name', 'video')->first()['ext']) : null;
             $file_ext = FileExt::where('name', 'file')->exists() && FileExt::where('name', 'file')->first()['ext'] ? explode(', ', FileExt::where('name', 'file')->first()['ext']) : null;
 
             if(Employee::where([
@@ -304,7 +294,12 @@ class EmployeeController extends Controller
                 
                 $photoCountCheck = 0;
                 foreach($photos as $photo){
-                    
+                    if(Str::of($photo["id"])->trim()->isEmpty()) continue;
+                    if(!$request->file("photo_" . $photoCountCheck) || (filesize($request->file("photo_" . $photoCountCheck)) < $photo_size * 1024) != 1){
+                        $errors[] = "photo_" . $photo["id"];
+                        continue;
+                    }
+
                     if(!is_null($photo_ext)){
                         $ext = $request->file('photo_'.$photoCountCheck)->getClientOriginalExtension();
                         $extError = true;
@@ -319,8 +314,6 @@ class EmployeeController extends Controller
                         }
                     }
 
-                    if(Str::of($photo["id"])->trim()->isEmpty()) continue;
-                    if(!$request->file("photo_" . $photoCountCheck) || (filesize($request->file("photo_" . $photoCountCheck)) < $photo_size * 1024) != 1) $errors[] = "photo_" . $photo["id"];
                     if($photo["photoName"] && Str::of($photo["photoName"])->trim()->isEmpty()) $errors[] = "photoName_" . $photo["id"];
                     if($photo["photoDate"] && Str::of($photo["photoDate"])->trim()->isEmpty()) $errors[] = "photoDate_" . $photo["id"];
                     $photoCountCheck++;
@@ -332,25 +325,10 @@ class EmployeeController extends Controller
                 
                 $videoCountCheck = 0;
                 foreach($videos as $video){
-
-                    if(!is_null($video_ext)){
-                        $ext = $request->file('video_'.$videoCountCheck)->getClientOriginalExtension();
-                        $extError = true;
-                        foreach($video_ext as $value){
-                            if($ext == $value){
-                                $extError = false;
-                            }
-                        }
-
-                        if($extError){
-                            $errors[] = "video_" . $video["id"];
-                        }
-                    }
-
                     if(Str::of($video["id"])->trim()->isEmpty()) continue;
-                    if(!$request->file("video_" . $videoCountCheck) || (filesize($request->file("video_" . $videoCountCheck)) < $video_size * 1024) != 1) $errors[] = "video_" . $video["id"];
                     if($video["videoName"] && Str::of($video["videoName"])->trim()->isEmpty()) $errors[] = "videoName_" . $video["id"];
                     if($video["videoDate"] && Str::of($video["videoDate"])->trim()->isEmpty()) $errors[] = "videoDate_" . $video["id"];
+                    if(!$video["video"] || Str::of($video["video"])->trim()->isEmpty() || !preg_match('~^https://www.youtube.com/watch\?v=([a-zA-Z]+)$~', $video["video"])) $errors[] = "video_" . $video["id"];
                     $videoCountCheck++;
                 }
             }
@@ -511,10 +489,10 @@ class EmployeeController extends Controller
                         $videoCountData = 0;
 
                         foreach($videos as $video){
-                            $videoPath = $request->file("video_" . $videoCountData)->store('uploads/emp/video', 'public');
                             $newVideo = new Video;
                             $newVideo->employee_id = $newEmployee->id;
-                            $newVideo->video = $videoPath;
+                            preg_match('~^https://www.youtube.com/watch\?v=([a-zA-Z]+)$~', $video['video'], $matches);
+                            $newVideo->video = $matches[1];
                             if(Str::of($video["videoDate"])->trim()->isNotEmpty()) $newVideo->videoDate = trim($video["videoDate"]);
                             if(Str::of($video["videoName"])->trim()->isNotEmpty()) $newVideo->videoName = trim($video["videoName"]);
                             $newVideo->save();
@@ -592,12 +570,10 @@ class EmployeeController extends Controller
 
         if(isset($request)){
             $photo_ext = FileExt::where('name', 'photo')->exists() && FileExt::where('name', 'photo')->first()['ext'] ? explode(', ', FileExt::where('name', 'photo')->first()['ext']) : null;
-            $video_ext = FileExt::where('name', 'video')->exists() && FileExt::where('name', 'video')->first()['ext'] ? explode(', ', FileExt::where('name', 'video')->first()['ext']) : null;
             $file_ext = FileExt::where('name', 'file')->exists() && FileExt::where('name', 'file')->first()['ext'] ? explode(', ', FileExt::where('name', 'file')->first()['ext']) : null;
 
             $file_size = FileSize::where('name', 'file')->exists()? FileSize::where('name', 'file')->first()['size'] : 0;
             $photo_size = FileSize::where('name', 'photo')->exists()? FileSize::where('name', 'photo')->first()['size'] : 0;
-            $video_size = FileSize::where('name', 'video')->exists()? FileSize::where('name', 'video')->first()['size'] : 0;
 
             if(!$request->input("id") ||  !Employee::where([
                 ['addUserId', Auth::user()->id],
@@ -680,25 +656,10 @@ class EmployeeController extends Controller
                 
                 $videoCountCheck = 0;
                 foreach($videos as $video){
-
-                    if(!is_null($video_ext)){
-                        $ext = $request->file('video_'.$videoCountCheck)->getClientOriginalExtension();
-                        $extError = true;
-                        foreach($video_ext as $value){
-                            if($ext == $value){
-                                $extError = false;
-                            }
-                        }
-
-                        if($extError){
-                            $errors[] = "video_" . $video["id"];
-                        }
-                    }
-
                     if(Str::of($video["id"])->trim()->isEmpty()) continue;
-                    if(!$request->file("video_" . $videoCountCheck) || (filesize($request->file("video_" . $videoCountCheck)) < $video_size * 1024) != 1) $errors[] = "video_" . $video["id"];
                     if($video["videoName"] && Str::of($video["videoName"])->trim()->isEmpty()) $errors[] = "videoName_" . $video["id"];
                     if($video["videoDate"] && Str::of($video["videoDate"])->trim()->isEmpty()) $errors[] = "videoDate_" . $video["id"];
+                    if(!$video["video"] || Str::of($video["video"])->trim()->isEmpty() || !preg_match('~^https://www.youtube.com/watch\?v=([a-zA-Z]+)$~', $video["video"])) $errors[] = "video_" . $video["id"];
                     $videoCountCheck++;
                 }
             }
@@ -919,7 +880,6 @@ class EmployeeController extends Controller
 
                             $oldVideo = Video::where('id', $video);
                             if($oldVideo->exists()){
-                                Storage::disk('public')->delete($oldVideo->first()->video);
                                 $oldVideo->delete();
                             }
                         }
@@ -1021,10 +981,10 @@ class EmployeeController extends Controller
                         $videoCountData = 0;
 
                         foreach($videos as $video){
-                            $videoPath = $request->file("video_" . $videoCountData)->store('uploads/emp/video', 'public');
                             $newVideo = new Video;
                             $newVideo->employee_id = $editEmployee->first()->id;
-                            $newVideo->video = $videoPath;
+                            preg_match('~^https://www.youtube.com/watch\?v=([a-zA-Z]+)$~', $video['video'], $matches);
+                            $newVideo->video = $matches[1];
                             if(Str::of($video["videoDate"])->trim()->isNotEmpty()) $newVideo->videoDate = trim($video["videoDate"]);
                             if(Str::of($video["videoName"])->trim()->isNotEmpty()) $newVideo->videoName = trim($video["videoName"]);
                             $newVideo->save();

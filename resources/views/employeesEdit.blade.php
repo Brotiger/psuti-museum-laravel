@@ -306,9 +306,7 @@
                             <div class="row">
                                 <label for="video_'+ videoCount +'" class="col-sm-3 col-form-label">Видео</label>
                                 <div class="col-sm-9">
-                                    <video controls="controls" class="video">
-                                        <source src="{{ '/storage/'.$video->video }}">
-                                    </video>
+                                    <iframe width="481" height="315" src="{{ 'https://www.youtube.com/embed/'.$video->video }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                                 </div>
                             </div>
                         </div>
@@ -619,15 +617,10 @@
         //Видео
         $("#addVideo").on("click", function(){
             $("#videoList").append('<li class="my-4 videoBlock" style="display: none" id="videoBlock_'+ videoCount +'">'
-                + '<div class="mb-3">'
-                    + '<div class="row mb-1">'
-                        +   '<span class="offset-3 col-9"><small>Максимальный вес файла: {{ $video_size }} КБ. Допустимые расширения: {{ $video_ext }}</small></span>'
-                        + '</div>'
-                    + '<div class="row">'
-                    + '<label for="video_'+ videoCount +'" class="col-sm-3 col-form-label">Видео*</label>'
+                + '<div class="form-group mb-3 row">'
+                    + '<label for="video_'+ videoCount +'" class="col-3 col-form-label">Видео*</label>'
                     + '<div class="col-sm-9">'
-                        + '<input type="file" id="video_'+ videoCount +'" class="video">'
-                    + '</div>'
+                        + '<input class="form-control video" type="text" id="video_'+ videoCount +'" placeholder="Ссылка на видео с YouTube" autocomplete="off" class="video">'
                     + '</div>'
                 + '</div>'
                 + '<div class="form-group mb-3 row">'
@@ -770,9 +763,9 @@
                 video.push({
                     "videoDate": $(this).find(".videoDate").val(),
                     "videoName": $(this).find(".videoName").val(),
+                    "video": $(this).find(".video").val(),
                     "id": ell.id.replace("videoBlock_", "")
                 });
-                formData.append("video_" + i, $(this).find(".video")[0].files[0]);
             });
             formData.append("video", JSON.stringify(video));
             //Конец добавления данных о видео

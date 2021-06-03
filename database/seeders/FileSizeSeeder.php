@@ -20,11 +20,6 @@ class FileSizeSeeder extends Seeder
         ]);
 
         DB::table("file_sizes")->insert([
-            'name' => 'video',
-            'size' => 1024
-        ]);
-
-        DB::table("file_sizes")->insert([
             'name' => 'file',
             'size' => 2048
         ]);

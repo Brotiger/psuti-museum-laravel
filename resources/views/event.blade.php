@@ -1,52 +1,35 @@
 <x-app-layout>
     <div class="container">
-        <div class="alert alert-primary position-fixed bottom-1 right-1" role="alert">Вы внесли:<br><strong id="counter">{{ $counter }}</strong> подразделений</div>
-        <div class="alert alert-success" style="display: none" role="alert" id="success-message">Информация о подразделении успешно обновлена.</div>
+        <div class="alert alert-primary position-fixed bottom-1 right-1" role="alert">Вы внесли:<br><strong id="counter">{{ $counter }}</strong> событий</div>
+        <div class="alert alert-success" style="display: none" role="alert" id="success-message">Событие успешно добавлено.</div>
         <div class="alert alert-warning" style="display: none" role="alert" id="error-global-message">Ошибка! Некоторые поля заполненны не верно.</div>
+        <div class="alert alert-warning" style="display: none" role="alert" id="error-limit-message">Ошибка! Лимит на данную таблицу превышен, для увидичения лимита свяжитесь с системным администратором.</div>
         <div class="alert alert-danger" style="display: none" role="alert" id="error-message">Ошибка сервера, свяжитесь с системным администратором.</div>
-        <form enctype="multipart/form-data" id="editUnitForm" class="editUnitForm mt-5">
-            <h1 class="h1">Редактирование подразделения</h1>
+        <form enctype="multipart/form-data" id="addUnitForm" class="addUnitForm mt-5">
+            <h1 class="h1">Добавление события</h1>
             <div class="my-4">
                 <h2 class="h2 mb-4">Общая информация</h2>
                 <div class="mb-3">
                     <div class="row mb-1">
-                        <span class="offset-3 col-9"><small>Название подразделения должно быть уникальным, иначе данное поле будет выделено красным</small></span>
+                        <span class="offset-3 col-9"><small>Название события должно быть уникальным, иначе данное поле будет выделено красным</small></span>
                     </div>
                     <div class="row">
-                        <label for="fullUnitName" class="col-sm-3 col-form-label">Полное название подразделения*</label>
+                        <label for="name" class="col-sm-3 col-form-label">Название события</label>
                         <div class="col-sm-9">
-                            <input type="text" class="form-control" id="fullUnitName" placeholder="Полное название подразделения" data-field form-field autocomplete="off" value="{{ !empty($unit)? $unit->fullUnitName : '' }}">
+                            <input type="text" class="form-control" id="name" placeholder="Название события" data-field form-field autocomplete="off">
                         </div>
                     </div>
                 </div>
-                <div class="mb-3 row">
-                    <label for="shortUnitName" class="col-sm-3 col-form-label">Сокращенное название подразделения</label>
-                    <div class="col-sm-9">
-                        <input type="text" class="form-control" id="shortUnitName" placeholder="Сокращенное название подразделения" data-field form-field autocomplete="off" value="{{ !empty($unit)? $unit->shortUnitName : '' }}">
-                    </div>
-                </div>
-                <div class="mb-3 row">
-                    <label for="typeUnit" class="col-sm-3 col-form-label">Тип подразделения</label>
-                    <div class="col-sm-9">
-                        <input type="text" class="form-control" id="typeUnit" placeholder="Тип подразделения" data-field form-field autocomplete="off" value="{{ !empty($unit)? $unit->typeUnit : '' }}">
-                    </div>
-                </div>
                 <div class="form-group mb-3 row">
-                    <label for="creationDate" class="col-3 col-form-label">Дата создания</label>
+                    <label for="date" class="col-3 col-form-label">Дата события</label>
                     <div class="col-sm-9">
-                        <input class="form-control" type="date" id="creationDate" data-field form-field value="{{ !empty($unit)? $unit->creationDate : '' }}">
-                    </div>
-                </div>
-                <div class="form-group mb-3 row">
-                    <label for="terminationDate" class="col-3 col-form-label">Дата прекращения</label>
-                    <div class="col-sm-9">
-                        <input class="form-control" type="date" id="terminationDate" data-field form-field value="{{ !empty($unit)? $unit->terminationDate : '' }}">
+                        <input class="form-control" type="date" id="date" data-field form-field>
                     </div>
                 </div>
                 <div class="form-group mb-3 row">
                     <label for="description" class="col-3 col-form-label">Описание</label>
                     <div class="col-sm-9">
-                        <textarea class="form-control border border-secondary rounded-0" id="description" rows="7" placeholder="Описание" data-field form-field>{{ !empty($unit)? $unit->description : '' }}</textarea>
+                        <textarea class="form-control border border-secondary rounded-0" id="description" rows="7" placeholder="Описание" data-field form-field></textarea>
                     </div>
                 </div>
             </div>
@@ -55,31 +38,6 @@
                 <h2 class="h2 my-4">Фотографии</h2>
                 <p class="mb-4">Для добавления фотографии нажмите кнопку <strong>добавить</strong></p>
                 <ul id="photoList">
-                    @foreach($unit->photos as $index => $photo)
-                    <li class="my-4 photoBlockOld" id="photoBlock_{{ $index }}">
-                        <div class="mb-3">
-                            <div class="row">
-                                <label for="photo_{{ $index }}" class="col-sm-3 col-form-label">Фото</label>
-                                <div class="col-sm-9">
-                                    <img src="{{ '/storage/'.$photo->photo }}">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group mb-3 row">
-                            <label for="photoName_{{ $index }}" class="col-3 col-form-label">Название фотографии</label>
-                            <div class="col-sm-9">
-                                <input class="form-control photoName" type="text" id="photoName_{{ $index }}" placeholder="Название фотографии" autocomplete="off" disabled value="{{ $photo->photoName }}">
-                            </div>
-                        </div>
-                        <div class="form-group mb-3 row">
-                            <label for="photoDate_{{ $index }}" class="col-3 col-form-label">Дата фотографии</label>
-                            <div class="col-sm-9">
-                                <input class="form-control photoDate" type="date" id="photoDate_{{ $index }}" placeholder="Дата фотографии" disabled value="{{ $photo->photoDate }}">
-                            </div>
-                        </div>
-                        <button class="btn btn-danger delete" type="button" photo-id="{{ $photo->id }}">Удалить</button>
-                    </li>
-                    @endforeach
                 </ul>
                 <button class="btn btn-primary" type="button" id="addPhoto">Добавить</button>
             </div>
@@ -88,36 +46,12 @@
                 <h2 class="h2 my-4">Видео</h2>
                 <p class="mb-4">Для добавления видео нажмите кнопку <strong>добавить</strong></p>
                 <ul id="videoList">
-                    @foreach($unit->videos as $index => $video)
-                    <li class="my-4 videoBlockOld" id="videoBlock_{{ $index }}">
-                        <div class="mb-3">
-                            <div class="row">
-                                <label for="video_{{ $index }}" class="col-sm-3 col-form-label">Видео</label>
-                                <div class="col-sm-9">
-                                    <iframe width="481" height="315" src="{{ 'https://www.youtube.com/embed/'.$video->video }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group mb-3 row">
-                            <label for="videoName_{{ $index }}" class="col-3 col-form-label">Название видео</label>
-                            <div class="col-sm-9">
-                                <input class="form-control videoName" type="text" id="videoName_{{ $index }}" placeholder="Название видео" autocomplete="off" disabled value="{{ $video->videoName }}">
-                            </div>
-                        </div>
-                        <div class="form-group mb-3 row">
-                            <label for="videoDate_{{ $index }}" class="col-3 col-form-label">Дата видео</label>
-                            <div class="col-sm-9">
-                                <input class="form-control videoDate" type="date" id="videoDate_{{ $index }}" placeholder="Дата видео" disabled value="{{ $video->videoDate }}">
-                            </div>
-                        </div>
-                        <button class="btn btn-danger delete" type="button" video-id="{{ $video->id }}">Удалить</button>
-                    </li>
-                    @endforeach
                 </ul>
                 <button class="btn btn-primary" type="button" id="addVideo">Добавить</button>
             </div>
             <hr>
             <div class="form-group mt-4">
+                <button class="btn btn-danger mb-4" type="button" id="reset">Сбросить</button>
                 <button class="btn btn-primary mb-4" type="submit">Сохранить</button>
             </div>
         </form>
@@ -125,25 +59,16 @@
 </x-app-layout>
 <script>
     $(document).ready(function(){
-        var photoCount = {{ !empty($unit)? $unit->photos->count(): 0}};
-        var videoCount = {{ !empty($unit)? $unit->photos->count(): 0}};
-        var photoToDelete = [];
-        var videoToDelete = [];
+        var photoCount = 0;
+        var videoCount = 0;
 
-        $(".editUnitForm").delegate(".delete", "click", function(){
-            if($(this).attr('photo-id')){
-                photoToDelete.push($(this).attr('photo-id'));
-            }
-            if($(this).attr('video-id')){
-                videoToDelete.push($(this).attr('video-id'));
-            }
-
+        $(".addUnitForm").delegate(".delete", "click", function(){
             var $parent = $(this).parent();
             $parent.slideUp(300, function(){ $(this).remove()});
         });
 
-        $(".editUnitForm").delegate("input", "click", function(){
-                $(this).removeClass("errorField");
+        $(".addUnitForm").delegate("input", "click", function(){
+            $(this).removeClass("errorField");
         });
 
         //Фотографии
@@ -182,7 +107,7 @@
         $("#addVideo").on("click", function(){
             $("#videoList").append('<li class="my-4 videoBlock" style="display: none" id="videoBlock_'+ videoCount +'">'
                 + '<div class="form-group mb-3 row">'
-                    + '<label for="video_'+ videoCount +'" class="col-3 col-form-label">Видео*</label>'
+                + '<label for="video_'+ videoCount +'" class="col-3 col-form-label">Видео*</label>'
                     + '<div class="col-sm-9">'
                         + '<input class="form-control video" type="text" id="video_'+ videoCount +'" placeholder="Ссылка на видео с YouTube" autocomplete="off" class="video">'
                     + '</div>'
@@ -205,11 +130,9 @@
             videoCount++;
         });
 
-        $("#editUnitForm").submit(function(event){
-            let formData = new FormData();
-
+        $("#addUnitForm").submit(function(event){
             startLoading();
-
+            let formData = new FormData();
             var photo = [];
             var video = [];
 
@@ -236,19 +159,14 @@
             });
             formData.append("video", JSON.stringify(video));
             //Конец добавления данных о видео
-
-            formData.append('photoToDelete', photoToDelete);
-            formData.append('videoToDelete', videoToDelete);
-
-            formData.append('id', '{{ $id }}');
-
+            
             $('[data-field]').each(function(i, ell){
                 formData.append(ell.id, $(this).val());
             });
 
             let res = $.ajax({
                 type: "POST",
-                url: "{{ route('update_unit') }}",
+                url: "{{ route('add_event') }}",
                 cache: false,
                 contentType: false,
                 processData: false,
@@ -258,20 +176,20 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success: function(data){
-                    $('#photoList').html(data.photos);
-                    $('#videoList').html(data.videos);
                     stopLoading();
                     if (data.success) {
                         $('#success-message').fadeIn(300).delay(2000).fadeOut(300);
                         $('#counter').text(Number($('#counter').text()) + 1);
-                        photoToDelete = [];
-                        videoToDelete = [];
                         resetForm();
                     } else if(data.errors){
+                        if(data.errors.indexOf('limit') == -1){
                             $('#error-global-message').fadeIn(300).delay(2000).fadeOut(300);
                             data.errors.forEach(function(ell){
                                 $("#" + ell).addClass("errorField");
                             });
+                        }else{
+                            $('#error-limit-message').fadeIn(300).delay(3500).fadeOut(300);
+                        }
                     }else{
                         $('#error-message').fadeIn(300).delay(2000).fadeOut(300);
                     }
@@ -287,5 +205,22 @@
             scrollTop();
             event.preventDefault();
         });
+
+        $("#reset").on("click", function(){
+            resetForm();
+            scrollTop();
+            });
+
+        function resetForm(){
+            $("[form-field]").each(function(){
+                $(this).removeClass("errorField");
+                $(this).val("");
+            });
+            $(".photoBlock").slideUp(300, function(){ $(this).remove()});
+            $(".videoBlock").slideUp(300, function(){ $(this).remove()});
+
+            photoCount = 0;
+            videoCount = 0;
+        }
     });
 </script>

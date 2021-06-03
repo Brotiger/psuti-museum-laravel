@@ -4,42 +4,38 @@
         <div class="flex justify-between h-16">
             <div class="flex">
                 <!-- Logo -->
-                <div class="flex-shrink-0 flex items-center">
+                <div class="flex-shrink-0 flex items-center mr-5">
                     <a href="{{ route('employee') }}">
                         <img src="{{asset('images/favicon-min.png')}}" width="45">
                     </a>
                 </div>
-
-                <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                    <x-jet-nav-link href="{{ route('employee') }}" :active="request()->routeIs('employee')">
-                        {{ __('Добавить сотрудника') }}
-                    </x-jet-nav-link>
+                <div class="dropdown">
+                    <button class="dropbtn">Сотрудники</button>
+                    <div class="dropdown-content">
+                        <a href="{{ route('employees_list') }}">Список сотрудников</a>
+                        <a href="{{ route('employee') }}">Добавить сотрудника</a>
+                    </div>
                 </div>
-                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                    <x-jet-nav-link href="{{ route('employees_list') }}" :active="request()->routeIs('employees_list')">
-                        {{ __('Список сотрудников') }}
-                    </x-jet-nav-link>
+                <div class="dropdown">
+                    <button class="dropbtn">Подразделения</button>
+                    <div class="dropdown-content">
+                        <a href="{{ route('units_list') }}">Список подразделений</a>
+                        <a href="{{ route('unit') }}">Добавить подразделение</a>
+                    </div>
                 </div>
-                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                    <x-jet-nav-link href="{{ route('unit') }}" :active="request()->routeIs('unit')">
-                        {{ __('Добавить подразделение') }}
-                    </x-jet-nav-link>
+                <div class="dropdown">
+                    <button class="dropbtn">События</button>
+                    <div class="dropdown-content">
+                        <a href="{{ route('graduates_list') }}">Список событий</a>
+                        <a href="{{ route('event') }}">Добавить событие</a>
+                    </div>
                 </div>
-                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                    <x-jet-nav-link href="{{ route('units_list') }}" :active="request()->routeIs('units_list')">
-                        {{ __('Список подразделений') }}
-                    </x-jet-nav-link>
-                </div>
-                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                    <x-jet-nav-link href="{{ route('graduate') }}" :active="request()->routeIs('graduate')">
-                        {{ __('Добавить выпускников') }}
-                    </x-jet-nav-link>
-                </div>
-                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                    <x-jet-nav-link href="{{ route('graduates_list') }}" :active="request()->routeIs('graduates_list')">
-                        {{ __('Список выпускников') }}
-                    </x-jet-nav-link>
+                <div class="dropdown">
+                    <button class="dropbtn">Выпускники</button>
+                    <div class="dropdown-content">
+                        <a href="{{ route('graduates_list') }}">Список выпускников</a>
+                        <a href="{{ route('graduate') }}">Добавить выпускников</a>
+                    </div>
                 </div>
             </div>
 

@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\UnitController;
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\GraduateController;
 
 /*
@@ -32,6 +33,9 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/employees_list', [Employe
 Route::middleware(['auth:sanctum', 'verified'])->get('/unit', [UnitController::class, 'index'])->name('unit');
 Route::middleware(['auth:sanctum', 'verified'])->get('/edit_unit/{id}', [UnitController::class, "edit_unit"])->name('edit_unit');
 Route::middleware(['auth:sanctum', 'verified'])->get('/units_list', [UnitController::class, "units_list"])->name('units_list');
+
+Route::middleware(['auth:sanctum', 'verified'])->get('/event', [EventController::class, 'index'])->name('event');
+Route::middleware(['auth:sanctum', 'verified'])->post('/add_event', [EventController::class, 'add_event'])->name('add_event');
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/graduate', [GraduateController::class, "index"])->name('graduate');
 Route::middleware(['auth:sanctum', 'verified'])->get('/graduates_list', [GraduateController::class, "graduates_list"])->name('graduates_list');
