@@ -27,20 +27,23 @@ Route::middleware(['auth:sanctum', 'verified'])->post("/add_unit", [UnitControll
 Route::middleware(['auth:sanctum', 'verified'])->post("/update_unit", [UnitController::class, "update_unit"])->name('update_unit');
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/employee', [EmployeeController::class, "index"])->name('employee');
-Route::middleware(['auth:sanctum', 'verified'])->get('/edit_employee/{id}', [EmployeeController::class, "edit_employee"])->name('edit_employee');
-Route::middleware(['auth:sanctum', 'verified'])->get('/employees_list', [EmployeeController::class, "employees_list"])->name('employees_list');
+Route::middleware(['auth:sanctum', 'verified'])->get('/employees/'. env('DB_SITE' , 'pguty') .'/more/{id}', [EmployeeController::class, "edit_employee"])->name('edit_employee');
+Route::middleware(['auth:sanctum', 'verified'])->get('/employees/'. env('DB_SITE', 'pguty'), [EmployeeController::class, "employees_list"])->name('employees_list');
+Route::middleware(['auth:sanctum', 'verified'])->get('/search_employee', [EmployeeController::class, "search_employee"])->name('search_employee');
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/unit', [UnitController::class, 'index'])->name('unit');
-Route::middleware(['auth:sanctum', 'verified'])->get('/edit_unit/{id}', [UnitController::class, "edit_unit"])->name('edit_unit');
-Route::middleware(['auth:sanctum', 'verified'])->get('/units_list', [UnitController::class, "units_list"])->name('units_list');
+Route::middleware(['auth:sanctum', 'verified'])->get('/units/'. env('DB_SITE', 'pguty') .'/more/{id}', [UnitController::class, "edit_unit"])->name('edit_unit');
+Route::middleware(['auth:sanctum', 'verified'])->get('/units/'. env('DB_SITE', 'pguty'), [UnitController::class, "units_list"])->name('units_list');
+Route::middleware(['auth:sanctum', 'verified'])->get('/search_unit', [UnitController::class, "search_unit"])->name('search_unit');
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/event', [EventController::class, 'index'])->name('event');
-Route::middleware(['auth:sanctum', 'verified'])->get('/events_list', [EventController::class, 'events_list'])->name('events_list');
+Route::middleware(['auth:sanctum', 'verified'])->get('/events/'. env('DB_SITE', 'pguty'), [EventController::class, 'events_list'])->name('events_list');
 Route::middleware(['auth:sanctum', 'verified'])->post('/add_event', [EventController::class, 'add_event'])->name('add_event');
-Route::middleware(['auth:sanctum', 'verified'])->get('/edit_event/{id}', [EventController::class, "edit_event"])->name('edit_event');
+Route::middleware(['auth:sanctum', 'verified'])->get('/events/'. env('DB_SITE', 'pguty') .'/more/{id}', [EventController::class, "edit_event"])->name('edit_event');
 Route::middleware(['auth:sanctum', 'verified'])->post("/update_event", [EventController::class, "update_event"])->name('update_event');
+Route::middleware(['auth:sanctum', 'verified'])->get('/search_event', [EventController::class, "search_event"])->name('search_event');
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/graduate', [GraduateController::class, "index"])->name('graduate');
-Route::middleware(['auth:sanctum', 'verified'])->get('/graduates_list', [GraduateController::class, "graduates_list"])->name('graduates_list');
+Route::middleware(['auth:sanctum', 'verified'])->get('/graduates/'. env('DB_SITE', 'pguty'), [GraduateController::class, "graduates_list"])->name('graduates_list');
 Route::middleware(['auth:sanctum', 'verified'])->post("/add_graduate", [GraduateController::class, "add_graduate"])->name('add_graduate');
 Route::middleware(['auth:sanctum', 'verified'])->get('/more_graduate/{id}', [GraduateController::class, "more_graduate"])->name('more_graduate');

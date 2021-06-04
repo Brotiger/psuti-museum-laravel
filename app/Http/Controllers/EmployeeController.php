@@ -12,6 +12,7 @@ use App\Models\Attainment;
 use App\Models\Photo;
 use App\Models\Video;
 use App\Models\Unit;
+use App\Models\Event;
 use App\Models\User;
 use App\Models\FileSize;
 use App\Models\FileExt;
@@ -26,8 +27,34 @@ use Illuminate\Support\Facades\Validator;
 
 class EmployeeController extends Controller
 {
+    public function search_employee(Request $request){
+        $filter = [];
+
+        if($request->input("lastName") != null){
+            $filter[] = ["lastName", "like", '%' . $request->input("lastName") . '%'];
+        }
+
+        if($request->input("firstName") != null){
+            $filter[] = ["firstName", "like", '%' . $request->input("firstName") . '%'];
+        }
+
+        if($request->input("secondName") != null){
+            $filter[] = ["secondName", "like", '%' . $request->input("secondName") . '%'];
+        }
+
+        $employees_search = Employee::where($filter)->orderBy('lastName')->limit(15)->get();
+
+        return view('ajax.searchEmployee', [
+            'employees_search' => $employees_search
+        ])->render();
+    }
 
     public function index(){
+        $site = env('DB_SITE', 'pguty');
+        $employees_search = Employee::orderBy('lastName')->limit(15)->get();
+        $units_search = Unit::orderBy('fullUnitName')->limit(15)->get();
+        $events_search = Event::orderBy('name')->limit(15)->get();
+
         $file_size = FileSize::where('name', 'file')->exists()? FileSize::where('name', 'file')->first()['size'] : 0;
         $photo_size = FileSize::where('name', 'photo')->exists()? FileSize::where('name', 'photo')->first()['size'] : 0;
 
@@ -35,14 +62,20 @@ class EmployeeController extends Controller
         $file_ext = FileExt::where('name', 'file')->exists() && FileExt::where('name', 'file')->first()['ext'] ? explode(', ', FileExt::where('name', 'file')->first()['ext']) : null;
 
         $units = Unit::orderBy('fullUnitName')->get();
+
         $counter = Employee::where('addUserId', Auth::user()->id)->get()->count();
+        
         $params = [
+            'site' => $site,
             'units' => $units,
             'counter' => $counter,
             'file_size' => $file_size,
             'photo_size' => $photo_size,
             'file_ext' => $file_ext? implode(', ', $file_ext) : 'любые',
             'photo_ext' => $photo_ext? implode(', ', $photo_ext) : 'любые',
+            'employees_search' => $employees_search,
+            'units_search' => $units_search,
+            'events_search' => $events_search,
         ];
 
         return view('employees', $params);
@@ -103,7 +136,7 @@ class EmployeeController extends Controller
             'hiredFrom' => '',
             'hiredTo' => '',
             'dateBirthdayFrom' => '',
-            'dateBirthdayTo' => ''
+            'dateBirthdayTo' => '',
         ];
 
         if($request->input("lastName") != null){
@@ -143,12 +176,13 @@ class EmployeeController extends Controller
             $next_query['dateBirthdayTo'] = $request->input("dateBirthdayTo");
         }
 
-        $employees = Employee::where($filter)->orderBy("firstName")->paginate(50);
+        $employees = Employee::where($filter)->orderBy("lastName")->paginate(50);
 
         return view('employeesList', [
             'employees' => $employees,
             'next_query' => $next_query,
-            'counter' => $counter
+            'counter' => $counter,
+            'site' => env('DB_SITE', 'pguty')
         ]);
     }
 

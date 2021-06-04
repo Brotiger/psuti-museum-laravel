@@ -116,7 +116,8 @@ class GraduateController extends Controller
         return view('graduatesList', [
             'graduates' => $graduates,
             'next_query' => $next_query,
-            'counter' => $counter
+            'counter' => $counter,
+            'site' => env('DB_SITE', 'pguty')
         ]);
     }
 

@@ -15,6 +15,28 @@ use App\Models\User;
 
 class UnitController extends Controller
 {
+    public function search_unit(Request $request){
+        $filter = [];
+
+        if($request->input("fullUnitName") != null){
+            $filter[] = ["fullUnitName", "like", '%' . $request->input("fullUnitName") . '%'];
+        }
+
+        if($request->input("shortUnitName") != null){
+            $filter[] = ["shortUnitName", "like", '%' . $request->input("shortUnitName") . '%'];
+        }
+
+        if($request->input("typeUnit") != null){
+            $filter[] = ["typeUnit", "like", '%' . $request->input("typeUnit") . '%'];
+        }
+
+        $units_search = Unit::where($filter)->orderBy('fullUnitName')->limit(15)->get();
+
+        return view('ajax.searchUnit', [
+            'units_search' => $units_search
+        ])->render();
+    }
+
     public function edit_unit($id = null){
         $file_size = FileSize::where('name', 'file')->exists()? FileSize::where('name', 'file')->first()['size'] : 0;
         $photo_size = FileSize::where('name', 'photo')->exists()? FileSize::where('name', 'photo')->first()['size'] : 0;
@@ -98,7 +120,8 @@ class UnitController extends Controller
         return view('unitsList', [
             'units' => $units,
             'next_query' => $next_query,
-            'counter' => $counter
+            'counter' => $counter,
+            'site' => env('DB_SITE', 'pguty')
         ]);
     }
 

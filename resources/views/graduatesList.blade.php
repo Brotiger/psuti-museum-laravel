@@ -60,7 +60,7 @@
     $(document).ready(function(){
         $('#graduatesTable').delegate('.recordRow', 'click', function(){
             let graduateId = $(this).attr('graduate-id')
-            window.location.href = 'more_graduate' + '/' + graduateId;
+            window.location.href = '/graduates/{{ $site }}/more/' + graduateId;
         });
 
         $('#reset').on('click', function(){

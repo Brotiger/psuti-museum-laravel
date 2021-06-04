@@ -5,6 +5,8 @@
         <div class="alert alert-warning" style="display: none" role="alert" id="error-global-message">Ошибка! Некоторые поля заполненны не верно.</div>
         <div class="alert alert-warning" style="display: none" role="alert" id="error-limit-message">Ошибка! Лимит на данную таблицу превышен, для увидичения лимита свяжитесь с системным администратором.</div>
         <div class="alert alert-danger" style="display: none" role="alert" id="error-message">Ошибка сервера, свяжитесь с системным администратором.</div>
+        @include('components.addHref')
+        <!-- форма ввода -->
         <form enctype="multipart/form-data" id="addEmpForm" class="addEmpForm mt-5">
             <h1 class="h1">Добавление сотрудника</h1>
             <div class="my-4">
@@ -63,6 +65,12 @@
                     <label for="description" class="col-3 col-form-label">Описание</label>
                     <div class="col-sm-9">
                         <textarea class="form-control border border-secondary rounded-0" id="description" rows="7" placeholder="Описание" data-field form-field></textarea>
+                    </div>
+                    <span class="offset-3 col-9"><small>Для добавления ссылки в описании, поставьте курсор в то место где хотите создать ссылку и выбирите один из вариантов предложенных ниже</small></span>
+                    <div class="col-sm-9 offset-3 mt-2">
+                        <input type="button" class="btn btn-primary" value="Сотрудники" id="addEmpHref">
+                        <input type="button" class="btn btn-primary" value="Подразделения" id="addUnitHref">
+                        <input type="button" class="btn btn-primary" value="События" id="addEventHref">
                     </div>
                 </div>
             </div>
@@ -158,6 +166,7 @@
         </form>
     </div>
 </x-app-layout>
+@include('components.js.addHref')
 <script>
     $(document).ready(function(){
         var educationCount = 0;
@@ -410,10 +419,6 @@
             autobiographyCount++;
         });
 
-        /*$("#addEmpForm input").click(function(){
-            $(this).removeClass("errorField");
-        });*/
-
         $('#unitList').delegate('.search-select', 'keyup', function(){
             if($(this).val()){
                 options = $(this).next('select').children('option');
@@ -561,6 +566,7 @@
                     if (data.success) {
                         $('#success-message').fadeIn(300).delay(2000).fadeOut(300);
                         $('#counter').text(Number($('#counter').text()) + 1);
+                        $('#searchEmp').click();
                         resetForm();
                     } else if(data.errors){
                         if(data.errors.indexOf('limit') == -1){

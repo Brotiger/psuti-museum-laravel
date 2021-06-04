@@ -17,6 +17,27 @@ use Illuminate\Support\Facades\Auth;
 
 class EventController extends Controller
 {
+    public function search_event(Request $request){
+        $filter = [];
+
+        if($request->input("name") != null){
+            $filter[] = ["name", "like", '%' . $request->input("name") . '%'];
+        }
+
+        if($request->input("dateFrom") != null){
+            $filter[] = ["date", ">=", $request->input("dateFrom")];
+        }
+        if($request->input("dateTo") != null){
+            $filter[] = ["date", "<", $request->input("dateTo")];
+        }
+
+        $events_search = Event::where($filter)->orderBy('name')->limit(15)->get();
+
+        return view('ajax.searchEvent', [
+            'events_search' => $events_search
+        ])->render();
+    }
+
     public function edit_event($id = null){
         $file_size = FileSize::where('name', 'file')->exists()? FileSize::where('name', 'file')->first()['size'] : 0;
         $photo_size = FileSize::where('name', 'photo')->exists()? FileSize::where('name', 'photo')->first()['size'] : 0;
@@ -101,7 +122,8 @@ class EventController extends Controller
         return view('eventsList', [
             'events' => $events,
             'next_query' => $next_query,
-            'counter' => $counter
+            'counter' => $counter,
+            'site' => env('DB_SITE', 'pguty')
         ]);
     }
 

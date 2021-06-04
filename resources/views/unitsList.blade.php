@@ -54,7 +54,7 @@
     $(document).ready(function(){
         $('#unitsTable').delegate('.recordRow', 'click', function(){
             let unitId = $(this).attr('unit-id')
-            window.location.href = 'edit_unit' + '/' + unitId;
+            window.location.href = '/units/{{ $site }}/more/' + unitId;
         });
 
         $('#reset').on('click', function(){

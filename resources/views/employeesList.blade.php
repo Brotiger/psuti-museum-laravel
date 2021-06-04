@@ -57,7 +57,7 @@
     $(document).ready(function(){
         $('#employeesTable').delegate('.recordRow', 'click', function(){
             let empId = $(this).attr('employee-id')
-            window.location.href = 'edit_employee' + '/' + empId;
+            window.location.href = '/employees/{{ $site }}/more/' + empId;
         });
         $('#reset').on('click', function(){
             $("[filter-field]").each(function(){

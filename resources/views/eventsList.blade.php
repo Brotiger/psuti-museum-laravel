@@ -45,7 +45,7 @@
     $(document).ready(function(){
         $('#eventsTable').delegate('.recordRow', 'click', function(){
             let unitId = $(this).attr('event-id')
-            window.location.href = 'edit_event' + '/' + unitId;
+            window.location.href = '/events/{{ $site }}/more/' + unitId;
         });
 
         $('#reset').on('click', function(){
