@@ -5,7 +5,7 @@
         <div class="alert alert-warning" style="display: none" role="alert" id="error-global-message">Ошибка! Некоторые поля заполненны не верно.</div>
         <div class="alert alert-danger" style="display: none" role="alert" id="error-message">Ошибка сервера, свяжитесь с системным администратором.</div>
         <form enctype="multipart/form-data" id="editUnitForm" class="editUnitForm mt-5">
-            <h1 class="h1">Редактирование подразделения</h1>
+            <h1 class="h1">Редактирование события</h1>
             <div class="my-4">
                 <h2 class="h2 mb-4">Общая информация</h2>
                 <div class="mb-3">
@@ -13,40 +13,22 @@
                         <span class="offset-3 col-9"><small>Название подразделения должно быть уникальным, иначе данное поле будет выделено красным</small></span>
                     </div>
                     <div class="row">
-                        <label for="fullUnitName" class="col-sm-3 col-form-label">Полное название подразделения*</label>
+                        <label for="name" class="col-sm-3 col-form-label">Название события*</label>
                         <div class="col-sm-9">
-                            <input type="text" class="form-control" id="fullUnitName" placeholder="Полное название подразделения" data-field form-field autocomplete="off" value="{{ !empty($unit)? $unit->fullUnitName : '' }}">
+                            <input type="text" class="form-control" id="name" placeholder="Название события" data-field form-field autocomplete="off" value="{{ !empty($event)? $event->name : '' }}">
                         </div>
                     </div>
                 </div>
-                <div class="mb-3 row">
-                    <label for="shortUnitName" class="col-sm-3 col-form-label">Сокращенное название подразделения</label>
-                    <div class="col-sm-9">
-                        <input type="text" class="form-control" id="shortUnitName" placeholder="Сокращенное название подразделения" data-field form-field autocomplete="off" value="{{ !empty($unit)? $unit->shortUnitName : '' }}">
-                    </div>
-                </div>
-                <div class="mb-3 row">
-                    <label for="typeUnit" class="col-sm-3 col-form-label">Тип подразделения</label>
-                    <div class="col-sm-9">
-                        <input type="text" class="form-control" id="typeUnit" placeholder="Тип подразделения" data-field form-field autocomplete="off" value="{{ !empty($unit)? $unit->typeUnit : '' }}">
-                    </div>
-                </div>
                 <div class="form-group mb-3 row">
-                    <label for="creationDate" class="col-3 col-form-label">Дата создания</label>
+                    <label for="date" class="col-3 col-form-label">Дата события</label>
                     <div class="col-sm-9">
-                        <input class="form-control" type="date" id="creationDate" data-field form-field value="{{ !empty($unit)? $unit->creationDate : '' }}">
-                    </div>
-                </div>
-                <div class="form-group mb-3 row">
-                    <label for="terminationDate" class="col-3 col-form-label">Дата прекращения</label>
-                    <div class="col-sm-9">
-                        <input class="form-control" type="date" id="terminationDate" data-field form-field value="{{ !empty($unit)? $unit->terminationDate : '' }}">
+                        <input class="form-control" type="date" id="date" data-field form-field value="{{ !empty($event)? $event->date : '' }}">
                     </div>
                 </div>
                 <div class="form-group mb-3 row">
                     <label for="description" class="col-3 col-form-label">Описание</label>
                     <div class="col-sm-9">
-                        <textarea class="form-control border border-secondary rounded-0" id="description" rows="7" placeholder="Описание" data-field form-field>{{ !empty($unit)? $unit->description : '' }}</textarea>
+                        <textarea class="form-control border border-secondary rounded-0" id="description" rows="7" placeholder="Описание" data-field form-field>{{ !empty($event)? $event->description : '' }}</textarea>
                     </div>
                 </div>
             </div>
@@ -55,7 +37,7 @@
                 <h2 class="h2 my-4">Фотографии</h2>
                 <p class="mb-4">Для добавления фотографии нажмите кнопку <strong>добавить</strong></p>
                 <ul id="photoList">
-                    @foreach($unit->photos as $index => $photo)
+                    @foreach($event->photos as $index => $photo)
                     <li class="my-4 photoBlockOld" id="photoBlock_{{ $index }}">
                         <div class="mb-3">
                             <div class="row">
@@ -88,7 +70,7 @@
                 <h2 class="h2 my-4">Видео</h2>
                 <p class="mb-4">Для добавления видео нажмите кнопку <strong>добавить</strong></p>
                 <ul id="videoList">
-                    @foreach($unit->videos as $index => $video)
+                    @foreach($event->videos as $index => $video)
                     <li class="my-4 videoBlockOld" id="videoBlock_{{ $index }}">
                         <div class="mb-3">
                             <div class="row">
@@ -248,7 +230,7 @@
 
             let res = $.ajax({
                 type: "POST",
-                url: "{{ route('update_unit') }}",
+                url: "{{ route('update_event') }}",
                 cache: false,
                 contentType: false,
                 processData: false,

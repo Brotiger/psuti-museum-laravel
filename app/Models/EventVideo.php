@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class EventVideo extends Model
 {
     use HasFactory;
+
+    public function event(){
+        return $this->belongsTo('App\Models\Event', 'event_id', 'id');
+    }
 }

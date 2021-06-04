@@ -37,6 +37,8 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/units_list', [UnitControl
 Route::middleware(['auth:sanctum', 'verified'])->get('/event', [EventController::class, 'index'])->name('event');
 Route::middleware(['auth:sanctum', 'verified'])->get('/events_list', [EventController::class, 'events_list'])->name('events_list');
 Route::middleware(['auth:sanctum', 'verified'])->post('/add_event', [EventController::class, 'add_event'])->name('add_event');
+Route::middleware(['auth:sanctum', 'verified'])->get('/edit_event/{id}', [EventController::class, "edit_event"])->name('edit_event');
+Route::middleware(['auth:sanctum', 'verified'])->post("/update_event", [EventController::class, "update_event"])->name('update_event');
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/graduate', [GraduateController::class, "index"])->name('graduate');
 Route::middleware(['auth:sanctum', 'verified'])->get('/graduates_list', [GraduateController::class, "graduates_list"])->name('graduates_list');

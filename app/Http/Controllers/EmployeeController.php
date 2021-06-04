@@ -628,6 +628,11 @@ class EmployeeController extends Controller
                 
                 $photoCountCheck = 0;
                 foreach($photos as $photo){
+                    if(Str::of($photo["id"])->trim()->isEmpty()) continue;
+                    if(!$request->file("photo_" . $photoCountCheck) || (filesize($request->file("photo_" . $photoCountCheck)) < $photo_size * 1024) != 1){
+                        $errors[] = "photo_" . $photo["id"];
+                        continue;
+                    }
 
                     if(!is_null($photo_ext)){
                         $ext = $request->file('photo_'.$photoCountCheck)->getClientOriginalExtension();
@@ -643,8 +648,6 @@ class EmployeeController extends Controller
                         }
                     }
 
-                    if(Str::of($photo["id"])->trim()->isEmpty()) continue;
-                    if(!$request->file("photo_" . $photoCountCheck) || (filesize($request->file("photo_" . $photoCountCheck)) < $photo_size * 1024) != 1) $errors[] = "photo_" . $photo["id"];
                     if($photo["photoName"] && Str::of($photo["photoName"])->trim()->isEmpty()) $errors[] = "photoName_" . $photo["id"];
                     if($photo["photoDate"] && Str::of($photo["photoDate"])->trim()->isEmpty()) $errors[] = "photoDate_" . $photo["id"];
                     $photoCountCheck++;

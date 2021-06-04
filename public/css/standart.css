@@ -32,8 +32,10 @@ img{
 
 /* Стилизация выпадающей кнопки */
 .dropbtn {
-    padding: 16px;
+    padding-left: 16px;
+    padding-right: 16px;
     font-size: 16px;
+    height: 100%;
     border: none;
     cursor: pointer;
   }
@@ -73,5 +75,5 @@ img{
   /* Изменить цвет фона кнопки выпадающего списка, когда отображается содержимое выпадающего списка. */
   .dropdown:hover .dropbtn {
     color: white;
-    background-color: #3c85af9f;
+    background-color: #5692b471;
   }
