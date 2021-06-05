@@ -82,6 +82,11 @@ class EmployeeController extends Controller
     }
 
     public function edit_employee($id = null){
+        $site = env('DB_SITE', 'pguty');
+        $employees_search = Employee::orderBy('lastName')->limit(15)->get();
+        $units_search = Unit::orderBy('fullUnitName')->limit(15)->get();
+        $events_search = Event::orderBy('name')->limit(15)->get();
+
         $file_size = FileSize::where('name', 'file')->exists()? FileSize::where('name', 'file')->first()['size'] : 0;
         $photo_size = FileSize::where('name', 'photo')->exists()? FileSize::where('name', 'photo')->first()['size'] : 0;
 
@@ -98,6 +103,10 @@ class EmployeeController extends Controller
             'photo_size' => $photo_size,
             'file_ext' => $file_ext? implode(', ', $file_ext) : 'любые',
             'photo_ext' => $photo_ext? implode(', ', $photo_ext) : 'любые',
+            'employees_search' => $employees_search,
+            'units_search' => $units_search,
+            'events_search' => $events_search,
+            'site' => $site,
         ];
         if(isset($id)){
             $employee = Employee::where([

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Unit;
+use App\Models\Employee;
+use App\Models\Event;
 use App\Models\UnitPhoto;
 use App\Models\UnitVideo;
 use App\Models\FileSize;
@@ -38,6 +40,11 @@ class UnitController extends Controller
     }
 
     public function edit_unit($id = null){
+        $site = env('DB_SITE', 'pguty');
+        $employees_search = Employee::orderBy('lastName')->limit(15)->get();
+        $units_search = Unit::orderBy('fullUnitName')->limit(15)->get();
+        $events_search = Event::orderBy('name')->limit(15)->get();
+
         $file_size = FileSize::where('name', 'file')->exists()? FileSize::where('name', 'file')->first()['size'] : 0;
         $photo_size = FileSize::where('name', 'photo')->exists()? FileSize::where('name', 'photo')->first()['size'] : 0;
         
@@ -52,6 +59,10 @@ class UnitController extends Controller
             'photo_size' => $photo_size,
             'file_ext' => $file_ext? implode(', ', $file_ext) : 'любые',
             'photo_ext' => $photo_ext? implode(', ', $photo_ext) : 'любые',
+            'employees_search' => $employees_search,
+            'units_search' => $units_search,
+            'events_search' => $events_search,
+            'site' => $site,
         ];
         if(isset($id)){
             $unit = Unit::where([
@@ -126,6 +137,11 @@ class UnitController extends Controller
     }
 
     public function index(){
+        $site = env('DB_SITE', 'pguty');
+        $employees_search = Employee::orderBy('lastName')->limit(15)->get();
+        $units_search = Unit::orderBy('fullUnitName')->limit(15)->get();
+        $events_search = Event::orderBy('name')->limit(15)->get();
+
         $file_size = FileSize::where('name', 'file')->exists()? FileSize::where('name', 'file')->first()['size'] : 0;
         $photo_size = FileSize::where('name', 'photo')->exists()? FileSize::where('name', 'photo')->first()['size'] : 0;
 
@@ -133,12 +149,17 @@ class UnitController extends Controller
         $file_ext = FileExt::where('name', 'file')->exists() && FileExt::where('name', 'file')->first()['ext'] ? explode(', ', FileExt::where('name', 'file')->first()['ext']) : null;
 
         $counter = Unit::where('addUserId', Auth::user()->id)->get()->count();
+
         return view('units', [
             'counter' => $counter,
             'file_size' => $file_size,
             'photo_size' => $photo_size,
             'file_ext' => $file_ext? implode(', ', $file_ext) : 'любые',
             'photo_ext' => $photo_ext? implode(', ', $photo_ext) : 'любые',
+            'employees_search' => $employees_search,
+            'units_search' => $units_search,
+            'events_search' => $events_search,
+            'site' => $site,
         ]);
     }
 

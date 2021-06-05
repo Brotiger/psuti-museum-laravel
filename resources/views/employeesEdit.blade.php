@@ -4,6 +4,7 @@
         <div class="alert alert-success" style="display: none" role="alert" id="success-message">Информация о сотруднике успешно обновлена.</div>
         <div class="alert alert-warning" style="display: none" role="alert" id="error-global-message">Ошибка! Некоторые поля заполненны не верно.</div>
         <div class="alert alert-danger" style="display: none" role="alert" id="error-message">Ошибка сервера, свяжитесь с системным администратором.</div>
+        @include('components.addHref')
         <form enctype="multipart/form-data" id="addEmpForm" class="editEmpForm mt-5">
             <h1 class="h1">Редактирование сотрудника</h1>
             <div class="my-4">
@@ -68,6 +69,12 @@
                     <label for="description" class="col-3 col-form-label">Описание</label>
                     <div class="col-sm-9">
                         <textarea class="form-control border border-secondary rounded-0" id="description" rows="7" placeholder="Описание" data-field form-field>{{ !empty($employee)? $employee->description : '' }}</textarea>
+                    </div>
+                    <span class="offset-3 col-9"><small>Для добавления ссылки в описании, поставьте курсор в то место где хотите создать ссылку и выбирите один из вариантов предложенных ниже</small></span>
+                    <div class="col-sm-9 offset-3 mt-2">
+                        <input type="button" class="btn btn-primary" value="Сотрудники" id="addEmpHref">
+                        <input type="button" class="btn btn-primary" value="Подразделения" id="addUnitHref">
+                        <input type="button" class="btn btn-primary" value="События" id="addEventHref">
                     </div>
                 </div>
             </div>
@@ -374,6 +381,7 @@
         </form>
     </div>
 </x-app-layout>
+@include('components.js.addHref')
 <script>
     $(document).ready(function(){
         var educationCount = {{ !empty($employee)? $employee->educations->count(): 0}};
