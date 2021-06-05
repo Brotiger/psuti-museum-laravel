@@ -48,7 +48,7 @@
                 <div class="form-group mb-3 row">
                     <label for="description" class="col-3 col-form-label">Описание</label>
                     <div class="col-sm-9">
-                        <textarea class="form-control border border-secondary rounded-0" id="description" rows="7" placeholder="Описание" data-field form-field></textarea>
+                        <textarea class="form-control border border-secondary rounded-0" id="description" rows="14" placeholder="Описание" data-field form-field></textarea>
                     </div>
                     <span class="offset-3 col-9"><small>Для добавления ссылки в описании, поставьте курсор в то место где хотите создать ссылку и выбирите один из вариантов предложенных ниже</small></span>
                     <div class="col-sm-9 offset-3 mt-2">
