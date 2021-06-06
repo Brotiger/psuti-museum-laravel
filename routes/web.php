@@ -5,6 +5,7 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\GraduateController;
+use App\Http\Middleware\fileCompressionMiddleware;
 
 /*
 |--------------------------------------------------------------------------

@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Intervention\Image\ImageManagerStatic as Image;
 
 class EmployeeController extends Controller
 {
@@ -513,9 +514,45 @@ class EmployeeController extends Controller
                         $photos = json_decode($request->input("photo"), true);
 
                         $photoCountData = 0;
+                        $photo_size = FileSize::where('name', 'photo')->exists()? FileSize::where('name', 'photo')->first()['size'] : 0;
 
                         foreach($photos as $photo){
-                            $photoPath = $request->file("photo_" . $photoCountData)->store('uploads/emp/photo', 'public');
+
+                            $ext = $request->file("photo_" . $photoCountData)->getClientOriginalExtension();
+
+                            if($ext == 'svg'){
+                                $photoPath = $request->file("photo_" . $photoCountData)->store('uploads/emp/photo', 'public');
+                            }else{
+                                $quality = 100;
+
+                                $tmp_dir = "app/public/uploads/tmp/"; 
+                                $file_name = Str::random(40).'.'.$ext;
+                                $photoPath = 'uploads/emp/photo/'.$file_name;
+                                $tmpFilePath = $tmp_dir.$file_name;
+
+                                if (!file_exists(storage_path($tmp_dir))){
+                                    mkdir(storage_path($tmp_dir), 0777, true);
+                                }
+
+                                $imgTmp = Image::make($request->file("photo_" . $photoCountData));
+
+                                $imgTmp->resize(400, null, function ($constraint) {
+                                    $constraint->aspectRatio();
+                                })->save(storage_path($tmpFilePath));
+
+                                $img = Image::make(storage_path($tmpFilePath));
+
+                                $img_size = $img->filesize();
+                                $limit_size = ($photo_size / 2) * 1024;
+
+                                if($img_size > $limit_size){
+                                    $quality = 90;
+                                }
+
+                                $img->save(storage_path('app/public/'.$photoPath), $quality);
+                                unlink(storage_path($tmpFilePath));
+                            }
+        
                             $newPhoto = new Photo;
                             $newPhoto->employee_id = $newEmployee->id;
                             $newPhoto->photo = $photoPath;
