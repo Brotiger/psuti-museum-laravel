@@ -45,11 +45,14 @@ class UnitController extends Controller
         $units_search = Unit::orderBy('fullUnitName')->limit(15)->get();
         $events_search = Event::orderBy('name')->limit(15)->get();
 
-        $file_size = FileSize::where('name', 'file')->exists()? FileSize::where('name', 'file')->first()['size'] : 0;
-        $photo_size = FileSize::where('name', 'photo')->exists()? FileSize::where('name', 'photo')->first()['size'] : 0;
-        
-        $photo_ext = FileExt::where('name', 'photo')->exists() && FileExt::where('name', 'photo')->first()['ext'] ? explode(', ', FileExt::where('name', 'photo')->first()['ext']) : null;
-        $file_ext = FileExt::where('name', 'file')->exists() && FileExt::where('name', 'file')->first()['ext'] ? explode(', ', FileExt::where('name', 'file')->first()['ext']) : null;
+        $file_size = env('FILE_SIZE', 0);
+        $photo_size = env('IMG_SIZE', 0);
+
+        $photo_ext = env('IMG_EXT', null);
+        if($photo_ext != null) $photo_ext = explode(',', $photo_ext);
+
+        $file_ext = env('FILE_EXT', null);
+        if($file_ext != null) $file_ext = explode(',', $file_ext);
 
         $counter = Unit::where('addUserId', Auth::user()->id)->get()->count();
         $params = [
@@ -142,11 +145,14 @@ class UnitController extends Controller
         $units_search = Unit::orderBy('fullUnitName')->limit(15)->get();
         $events_search = Event::orderBy('name')->limit(15)->get();
 
-        $file_size = FileSize::where('name', 'file')->exists()? FileSize::where('name', 'file')->first()['size'] : 0;
-        $photo_size = FileSize::where('name', 'photo')->exists()? FileSize::where('name', 'photo')->first()['size'] : 0;
+        $file_size = env('FILE_SIZE', 0);
+        $photo_size = env('IMG_SIZE', 0);
 
-        $photo_ext = FileExt::where('name', 'photo')->exists() && FileExt::where('name', 'photo')->first()['ext'] ? explode(', ', FileExt::where('name', 'photo')->first()['ext']) : null;
-        $file_ext = FileExt::where('name', 'file')->exists() && FileExt::where('name', 'file')->first()['ext'] ? explode(', ', FileExt::where('name', 'file')->first()['ext']) : null;
+        $photo_ext = env('IMG_EXT', null);
+        if($photo_ext != null) $photo_ext = explode(',', $photo_ext);
+
+        $file_ext = env('FILE_EXT', null);
+        if($file_ext != null) $file_ext = explode(',', $file_ext);
 
         $counter = Unit::where('addUserId', Auth::user()->id)->get()->count();
 
@@ -180,11 +186,14 @@ class UnitController extends Controller
         }
 
         if(isset($request)){
-            $file_size = FileSize::where('name', 'file')->exists()? FileSize::where('name', 'file')->first()['size'] : 0;
-            $photo_size = FileSize::where('name', 'photo')->exists()? FileSize::where('name', 'photo')->first()['size'] : 0;
+            $file_size = env('FILE_SIZE', 0);
+            $photo_size = env('IMG_SIZE', 0);
 
-            $photo_ext = FileExt::where('name', 'photo')->exists() && FileExt::where('name', 'photo')->first()['ext'] ? explode(', ', FileExt::where('name', 'photo')->first()['ext']) : null;
-            $file_ext = FileExt::where('name', 'file')->exists() && FileExt::where('name', 'file')->first()['ext'] ? explode(', ', FileExt::where('name', 'file')->first()['ext']) : null;
+            $photo_ext = env('IMG_EXT', null);
+            if($photo_ext != null) $photo_ext = explode(',', $photo_ext);
+
+            $file_ext = env('FILE_EXT', null);
+            if($file_ext != null) $file_ext = explode(',', $file_ext);
 
             if(!trim($request->input("fullUnitName")) ||  Unit::where('fullUnitName', $request->input("fullUnitName"))->exists()) $errors[] = "fullUnitName";
             if($request->input("shortUnitName") && Str::of($request->input("shortUnitName"))->trim()->isEmpty()) $errors[] = "shortUnitName";
@@ -313,11 +322,14 @@ class UnitController extends Controller
 
         $errors = [];
 
-        $file_size = FileSize::where('name', 'file')->exists()? FileSize::where('name', 'file')->first()['size'] : 0;
-        $photo_size = FileSize::where('name', 'photo')->exists()? FileSize::where('name', 'photo')->first()['size'] : 0;
+        $file_size = env('FILE_SIZE', 0);
+        $photo_size = env('IMG_SIZE', 0);
 
-        $photo_ext = FileExt::where('name', 'photo')->exists() && FileExt::where('name', 'photo')->first()['ext'] ? explode(', ', FileExt::where('name', 'photo')->first()['ext']) : null;
-        $file_ext = FileExt::where('name', 'file')->exists() && FileExt::where('name', 'file')->first()['ext'] ? explode(', ', FileExt::where('name', 'file')->first()['ext']) : null;
+        $photo_ext = env('IMG_EXT', null);
+        if($photo_ext != null) $photo_ext = explode(',', $photo_ext);
+
+        $file_ext = env('FILE_EXT', null);
+        if($file_ext != null) $file_ext = explode(',', $file_ext);
 
         $user = User::where("id", Auth::user()->id)->get()->first();
 
