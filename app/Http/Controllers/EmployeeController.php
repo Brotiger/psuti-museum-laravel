@@ -536,7 +536,7 @@ class EmployeeController extends Controller
 
                                 $imgTmp = Image::make($request->file("photo_" . $photoCountData));
 
-                                $imgTmp->resize(400, null, function ($constraint) {
+                                $imgTmp->resize(env('MAX_IMG_WIDTH', 400), null, function ($constraint) {
                                     $constraint->aspectRatio();
                                 })->save(storage_path($tmpFilePath));
 
@@ -546,7 +546,7 @@ class EmployeeController extends Controller
                                 $limit_size = ($photo_size / 2) * 1024;
 
                                 if($img_size > $limit_size){
-                                    $quality = 90;
+                                    $quality = 85;
                                 }
 
                                 $img->save(storage_path('app/public/'.$photoPath), $quality);
