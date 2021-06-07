@@ -24,7 +24,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
-use Intervention\Image\ImageManagerStatic as Image;
+
+use PhotoService;
 
 class EmployeeController extends Controller
 {
@@ -439,7 +440,7 @@ class EmployeeController extends Controller
                     #Дописать удаление фотографии в случае не удачно транзакции
                     if($request->file("image"))
                     {
-                        $file_path = $request->file("image")->store('uploads/emp/personal', 'public');
+                        $file_path = PhotoService::resize($request, 'image', 'uploads/emp/personal', 800);
                         $newEmployee->img = $file_path;
                     }
 
@@ -521,57 +522,29 @@ class EmployeeController extends Controller
 
                     if($request->input("photo")){
                         $photos = json_decode($request->input("photo"), true);
-
+            
                         $photoCountData = 0;
-
-                        $photo_size = env('IMG_SIZE', 0);
-
+            
                         foreach($photos as $photo){
-
-                            $ext = $request->file("photo_" . $photoCountData)->getClientOriginalExtension();
-
-                            if($ext == 'svg'){
-                                $photoPath = $request->file("photo_" . $photoCountData)->store('uploads/emp/photo', 'public');
-                            }else{
-                                $quality = 100;
-
-                                $tmp_dir = "app/public/uploads/tmp/"; 
-                                $file_name = Str::random(40).'.'.$ext;
-                                $photoPath = 'uploads/emp/photo/'.$file_name;
-                                $tmpFilePath = $tmp_dir.$file_name;
-
-                                if (!file_exists(storage_path($tmp_dir))){
-                                    mkdir(storage_path($tmp_dir), 0777, true);
-                                }
-
-                                $imgTmp = Image::make($request->file("photo_" . $photoCountData));
-
-                                $imgTmp->resize(env('MAX_IMG_WIDTH', 400), null, function ($constraint) {
-                                    $constraint->aspectRatio();
-                                })->save(storage_path($tmpFilePath));
-
-                                $img = Image::make(storage_path($tmpFilePath));
-
-                                $img_size = $img->filesize();
-                                $limit_size = ($photo_size / 2) * 1024;
-
-                                if($img_size > $limit_size){
-                                    $quality = 85;
-                                }
-
-                                $img->save(storage_path('app/public/'.$photoPath), $quality);
-                                unlink(storage_path($tmpFilePath));
-                            }
-        
+            
+                            $reqPhotoName = "photo_" . $photoCountData;
+            
+                            $photoPath = PhotoService::resize($request, $reqPhotoName, 'uploads/emp/photo', 2300);
+            
                             $newPhoto = new Photo;
                             $newPhoto->employee_id = $newEmployee->id;
                             $newPhoto->photo = $photoPath;
+            
                             if(Str::of($photo["photoDate"])->trim()->isNotEmpty()) $newPhoto->photoDate = trim($photo["photoDate"]);
                             if(Str::of($photo["photoName"])->trim()->isNotEmpty()) $newPhoto->photoName = trim($photo["photoName"]);
+            
                             $newPhoto->save();
+            
                             $photoCountData++;
                         }
                     }
+
+                    //PhotoService::resizeMany($request, $newEmployee->id, 'uploads/emp/photo');
 
                     if($request->input("video")){
                         $videos = json_decode($request->input("video"), true);
@@ -925,7 +898,7 @@ class EmployeeController extends Controller
                     if($request->file("image"))
                     {
                         Storage::disk('public')->delete($editEmployee->first()->img);
-                        $file_path = $request->file("image")->store('uploads/emp/personal', 'public');
+                        $file_path = PhotoService::resize($request, 'image', 'uploads/emp/personal', 800);
                         $newEmpInfo['img'] = $file_path;
                     }
                     
@@ -1060,7 +1033,11 @@ class EmployeeController extends Controller
                         $photoCountData = 0;
 
                         foreach($photos as $photo){
-                            $photoPath = $request->file("photo_" . $photoCountData)->store('uploads/emp/photo', 'public');
+
+                            $reqPhotoName = "photo_" . $photoCountData;
+
+                            $photoPath = PhotoService::resize($request, $reqPhotoName, 'uploads/emp/photo', 2300);
+
                             $newPhoto = new Photo;
                             $newPhoto->employee_id = $editEmployee->first()->id;
                             $newPhoto->photo = $photoPath;

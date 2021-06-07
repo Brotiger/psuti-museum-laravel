@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
 
+use PhotoService;
+
 class UnitController extends Controller
 {
     public function search_unit(Request $request){
@@ -268,7 +270,10 @@ class UnitController extends Controller
                         $photoCountData = 0;
 
                         foreach($photos as $photo){
-                            $photoPath = $request->file("photo_" . $photoCountData)->store('uploads/unit/photo', 'public');
+                            $reqPhotoName = "photo_" . $photoCountData;
+
+                            $photoPath = PhotoService::resize($request, $reqPhotoName, 'uploads/unit/photo', 2300);
+
                             $newPhoto = new UnitPhoto;
                             $newPhoto->unit_id = $newUnit->id;
                             $newPhoto->photo = $photoPath;
@@ -441,7 +446,10 @@ class UnitController extends Controller
                         $photoCountData = 0;
 
                         foreach($photos as $photo){
-                            $photoPath = $request->file("photo_" . $photoCountData)->store('uploads/unit/photo', 'public');
+                            $reqPhotoName = "photo_" . $photoCountData;
+
+                            $photoPath = PhotoService::resize($request, $reqPhotoName, 'uploads/unit/photo', 2300);
+
                             $newPhoto = new UnitPhoto;
                             $newPhoto->unit_id = $editUnit->first()->id;
                             $newPhoto->photo = $photoPath;

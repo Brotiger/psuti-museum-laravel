@@ -17,6 +17,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Employee;
 use App\Models\Unit;
 
+//use PhotoService;
+
 class EventController extends Controller
 {
     public function search_event(Request $request){
@@ -248,7 +250,10 @@ class EventController extends Controller
                         $photoCountData = 0;
 
                         foreach($photos as $photo){
-                            $photoPath = $request->file("photo_" . $photoCountData)->store('uploads/event/photo', 'public');
+                            $reqPhotoName = "photo_" . $photoCountData;
+
+                            $photoPath = PhotoService::resize($request, $reqPhotoName, 'uploads/event/photo', 2300);
+                            
                             $newPhoto = new EventPhoto;
                             $newPhoto->event_id = $newEvent->id;
                             $newPhoto->photo = $photoPath;
@@ -415,7 +420,11 @@ class EventController extends Controller
                         $photoCountData = 0;
 
                         foreach($photos as $photo){
-                            $photoPath = $request->file("photo_" . $photoCountData)->store('uploads/event/photo', 'public');
+                            
+                            $reqPhotoName = "photo_" . $photoCountData;
+
+                            $photoPath = PhotoService::resize($request, $reqPhotoName, 'uploads/event/photo', 2300);
+
                             $newPhoto = new EventPhoto;
                             $newPhoto->event_id = $editEvent->first()->id;
                             $newPhoto->photo = $photoPath;
