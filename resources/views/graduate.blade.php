@@ -38,6 +38,8 @@
             startLoading();
             formData.append('file', $("#file")[0].files[0]);
 
+            $('#error-global-message, #success-message, #error-limit-message, #error-message').hide();
+            
             let res = $.ajax({
                 type: "POST",
                 url: "{{ route('add_graduate') }}",

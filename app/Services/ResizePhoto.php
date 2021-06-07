@@ -28,7 +28,7 @@ class ResizePhoto {
         $ext = $request->file($reqPhotoName)->getClientOriginalExtension();
 
         if($ext == 'svg'){
-            $photoPath = $request->file("photo_" . $photoCountData)->store($dir, 'public');
+            $photoPath = $request->file($reqPhotoName)->store($dir, 'public');
         }else{
             $quality = 100;
 
@@ -60,7 +60,8 @@ class ResizePhoto {
 
             $img->save(storage_path('app/public/'.$photoPath), $quality);
 
-            return $photoPath;
         }
+        
+        return $photoPath;
     }
 }

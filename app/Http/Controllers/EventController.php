@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Employee;
 use App\Models\Unit;
 
-//use PhotoService;
+use PhotoService;
 
 class EventController extends Controller
 {

@@ -254,6 +254,8 @@
             $('[data-field]').each(function(i, ell){
                 formData.append(ell.id, $(this).val());
             });
+            
+            $('#error-global-message, #success-message, #error-limit-message, #error-message').hide();
 
             let res = $.ajax({
                 type: "POST",
