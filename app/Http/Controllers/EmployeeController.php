@@ -393,6 +393,12 @@ class EmployeeController extends Controller
                 $autobiographyCountCheck = 0;
                 foreach($autobiographys as $autobiography){
 
+                    if(Str::of($autobiography["id"])->trim()->isEmpty()) continue;
+                    if(!$request->file("autobiography_" . $autobiographyCountCheck) || (filesize($request->file("autobiography_" . $autobiographyCountCheck)) < $file_size * 1024) != 1){
+                        $errors[] = "autobiography_" . $autobiography["id"];
+                        continue;
+                    }
+
                     if(!is_null($file_ext)){
                         $ext = $request->file('autobiography_'.$autobiographyCountCheck)->getClientOriginalExtension();
                         $extError = true;
@@ -407,8 +413,6 @@ class EmployeeController extends Controller
                         }
                     }
 
-                    if(Str::of($autobiography["id"])->trim()->isEmpty()) continue;
-                    if(!$request->file("autobiography_" . $autobiographyCountCheck) || (filesize($request->file("autobiography_" . $autobiographyCountCheck)) < $file_size * 1024) != 1) $errors[] = "autobiography_" . $autobiography["id"];
                     $autobiographyCountCheck++;
                 }
             }
@@ -844,6 +848,13 @@ class EmployeeController extends Controller
                 
                 $autobiographyCountCheck = 0;
                 foreach($autobiographys as $autobiography){
+
+                    if(Str::of($autobiography["id"])->trim()->isEmpty()) continue;
+                    if(!$request->file("autobiography_" . $autobiographyCountCheck) || (filesize($request->file("autobiography_" . $autobiographyCountCheck)) < $file_size * 1024) != 1){
+                        $errors[] = "autobiography_" . $autobiography["id"];
+                        continue;
+                    }
+
                     if(!is_null($file_ext)){
                         $ext = $request->file('autobiography_'.$autobiographyCountCheck)->getClientOriginalExtension();
                         $extError = true;
@@ -858,8 +869,6 @@ class EmployeeController extends Controller
                         }
                     }
 
-                    if(Str::of($autobiography["id"])->trim()->isEmpty()) continue;
-                    if(!$request->file("autobiography_" . $autobiographyCountCheck) || (filesize($request->file("autobiography_" . $autobiographyCountCheck)) < $file_size * 1024) != 1) $errors[] = "autobiography_" . $autobiography["id"];
                     $autobiographyCountCheck++;
                 }
             }
