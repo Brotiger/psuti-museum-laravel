@@ -3,7 +3,8 @@
         <div class="alert alert-primary position-fixed bottom-1 right-1" role="alert">Вы внесли:<br><strong id="counter">{{ $counter }}</strong> сотрудников</div>
         <div class="alert alert-success" style="display: none" role="alert" id="success-message">Сотрудник успешно добавлен.<i class="bi bi-x-circle" close></i></div>
         <div class="alert alert-warning" style="display: none" role="alert" id="error-global-message">Ошибка! Некоторые поля заполненны не верно.<i class="bi bi-x-circle" close></i></div>
-        <div class="alert alert-warning" style="display: none" role="alert" id="error-limit-message">Ошибка! Лимит на данную таблицу превышен, для увидичения лимита свяжитесь с системным администратором.<i class="bi bi-x-circle" close></i></div>
+        <div class="alert alert-warning" style="display: none" role="alert" id="error-limit-message">Ошибка! Лимит на данную таблицу превышен, для увиличения лимита свяжитесь с системным администратором.<i class="bi bi-x-circle" close></i></div>
+        <div class="alert alert-warning" style="display: none" role="alert" id="error-body-message">Ошибка! Тело запроса превышает максимум который может обработать web сервер, сократите количество прикрепляемых файлов.<i class="bi bi-x-circle" close></i></div>
         <div class="alert alert-danger" style="display: none" role="alert" id="error-message">Ошибка сервера, сделайте скриншот данного сообщения и отправьте системнному администратором на следующий адрес - @php echo env('ADMIN_MAIL') @endphp.<div id="server-error-file"></div><div id="server-error-line"></div><div id="server-error-message"></div><i class="bi bi-x-circle" close></i></div>
         @include('components.addHref')
         <!-- форма ввода -->
@@ -18,7 +19,7 @@
                     <div class="row">
                         <label for="empImg" class="col-sm-3 col-form-label">Фото</label>
                         <div class="col-sm-9">
-                            <input type="file" name="image" id="empImg" form-field>
+                            <input type="file" name="image" id="empImg" form-field accept="{{  '.'.str_replace(', ', ', .', $photo_ext) }}">
                         </div>
                     </div>
                 </div>
@@ -148,7 +149,7 @@
                     <div class="mb row">
                         <label for="titlePersonalFile" class="col-sm-3 col-form-label">Титульный лист</label>
                         <div class="col-sm-9">
-                            <input type="file" id="titlePersonalFile" form-field>
+                            <input type="file" id="titlePersonalFile" form-field accept="{{  '.'.str_replace(', ', ', .', $file_ext) }}">
                         </div>
                     </div>
                 </div>
@@ -179,6 +180,38 @@
         var videoCount = 0;
         var unitCount = 0;
         var autobiographyCount = 0;
+
+        $("form").delegate("#photoList input[type='file']", "change", function(e){
+            if(e.currentTarget.files[0] && e.currentTarget.files[0].size > {{ $photo_size * 1024 }} ){
+                if(!$(this).hasClass('errorField')){
+                    $(this).addClass('errorField');
+                }
+            }
+        });
+
+        $("form").delegate("#autobiographyList input[type='file']", "change", function(e){
+            if(e.currentTarget.files[0] && e.currentTarget.files[0].size > {{ $file_size * 1024 }} ){
+                if(!$(this).hasClass('errorField')){
+                    $(this).addClass('errorField');
+                }
+            }
+        });
+
+        $("#titlePersonalFile").on("change", function(e){
+            if(e.currentTarget.files[0] && e.currentTarget.files[0].size > {{ $file_size * 1024 }} ){
+                if(!$(this).hasClass('errorField')){
+                    $(this).addClass('errorField');
+                }
+            }
+        });
+
+        $("#empImg").on("change", function(e){
+            if(e.currentTarget.files[0] && e.currentTarget.files[0].size > {{ $photo_size * 1024 }} ){
+                if(!$(this).hasClass('errorField')){
+                    $(this).addClass('errorField');
+                }
+            }
+        });
 
         $(".addEmpForm").delegate(".delete", "click", function(){
             var $parent = $(this).parent();
@@ -353,7 +386,7 @@
                     + '<div class="row">'
                     + '<label for="photo_'+ photoCount +'" class="col-sm-3 col-form-label">Фото*</label>'
                     + '<div class="col-sm-9">'
-                        + '<input type="file" name="photo" id="photo_'+ photoCount +'" class="photo">'
+                        + '<input type="file" name="photo" id="photo_'+ photoCount +'" class="photo" accept="{{  '.'.str_replace(', ', ', .', $photo_ext) }}" >'
                     + '</div>'
                     + '</div>'
                 + '</div>'
@@ -410,7 +443,7 @@
                     + '<div class="row">'
                     + '<label for="autobiography_'+ autobiographyCount +'" class="col-sm-3 col-form-label">Лист</label>'
                     + '<div class="col-sm-9">'
-                        + '<input type="file" name="photo" id="autobiography_'+ autobiographyCount +'" class="autobiography">'
+                        + '<input type="file" name="photo" id="autobiography_'+ autobiographyCount +'" class="autobiography" accept="{{  '.'.str_replace(', ', ', .', $file_ext) }}">'
                     + '</div>'
                     + '</div>'
                 + '</div>'
@@ -450,6 +483,7 @@
             var video = [];
             var unit = [];
             var autobiography = [];
+
             //Начадл добавления данных о образовании
             $(".educations").each(function(i, ell){
                 educations.push({
@@ -552,56 +586,64 @@
                 formData.append(ell.id, $(this).val());
             });
 
-            $('#error-global-message, #success-message, #error-limit-message, #error-message').hide();
-            
-            let res = $.ajax({
-                type: "POST",
-                url: "{{ route('add_employee') }}",
-                cache: false,
-                contentType: false,
-                processData: false,
-                data: formData,
-                dataType: 'json',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(data){
-                    stopLoading();
-                    if (data.success) {
-                        $('#success-message').fadeIn(300).delay(2000).fadeOut(300);
-                        $('#counter').text(Number($('#counter').text()) + 1);
-                        $('#searchEmp').click();
-                        resetForm();
-                    } else if(data.errors){
-                        if(data.errors.indexOf('limit') == -1){
-                            $('#error-global-message').fadeIn(300).delay(2000).fadeOut(300);
-                            data.errors.forEach(function(ell){
-                                $("#" + ell).addClass("errorField");
-                            });
-                        }else{
-                            $('#error-limit-message').fadeIn(300).delay(3500).fadeOut(300);
-                        }
-                    }else{
-                        $('#error-message').fadeIn(300).delay(30000).fadeOut(300);
-                    }
-                    scrollTop();
-                },
-                error: function(data){
-                    stopLoading();
+            $('#error-global-message, #success-message, #error-limit-message, #error-message, #error-body-message').hide();
 
-                    $('#server-error-file').html('File: ' + data.responseJSON.file);
-                    $('#server-error-line').html('Line: ' + data.responseJSON.line);
-                    $('#server-error-message').html('Message: ' + data.responseJSON.message);
+            let sizeCount = 0;
 
-                    $('#error-message').fadeIn(300).delay(45000).fadeOut(300, function(){
-                        $('#server-error-file, #server-error-line, #server-error-message').html('');
-                    });
-                    scrollTop();
-                }
-            });
-            if(res.status == 0){
-                $('#error-message').fadeIn(300).delay(2000).fadeOut(300);
+            for(let pair of formData.entries()) {
+                sizeCount += (typeof pair[1] === "string") ? pair[1].length : pair[1].size;
             }
+
+            if(sizeCount < @php echo env("MAX_BODY_SIZE", 0) @endphp * 1024){
+            
+                let res = $.ajax({
+                    type: "POST",
+                    url: "{{ route('add_employee') }}",
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    data: formData,
+                    dataType: 'json',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(data){
+                        if (data.success) {
+                            $('#success-message').fadeIn(300).delay(2000).fadeOut(300);
+                            $('#counter').text(Number($('#counter').text()) + 1);
+                            $('#searchEmp').click();
+                            resetForm();
+                        } else if(data.errors){
+                            if(data.errors.indexOf('limit') == -1){
+                                $('#error-global-message').fadeIn(300).delay(2000).fadeOut(300);
+                                data.errors.forEach(function(ell){
+                                    $("#" + ell).addClass("errorField");
+                                });
+                            }else{
+                                $('#error-limit-message').fadeIn(300).delay(3500).fadeOut(300);
+                            }
+                        }else{
+                            $('#error-message').fadeIn(300).delay(30000).fadeOut(300);
+                        }
+                    },
+                    error: function(data){
+                        $('#server-error-file').html('File: ' + data.responseJSON.file);
+                        $('#server-error-line').html('Line: ' + data.responseJSON.line);
+                        $('#server-error-message').html('Message: ' + data.responseJSON.message);
+
+                        $('#error-message').fadeIn(300).delay(45000).fadeOut(300, function(){
+                            $('#server-error-file, #server-error-line, #server-error-message').html('');
+                        });
+                        scrollTop();
+                    }
+                });
+                if(res.status == 0){
+                    $('#error-message').fadeIn(300).delay(2000).fadeOut(300);
+                }
+            }else{//Если тело запроса слишком большое
+                $('#error-body-message').fadeIn(300).delay(4000).fadeOut(300);
+            }
+            stopLoading();
             scrollTop();
             event.preventDefault();
         });

@@ -22,8 +22,6 @@ class ResizePhoto {
 
     public function resize(Request $request, $reqPhotoName, $dir, $width){
         $this->createDir($dir);
-
-        $photo_size = env('IMG_SIZE', 0);
         
         $ext = $request->file($reqPhotoName)->getClientOriginalExtension();
 
@@ -52,7 +50,7 @@ class ResizePhoto {
             }
 
             $img_size = $img->filesize();
-            $limit_size = ($photo_size / 3) * 1024;
+            $limit_size = env('SIZE_TO_RESIZE', 0) * 1024;
 
             if($img_size > $limit_size){
                 $quality = env("PHOTO_QUALITY", 85);

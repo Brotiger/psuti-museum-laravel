@@ -1,8 +1,9 @@
 <x-app-layout>
     <div class="container">
-        <div class="alert alert-primary position-fixed bottom-1 right-1" role="alert">Вы внесли:<br><strong id="counter">{{ $counter }}</strong> подразделений</div>
+        <div class="alert alert-primary position-fixed bottom-1 right-1" role="alert">Вы внесли:<br><strong id="counter">{{ $counter }}</strong> событий</div>
         <div class="alert alert-success" style="display: none" role="alert" id="success-message">Информация о событии успешно обновлена.<i class="bi bi-x-circle" close></i></div>
         <div class="alert alert-warning" style="display: none" role="alert" id="error-global-message">Ошибка! Некоторые поля заполненны не верно.<i class="bi bi-x-circle" close></i></div>
+        <div class="alert alert-warning" style="display: none" role="alert" id="error-body-message">Ошибка! Тело запроса превышает максимум который может обработать web сервер, сократите количество прикрепляемых файлов.<i class="bi bi-x-circle" close></i></div>
         <div class="alert alert-danger" style="display: none" role="alert" id="error-message">Ошибка сервера, сделайте скриншот данного сообщения и отправьте системнному администратором на следующий адрес - @php echo env('ADMIN_MAIL') @endphp.<div id="server-error-file"></div><div id="server-error-line"></div><div id="server-error-message"></div><i class="bi bi-x-circle" close></i></div>
         @include('components.addHref')
         <form enctype="multipart/form-data" id="editUnitForm" class="editUnitForm mt-5">
@@ -121,6 +122,14 @@
         var photoToDelete = [];
         var videoToDelete = [];
 
+        $("form").delegate("#photoList input[type='file']", "change", function(e){
+            if(e.currentTarget.files[0] && e.currentTarget.files[0].size > {{ $photo_size * 1024 }} ){
+                if(!$(this).hasClass('errorField')){
+                    $(this).addClass('errorField');
+                }
+            }
+        });
+
         $(".editUnitForm").delegate(".delete", "click", function(){
             if($(this).attr('photo-id')){
                 photoToDelete.push($(this).attr('photo-id'));
@@ -147,7 +156,7 @@
                     + '<div class="row">'
                     + '<label for="photo_'+ photoCount +'" class="col-sm-3 col-form-label">Фото*</label>'
                     + '<div class="col-sm-9">'
-                        + '<input type="file" name="photo" id="photo_'+ photoCount +'" class="photo">'
+                        + '<input type="file" name="photo" id="photo_'+ photoCount +'" class="photo" accept="{{  '.'.str_replace(', ', ', .', $photo_ext) }}">'
                     + '</div>'
                     + '</div>'
                 + '</div>'
@@ -237,53 +246,61 @@
                 formData.append(ell.id, $(this).val());
             });
 
-            $('#error-global-message, #success-message, #error-limit-message, #error-message').hide();
+            $('#error-global-message, #success-message, #error-limit-message, #error-message, #error-body-message').hide();
 
-            let res = $.ajax({
-                type: "POST",
-                url: "{{ route('update_event') }}",
-                cache: false,
-                contentType: false,
-                processData: false,
-                data: formData,
-                tataType: 'json',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(data){
-                    $('#photoList').html(data.photos);
-                    $('#videoList').html(data.videos);
-                    stopLoading();
-                    if (data.success) {
-                        $('#success-message').fadeIn(300).delay(2000).fadeOut(300);
-                        $('#counter').text(Number($('#counter').text()) + 1);
-                        photoToDelete = [];
-                        videoToDelete = [];
-                    } else if(data.errors){
-                            $('#error-global-message').fadeIn(300).delay(2000).fadeOut(300);
-                            data.errors.forEach(function(ell){
-                                $("#" + ell).addClass("errorField");
-                            });
-                    }else{
-                        $('#error-message').fadeIn(300).delay(30000).fadeOut(300);
-                    }
-                },
-                error: function(data){
-                    stopLoading();
+            let sizeCount = 0;
 
-                    $('#server-error-file').html('File: ' + data.responseJSON.file);
-                    $('#server-error-line').html('Line: ' + data.responseJSON.line);
-                    $('#server-error-message').html('Message: ' + data.responseJSON.message);
-
-                    $('#error-message').fadeIn(300).delay(45000).fadeOut(300, function(){
-                        $('#server-error-file, #server-error-line, #server-error-message').html('');
-                    });
-                    scrollTop();
-                }
-            });
-            if(res.status == 0){
-                $('#error-message').fadeIn(300).delay(2000).fadeOut(300);
+            for(let pair of formData.entries()) {
+                sizeCount += (typeof pair[1] === "string") ? pair[1].length : pair[1].size;
             }
+
+            if(sizeCount < @php echo env("MAX_BODY_SIZE", 0) @endphp * 1024){
+                let res = $.ajax({
+                    type: "POST",
+                    url: "{{ route('update_event') }}",
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    data: formData,
+                    tataType: 'json',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(data){
+                        $('#photoList').html(data.photos);
+                        $('#videoList').html(data.videos);
+                        if (data.success) {
+                            $('#success-message').fadeIn(300).delay(2000).fadeOut(300);
+                            $('#counter').text(Number($('#counter').text()) + 1);
+                            photoToDelete = [];
+                            videoToDelete = [];
+                        } else if(data.errors){
+                                $('#error-global-message').fadeIn(300).delay(2000).fadeOut(300);
+                                data.errors.forEach(function(ell){
+                                    $("#" + ell).addClass("errorField");
+                                });
+                        }else{
+                            $('#error-message').fadeIn(300).delay(30000).fadeOut(300);
+                        }
+                    },
+                    error: function(data){
+                        $('#server-error-file').html('File: ' + data.responseJSON.file);
+                        $('#server-error-line').html('Line: ' + data.responseJSON.line);
+                        $('#server-error-message').html('Message: ' + data.responseJSON.message);
+
+                        $('#error-message').fadeIn(300).delay(45000).fadeOut(300, function(){
+                            $('#server-error-file, #server-error-line, #server-error-message').html('');
+                        });
+                    }
+                });
+                if(res.status == 0){
+                    $('#error-message').fadeIn(300).delay(2000).fadeOut(300);
+                }
+            }else{
+                $('#error-body-message').fadeIn(300).delay(4000).fadeOut(300);
+            }
+
+            stopLoading();
             scrollTop();
             event.preventDefault();
         });
