@@ -103,17 +103,16 @@ class PageController extends Controller
             if($request->input("post")){
                 $posts = json_decode($request->input("post"), true);
                 
-                $postCountCheck = 0;
                 foreach($posts as $post){
                     if(Str::of($post["id"])->trim()->isEmpty()) continue;
-                    if($request->file("post_" . $postCountCheck)){
-                        if((filesize($request->file("post_" . $postCountCheck)) < $photo_size * 1024) != 1){
+                    if($request->file("post_" . $post["id"])){
+                        if((filesize($request->file("post_" . $post["id"])) < $photo_size * 1024) != 1){
                             $errors[] = "post_" . $post["id"];
                             continue;
                         }
 
                         if(!is_null($photo_ext)){
-                            $ext = $request->file('post_'.$postCountCheck)->getClientOriginalExtension();
+                            $ext = $request->file('post_'.$post["id"])->getClientOriginalExtension();
                             $extError = true;
                             foreach($photo_ext as $value){
                                 if($ext == $value){
@@ -129,7 +128,37 @@ class PageController extends Controller
 
                     if($post["title"] && Str::of($post["title"])->trim()->isEmpty()) $errors[] = "title_" . $post["id"];
                     if(Str::of($post["description"])->trim()->isEmpty()) $errors[] = "description_" . $post["id"];
-                    $postCountCheck++;
+                }
+            }
+
+            if($request->input("postUpdate")){
+                $posts = json_decode($request->input("postUpdate"), true);
+                
+                foreach($posts as $post){
+                    if(Str::of($post["id"])->trim()->isEmpty()) continue;
+                    if($request->file("post_" . $post['id'])){
+                        if((filesize($request->file("post_" . $post['id'])) < $photo_size * 1024) != 1){
+                            $errors[] = "post_" . $post["id"];
+                            continue;
+                        }
+
+                        if(!is_null($photo_ext)){
+                            $ext = $request->file('post_'.$post['id'])->getClientOriginalExtension();
+                            $extError = true;
+                            foreach($photo_ext as $value){
+                                if($ext == $value){
+                                    $extError = false;
+                                }
+                            }
+
+                            if($extError){
+                                $errors[] = "post_" . $post["id"];
+                            }
+                        }
+                    }
+
+                    if($post["title"] && Str::of($post["title"])->trim()->isEmpty()) $errors[] = "title_" . $post["id"];
+                    if(Str::of($post["description"])->trim()->isEmpty()) $errors[] = "description_" . $post["id"];
                 }
             }
 
@@ -142,14 +171,12 @@ class PageController extends Controller
                     if($request->input("post")){
                         $posts = json_decode($request->input("post"), true);
 
-                        $postCountData = 0;
-
                         foreach($posts as $post){
                             
                             $newPost = new Post;
                             $newPost->page_id = $editPage->first()->id;
 
-                            $reqPhotoName = "post_" . $postCountData;
+                            $reqPhotoName = "post_" . $post["id"];
 
                             if($request->file($reqPhotoName)){
                                 $photoPath = PhotoService::resize($request, $reqPhotoName, 'uploads/page/photo', 2300);
@@ -158,7 +185,43 @@ class PageController extends Controller
                             if(Str::of($post["title"])->trim()->isNotEmpty()) $newPost->title = trim($post["title"]);
                             if(Str::of($post["description"])->trim()->isNotEmpty()) $newPost->description = trim($post["description"]);
                             $newPost->save();
-                            $postCountData++;
+                        }
+                    }
+
+                    if($request->input("deletePostPhoto")){
+                        $deletePostPhoto = explode(',',$request->input("deletePostPhoto"));
+
+                        foreach($deletePostPhoto as $index => $post){
+                            $oldPost = Post::where('id', $post);
+                            if($oldPost->exists()){
+                                if($oldPost->first()->photo != null){
+                                    Storage::disk('public')->delete($oldPost->first()->photo);
+                                }
+                                $oldPost->update([
+                                    'photo' => null
+                                ]);
+                            }
+                        }
+                    }
+
+                    if($request->input("postUpdate")){
+                        $posts = json_decode($request->input("postUpdate"), true);
+
+                        foreach($posts as $post){
+                            $newPostInfo = [];
+
+                            $updatePost = Post::where("id", $post['record-id']);
+
+                            $reqPhotoName = "post_" . $post["id"];
+
+                            if($request->file($reqPhotoName)){
+                                $photoPath = PhotoService::resize($request, $reqPhotoName, 'uploads/page/photo', 2300);
+                                $newPostInfo['photo'] = $photoPath;
+                                Storage::disk('public')->delete($updatePost->first()->photo);
+                            }
+                            if(Str::of($post["title"])->trim()->isNotEmpty()) $newPostInfo['title'] = trim($post["title"]);
+                            if(Str::of($post["description"])->trim()->isNotEmpty()) $newPostInfo['description'] = trim($post["description"]);
+                            $updatePost->update($newPostInfo);
                         }
                     }
 
@@ -175,14 +238,14 @@ class PageController extends Controller
                             }
                         }
                     }
-
-                    //$editPost->update($newPostInfo);
                 });
 
             $page = Page::where("id", $request->input("id"))->first();
 
             $response['posts'] = view('ajax.pagePosts', [
-                'page' => $page
+                'page' => $page,
+                'photo_size' => $photo_size,
+            'photo_ext' => $photo_ext? implode(', ', $photo_ext) : 'любые',
             ])->render();
 
             #Проверка успешно ли прошла транзакция

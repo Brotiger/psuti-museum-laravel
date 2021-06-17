@@ -74,8 +74,7 @@ img{
   
   /* Изменить цвет фона кнопки выпадающего списка, когда отображается содержимое выпадающего списка. */
   .dropdown:hover .dropbtn {
-    color: white;
-    background-color: #5692b471;
+    background-color: #ddd;
   }
 
   .modalAddHref{
