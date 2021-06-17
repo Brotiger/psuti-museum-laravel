@@ -35,26 +35,26 @@
                     </div>
                     <span class="offset-3 col-9"><small>Для добавления ссылки в описании, поставьте курсор в то место где хотите создать ссылку и выбирите один из вариантов предложенных ниже</small></span>
                     <div class="col-sm-9 offset-3 mt-2">
-                        <input type="button" class="btn btn-primary" value="Сотрудники" id="addEmpHref">
-                        <input type="button" class="btn btn-primary" value="Подразделения" id="addUnitHref">
-                        <input type="button" class="btn btn-primary" value="События" id="addEventHref">
+                        <input type="button" class="btn btn-primary" value="Сотрудники" addEmpHref>
+                        <input type="button" class="btn btn-primary" value="Подразделения" addUnitHref>
+                        <input type="button" class="btn btn-primary" value="События" addEventHref>
                     </div>
                 </div>
             </div>
             <div class="my-4">
                 <hr>
                 <h2 class="h2 my-4">Фотографии</h2>
-                <p class="mb-4">Для добавления фотографии нажмите кнопку <strong>добавить</strong></p>
                 <ul id="photoList">
                 </ul>
+                <p class="mb-4">Для добавления фотографии нажмите кнопку <strong>добавить</strong></p>
                 <button class="btn btn-primary" type="button" id="addPhoto">Добавить</button>
             </div>
             <div class="my-4">
                 <hr>
                 <h2 class="h2 my-4">Видео</h2>
-                <p class="mb-4">Для добавления видео нажмите кнопку <strong>добавить</strong></p>
                 <ul id="videoList">
                 </ul>
+                <p class="mb-4">Для добавления видео нажмите кнопку <strong>добавить</strong></p>
                 <button class="btn btn-primary" type="button" id="addVideo">Добавить</button>
             </div>
             <hr>
@@ -116,6 +116,7 @@
                     + '</div>'
                 + '</div>'
                 + '<button class="btn btn-danger delete" type="button">Удалить</button>'
+                + '<hr class="mt-4">'
             + '</li>');
             $("#photoBlock_" + photoCount).slideDown(300);
             photoCount++;
@@ -143,6 +144,7 @@
                     + '</div>'
                 + '</div>'
                 + '<button class="btn btn-danger delete" type="button">Удалить</button>'
+                + '<hr class="mt-4">'
             + '</li>');
             $("#videoBlock_" + videoCount).slideDown(300);
             videoCount++;

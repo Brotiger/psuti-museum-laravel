@@ -21,5 +21,6 @@
         </div>
     </div>
     <button class="btn btn-danger delete" type="button" photo-id="{{$photo->id}}">Удалить</button>
+    <hr class="mt-4">
 </li>
 @endforeach

@@ -25,7 +25,7 @@
                             <th><input type="date" class="form-control mb-1" placeholder="С:" filter-field id="dateBirthdayFrom" name="dateBirthdayFrom" value="{{ request()->input('dateBirthdayFrom') }}"><input type="date" class="form-control" placeholder="По:" filter-field id="dateBirthdayTo" name="dateBirthdayTo" value="{{ request()->input('dateBirthdayTo') }}"></th>
                             <th><input type="date" class="form-control mb-1" placeholder="С:" filter-field id="hiredFrom" name="hiredFrom" value="{{ request()->input('hiredFrom') }}"><input type="date" class="form-control" placeholder="По:" filter-field id="hiredTo" name="hiredTo" value="{{ request()->input('hiredTo') }}"></th>
                             <th><input type="date" placeholder="С:" class="form-control mb-1" filter-field id="firedFrom" name="firedFrom" value="{{ request()->input('firedFrom') }}"><input type="date" placeholder="По:" class="form-control" filter-field id="firedTo" name="firedTo" value="{{ request()->input('firedTo') }}"></th>
-                            <th><button class="form-control btn btn-danger mb-1" id="reset"><i class="bi bi-arrow-counterclockwise"></i></button><button class="form-control btn btn-primary" id="search"><i class="bi bi-search"></i></button></th>
+                            <th width="40"><button class="form-control btn btn-danger" id="reset"><i class="bi bi-arrow-counterclockwise"></i></button></th><th width="40"><button class="form-control btn btn-primary" id="search"><i class="bi bi-search"></i></button></th>
                         </form>
                     </tr>
                 </thead>

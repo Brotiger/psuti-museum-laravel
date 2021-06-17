@@ -9,5 +9,6 @@
         </div>
     </div>
     <button class="btn btn-danger delete" type="button" autobiography-id="{{ $autobiography->id }}">Удалить</button>
+    <hr class="mt-4">
 </li>
 @endforeach

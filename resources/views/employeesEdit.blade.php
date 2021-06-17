@@ -73,16 +73,15 @@
                     </div>
                     <span class="offset-3 col-9"><small>Для добавления ссылки в описании, поставьте курсор в то место где хотите создать ссылку и выбирите один из вариантов предложенных ниже</small></span>
                     <div class="col-sm-9 offset-3 mt-2">
-                        <input type="button" class="btn btn-primary" value="Сотрудники" id="addEmpHref">
-                        <input type="button" class="btn btn-primary" value="Подразделения" id="addUnitHref">
-                        <input type="button" class="btn btn-primary" value="События" id="addEventHref">
+                        <input type="button" class="btn btn-primary" value="Сотрудники" addEmpHref>
+                        <input type="button" class="btn btn-primary" value="Подразделения" addUnitHref>
+                        <input type="button" class="btn btn-primary" value="События" addEventHref>
                     </div>
                 </div>
             </div>
             <div class="my-4">
                 <hr>
                 <h2 class="h2 my-4">Образование</h2>
-                <p class="mb-4">Для добавления информации о образовании нажмите кнопку <strong>добавить</strong></p>
                 <ul id="educationList">
                     @if(!empty($employee))
                         @foreach($employee->educations as $index => $education)
@@ -106,16 +105,17 @@
                                     </div>
                                 </div>
                                 <button class="btn btn-danger delete" type="button">Удалить</button>
+                                <hr class="mt-4">
                             </li>
                         @endforeach
                     @endif
                 </ul>
+                <p class="mb-4">Для добавления информации о образовании нажмите кнопку <strong>добавить</strong></p>
                 <button class="btn btn-primary" type="button" id="addEducation">Добавить</button>
             </div>
             <div class="my-4">
                 <hr>
                 <h2 class="h2 my-4">Подразделения</h2>
-                <p class="mb-4">Для добавления информации о подразделениях нажмите кнопку <strong>добавить</strong></p>
                 <ul id="unitList">
                 @if(!empty($employee))
                     @foreach($employee->units as $index => $eu)
@@ -144,16 +144,17 @@
                             </div>
                         </div>
                         <button class="btn btn-danger delete" type="button">Удалить</button>
+                        <hr class="mt-4">
                     </li>
                     @endforeach
                 @endif
                 </ul>
+                <p class="mb-4">Для добавления информации о подразделениях нажмите кнопку <strong>добавить</strong></p>
                 <button class="btn btn-primary" type="button" id="addUnit">Добавить</button>
             </div>
             <div class="my-4">
                 <hr>
                 <h2 class="h2 my-4">Ученые степени</h2>
-                <p class="mb-4">Для добавления ученой степени нажмите кнопку <strong>добавить</strong></p>
                 <ul id="academicDegreeList">
                     @if(!empty($employee))
                         @foreach($employee->degrees as $index => $degree)
@@ -183,16 +184,17 @@
                                 </div>
                             </div>
                             <button class="btn btn-danger delete" type="button">Удалить</button>
+                            <hr class="mt-4">
                         </li>
                         @endforeach
                     @endif
                 </ul>
+                <p class="mb-4">Для добавления ученой степени нажмите кнопку <strong>добавить</strong></p>
                 <button class="btn btn-primary" type="button" id="addAcademicDegree">Добавить</button>
             </div>
             <div class="my-4">
                 <hr>
                 <h2 class="h2 my-4">Ученые звания</h2>
-                <p class="mb-4">Для добавления ученого звания нажмите кнопку <strong>добавить</strong></p>
                 <ul id="academicTitleList">
                     @if(!empty($employee))
                         @foreach($employee->titles as $index => $title)
@@ -210,16 +212,17 @@
                                 </div>
                             </div>
                             <button class="btn btn-danger delete" type="button">Удалить</button>
+                            <hr class="mt-4">
                         </li>
                         @endforeach
                     @endif
                 </ul>
+                <p class="mb-4">Для добавления ученого звания нажмите кнопку <strong>добавить</strong></p>
                 <button class="btn btn-primary" type="button" id="addAcademicTitle">Добавить</button>
             </div>
             <div class="my-4">
                 <hr>
                 <h2 class="h2 my-4">Награды</h2>
-                <p class="mb-4">Для добавления наград нажмите кнопку <strong>добавить</strong></p>
                 <ul id="academicRewardList">
                     @if(!empty($employee))
                         @foreach($employee->rewards as $index => $reward)
@@ -237,16 +240,17 @@
                                 </div>
                             </div>
                             <button class="btn btn-danger delete" type="button">Удалить</button>
+                            <hr class="mt-4">
                         </li>
                         @endforeach
                     @endif
                 </ul>
+                <p class="mb-4">Для добавления наград нажмите кнопку <strong>добавить</strong></p>
                 <button class="btn btn-primary" type="button" id="addAcademicReward">Добавить</button>
             </div>
             <div class="my-4">
                 <hr>
                 <h2 class="h2 my-4">Достижения</h2>
-                <p class="mb-4">Для добавления достижения нажмите кнопку <strong>добавить</strong></p>
                 <ul id="attainmentList">
                     @if(!empty($employee))
                         @foreach($employee->attainments as $index => $attainment)
@@ -264,16 +268,17 @@
                                 </div>
                             </div>
                             <button class="btn btn-danger delete" type="button">Удалить</button>
+                            <hr class="mt-4">
                         </li>
                         @endforeach
                     @endif
                 </ul>
+                <p class="mb-4">Для добавления достижения нажмите кнопку <strong>добавить</strong></p>
                 <button class="btn btn-primary" type="button" id="addAttainment">Добавить</button>
             </div>
             <div class="my-4">
                 <hr>
                 <h2 class="h2 my-4">Фотографии</h2>
-                <p class="mb-4">Для добавления фотографии нажмите кнопку <strong>добавить</strong></p>
                 <ul id="photoList">
                     @foreach($employee->photos as $index => $photo)
                     <li class="my-4 photoBlockOld" id="photoBlock_{{ $index }}">
@@ -298,15 +303,16 @@
                             </div>
                         </div>
                         <button class="btn btn-danger delete" type="button" photo-id="{{$photo->id}}">Удалить</button>
+                        <hr class="mt-4">
                     </li>
                     @endforeach
                 </ul>
+                <p class="mb-4">Для добавления фотографии нажмите кнопку <strong>добавить</strong></p>
                 <button class="btn btn-primary" type="button" id="addPhoto">Добавить</button>
             </div>
             <div class="my-4">
                 <hr>
                 <h2 class="h2 my-4">Видео</h2>
-                <p class="mb-4">Для добавления видео нажмите кнопку <strong>добавить</strong></p>
                 <ul id="videoList">
                     @foreach($employee->videos as $index => $video)
                     <li class="my-4 videoBlockOld" id="videoBlock_{{ $index }}">
@@ -331,9 +337,11 @@
                             </div>
                         </div>
                         <button class="btn btn-danger delete" type="button" video-id="{{$video->id}}">Удалить</button>
+                        <hr class="mt-4">
                     </li>
                     @endforeach
                 </ul>
+                <p class="mb-4">Для добавления видео нажмите кнопку <strong>добавить</strong></p>
                 <button class="btn btn-primary" type="button" id="addVideo">Добавить</button>
             </div>
             <div class="my-4">
@@ -350,6 +358,7 @@
                                 <div class="mb-2">
                                     <img src="{{ '/storage/'.$personals }}" class="mb-1">
                                     <button class="btn btn-danger delete" type="button" id="deletePersonalFile">Удалить</button>
+                                    <hr class="mt-4">
                                 </div>
                             @endif
                             <input type="file" id="titlePersonalFile" form-field accept="{{  '.'.str_replace(', ', ', .', $file_ext) }}">
@@ -357,7 +366,6 @@
                     </div>
                 </div>
                 <h3 class="h4 my-4">Автобиография</h3>
-                <p class="mb-4">Для добавления информации о автобиографии нажмите кнопку <strong>добавить</strong></p>
                 <ul id="autobiographyList">
                     @foreach($employee->autobiographys as $index => $autobiography)
                     <li class="my-4 autobiographyBlockOld" id="autobiographyBlock_{{ $index }}">
@@ -370,9 +378,11 @@
                             </div>
                         </div>
                         <button class="btn btn-danger delete" type="button" autobiography-id="{{ $autobiography->id }}">Удалить</button>
+                        <hr class="mt-4">
                     </li>
                     @endforeach
                 </ul>
+                <p class="mb-4">Для добавления информации о автобиографии нажмите кнопку <strong>добавить</strong></p>
                 <button class="btn btn-primary" type="button" id="addAutobiography">Добавить</button>
             </div>
             <hr>
@@ -486,6 +496,7 @@
                     + '</div>'
                 + '</div>'
                 + '<button class="btn btn-danger delete" type="button">Удалить</button>'
+                + '<hr class="mt-4">'
             + '</li>');
             $("#education_" + educationCount).slideDown(300);
 
@@ -519,6 +530,7 @@
                     + '</div>'
                 + '</div>'
                 + '<button class="btn btn-danger delete" type="button">Удалить</button>'
+                + '<hr class="mt-4">'
             + '</li>');
             $("#unitBlock_" + unitCount).slideDown(300);
 
@@ -553,6 +565,7 @@
                     + '</div>'
                 + '</div>'
                 + '<button class="btn btn-danger delete" type="button">Удалить</button>'
+                + '<hr class="mt-4">'
             + '</li>');
             $("#academicDegree_" + academicDegreeCount).slideDown(300);
 
@@ -575,6 +588,7 @@
                     + '</div>'
                 + '</div>'
                 + '<button class="btn btn-danger delete" type="button">Удалить</button>'
+                + '<hr class="mt-4">'
             + '</li>');
             $("#academicTitle_" + academicTitleCount).slideDown(300);
 
@@ -597,6 +611,7 @@
                     + '</div>'
                 + '</div>'
                 + '<button class="btn btn-danger delete" type="button">Удалить</button>'
+                + '<hr class="mt-4">'
             + '</li>');
             $("#academicReward_" + academicRewardCount).slideDown(300);
 
@@ -619,6 +634,7 @@
                     + '</div>'
                 + '</div>'
                 + '<button class="btn btn-danger delete" type="button">Удалить</button>'
+                + '<hr class="mt-4">'
             + '</li>');
             $("#attainmentBlock_" + attainmentCount).slideDown(300);
 
@@ -652,6 +668,7 @@
                     + '</div>'
                 + '</div>'
                 + '<button class="btn btn-danger delete" type="button">Удалить</button>'
+                + '<hr class="mt-4">'
             + '</li>');
             $("#photoBlock_" + photoCount).slideDown(300);
             photoCount++;
@@ -678,6 +695,7 @@
                     + '</div>'
                 + '</div>'
                 + '<button class="btn btn-danger delete" type="button">Удалить</button>'
+                + '<hr class="mt-4">'
             + '</li>');
             $("#videoBlock_" + videoCount).slideDown(300);
             videoCount++;
@@ -697,6 +715,7 @@
                     + '</div>'
                 + '</div>'
                 + '<button class="btn btn-danger delete" type="button">Удалить</button>'
+                + '<hr class="mt-4">'
             + '</li>');
             $("#autobiographyBlock_" + autobiographyCount).slideDown(300);
             autobiographyCount++;

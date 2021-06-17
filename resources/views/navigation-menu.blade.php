@@ -37,6 +37,9 @@
                         <a href="{{ route('graduate') }}">Добавить выпускников</a>
                     </div>
                 </div>
+                <div class="dropdown">
+                    <button class="dropbtn" onclick="window.location.href = '{{ route('pages_list') }}'">Страницы</button>
+                </div>
             </div>
 
             <div class="hidden sm:flex sm:items-center sm:ml-6">

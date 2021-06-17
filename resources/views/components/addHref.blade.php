@@ -1,6 +1,12 @@
 <!-- ссылка на сотрудника -->
 <div class="form-group row modalAddHref p-3" style="display: none" id="modalEmp">
-    <h4 class="h4 px-0">Добавление ссылки на сотрудника</h4>
+    <h4 class="h4 px-0">Добавление ссылки на сотрудника 
+    @if($site == 'pguty')
+        ПГУТИ
+    @else
+        КС ПГУТИ
+    @endif
+    </h4>
     <small class="mb-3 px-0">На выбор предлагаются первые 15 совпадений, если в списке нету того что вы искали, попробуйте задать параметры для поиска более конкретно</small>
     <div class="px-0">
         <input type="text" class="search-select form-control mb-3 searchField" placeholder="Фамилия" id="searchLastNameHref">
@@ -30,7 +36,13 @@
 </div>
 <!-- ссылка на подразделение -->
 <div class="form-group row modalAddHref p-3" style="display: none" id="modalUnit">
-    <h4 class="h4 px-0">Добавление ссылки на подразделение</h4>
+    <h4 class="h4 px-0">Добавление ссылки на подразделение 
+        @if($site == 'pguty')
+            ПГУТИ
+        @else
+            КС ПГУТИ
+        @endif
+    </h4>
     <small class="mb-3 px-0">На выбор предлагаются первые 15 совпадений, если в списке нету того что вы искали, попробуйте задать параметры для поиска более конкретно</small>
     <div class="px-0">
         <input type="text" class="search-select form-control mb-3 searchField" placeholder="Полное название подразделения" id="fullUnitNameHref">
@@ -60,7 +72,13 @@
 </div>
 <!-- ссылка на событие -->
 <div class="form-group row modalAddHref p-3" style="display: none" id="modalEvent">
-    <h4 class="h4 px-0">Добавление ссылки на событие</h4>
+    <h4 class="h4 px-0">Добавление ссылки на событие 
+        @if($site == 'pguty')
+            ПГУТИ
+        @else
+            КС ПГУТИ
+        @endif
+    </h4>
     <small class="mb-3 px-0">На выбор предлагаются первые 15 совпадений, если в списке нету того что вы искали, попробуйте задать параметры для поиска более конкретно</small>
     <div class="px-0">
         <input type="text" class="search-select form-control mb-3 searchField" placeholder="Название события" id="eventNameHref">

@@ -1,4 +1,4 @@
-.moreGraduateForm, .addEmpForm, .editEmpForm, .addUnitForm, .editUnitForm, .addGraduateForm{
+.moreGraduateForm, .addEmpForm, .editEmpForm, .addUnitForm, .editUnitForm, .addGraduateForm, .editPageForm{
     margin: 0 auto;
     width: 650px;
 }
@@ -106,4 +106,8 @@ img{
     position: absolute;
     right: 4px;
     top: 2px;
+  }
+
+  .table-btn{
+    max-width: 42px;
   }

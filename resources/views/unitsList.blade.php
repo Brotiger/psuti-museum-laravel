@@ -23,7 +23,7 @@
                             <th><input type="text" class="form-control" placeholder="Тип подразделения" filter-field id="typeUnit" autocomplete="off" name="typeUnit" value="{{ request()->input('typeUnit') }}"></th>
                             <th><input type="date" class="form-control mb-1" placeholder="С:" filter-field id="creationDateFrom" name="creationDateFrom" value="{{ request()->input('creationDateFrom') }}"><input type="date" class="form-control" placeholder="По:" filter-field id="creationDateTo" name="creationDateTo" value="{{ request()->input('CreationDateTo') }}"></th>
                             <th><input type="date" class="form-control mb-1" placeholder="С:" filter-field id="terminationDateFrom" name="terminationDateFrom" value="{{ request()->input('terminationDateFrom') }}"><input type="date" class="form-control" placeholder="По:" filter-field id="terminationDateTo" name="terminationDateTo" value="{{ request()->input('terminationDateTo') }}"></th>
-                            <th><button class="form-control btn btn-danger mb-1" id="reset"><i class="bi bi-arrow-counterclockwise"></i></button><button class="form-control btn btn-primary" id="search"><i class="bi bi-search"></i></button></th>
+                            <th width="40"><button class="form-control btn btn-danger" id="reset"><i class="bi bi-arrow-counterclockwise"></i></button></th><th width="40"><button class="form-control btn btn-primary" id="search"><i class="bi bi-search"></i></button></th>
                         </form>
                     </tr>
                 </thead>

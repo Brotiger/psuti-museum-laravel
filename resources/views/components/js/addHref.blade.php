@@ -2,6 +2,7 @@
     $(document).ready(function(){
         var caretEnd;
         var hrefId = 0;
+        var textarea = null;
 
         $('#modalUnit .resetSearchHref').click(function()
         {
@@ -21,26 +22,27 @@
             $('#searchEvent').click()
         });
 
-        $('#description').on('blur', function(e) {
+        $("body").delegate('textarea','blur', function(e) {
+            textarea = $(this);
             caretEnd = this.selectionEnd;
         });
 
-        $('#addEmpHref').on('click', function(){
+        $("body").delegate('[addEmpHref]', 'click', function(){
             $('body').css('overflow', 'hidden');
             $('#modalEmp, #blockBackground').show();
-            $('#description').focus();
+            $(this).parent().parent().find('textarea').focus().removeClass("errorField");
         });
 
-        $('#addUnitHref').on('click', function(){
+        $("body").delegate('[addUnitHref]','click', function(){
             $('body').css('overflow', 'hidden');
             $('#modalUnit, #blockBackground').show();
-            $('#description').focus();
+            $(this).parent().parent().find('textarea').focus().removeClass("errorField");
         });
 
-        $('#addEventHref').on('click', function(){
+        $("body").delegate('[addEventHref]','click', function(){
             $('body').css('overflow', 'hidden');
             $('#modalEvent, #blockBackground').show();
-            $('#description').focus();
+            $(this).parent().parent().find('textarea').focus().removeClass("errorField");
         });
 
         $('#searchEmpResult').change(function(){
@@ -62,29 +64,29 @@
         });
 
         $('#addEmpHrefDes').click(function(){
-            let oldText = $('#description').val();
+            let oldText = textarea.val();
             if(hrefId != null &&  $('#empHrefText').val().trim() != ''){
                 let data = oldText.substr(0, caretEnd) + '<a href="/employees/{{ $site }}/more/'+ hrefId +'">' + $('#empHrefText').val().trim() + '</a>' + oldText.substr(caretEnd);
                 
-                $('#description').val('').focus().val(data);
+                textarea.val('').focus().val(data);
             }
         });
 
         $('#addUnitHrefDes').click(function(){
-            let oldText = $('#description').val();
+            let oldText = textarea.val();
             if(hrefId != null &&  $('#unitHrefText').val().trim() != ''){
                 let data = oldText.substr(0, caretEnd) + '<a href="/units/{{ $site }}/more/'+ hrefId +'">' + $('#unitHrefText').val().trim() + '</a>' + oldText.substr(caretEnd);
                 
-                $('#description').val('').focus().val(data);
+                textarea.val('').focus().val(data);
             }
         });
 
         $('#addEventHrefDes').click(function(){
-            let oldText = $('#description').val();
+            let oldText = textarea.val();
             if(hrefId != null &&  $('#eventHrefText').val().trim() != ''){
                 let data = oldText.substr(0, caretEnd) + '<a href="/events/{{ $site }}/more/'+ hrefId +'">' + $('#eventHrefText').val().trim() + '</a>' + oldText.substr(caretEnd);
                 
-                $('#description').val('').focus().val(data);
+                textarea.val('').focus().val(data);
             }
         });
 
