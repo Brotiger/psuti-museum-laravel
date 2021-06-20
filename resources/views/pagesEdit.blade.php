@@ -4,7 +4,7 @@
 <x-app-layout>
     <div class="container">
         <div class="alert alert-success" style="display: none" role="alert" id="success-message">Информация на странице успешно обновлена.<i class="bi bi-x-circle" close></i></div>
-        <div class="alert alert-warning" style="display: none" role="alert" id="error-global-message">Ошибка! Некоторые поля заполненны не верно.<i class="bi bi-x-circle" close></i></div>
+        <div class="alert alert-warning" style="display: none" role="alert" id="error-global-message">Ошибка! Некоторые поля заполненны не верно. Проверьте вкладки - "Страница", "Фото архив", "Видео архив"<i class="bi bi-x-circle" close></i></div>
         <div class="alert alert-warning" style="display: none" role="alert" id="error-body-message">Ошибка! Тело запроса превышает максимум который может обработать web сервер, сократите количество прикрепляемых файлов.<i class="bi bi-x-circle" close></i></div>
         <div class="alert alert-danger" style="display: none" role="alert" id="error-message">Ошибка сервера, сделайте скриншот данного сообщения и отправьте системнному администратором на следующий адрес - @php echo env('ADMIN_MAIL') @endphp.<div id="server-error-file"></div><div id="server-error-line"></div><div id="server-error-message"></div><i class="bi bi-x-circle" close></i></div>
         @include('components.addHref')
@@ -68,8 +68,70 @@
                     <button class="btn btn-primary" type="button" id="addPost">Добавить</button>
                 </div>
                 <div id="photoArchive" class="tabcontent">
+                        <h2 class="h2 my-4">Фотографии</h2>
+                        <ul id="photoList">
+                            @foreach($page->photos as $index => $photo)
+                            <li class="my-4 photoBlockOld" id="photoBlock_{{ $index }}">
+                                <div class="mb-3">
+                                    <div class="row">
+                                        <label for="photo_{{ $index }}" class="col-sm-3 col-form-label">Фото</label>
+                                        <div class="col-sm-9">
+                                            <img src="{{ '/storage/'.$photo->photo }}">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group mb-3 row">
+                                    <label for="photoName_{{ $index }}" class="col-3 col-form-label">Название фотографии</label>
+                                    <div class="col-sm-9">
+                                        <input class="form-control photoName" type="text" id="photoName_{{ $index }}" placeholder="Название фотографии" autocomplete="off" disabled value="{{ $photo->photoName }}">
+                                    </div>
+                                </div>
+                                <div class="form-group mb-3 row">
+                                    <label for="photoDate_{{ $index }}" class="col-3 col-form-label">Дата фотографии</label>
+                                    <div class="col-sm-9">
+                                        <input class="form-control photoDate" type="date" id="photoDate_{{ $index }}" placeholder="Дата фотографии" disabled value="{{ $photo->photoDate }}">
+                                    </div>
+                                </div>
+                                <button class="btn btn-danger delete" type="button" photo-id="{{ $photo->id }}">Удалить</button>
+                                <hr class="mt-4">
+                            </li>
+                            @endforeach
+                        </ul>
+                        <p class="mb-4">Для добавления фотографии нажмите кнопку <strong>добавить</strong></p>
+                        <button class="btn btn-primary" type="button" id="addPhoto">Добавить</button>
                 </div>
                 <div id="videoArchive" class="tabcontent">
+                    <h2 class="h2 my-4">Видео</h2>
+                    <ul id="videoList">
+                        @foreach($page->videos as $index => $video)
+                        <li class="my-4 videoBlockOld" id="videoBlock_{{ $index }}">
+                            <div class="mb-3">
+                                <div class="row">
+                                    <label for="video_{{ $index }}" class="col-sm-3 col-form-label">Видео</label>
+                                    <div class="col-sm-9">
+                                        <iframe width="481" height="315" src="{{ 'https://www.youtube.com/embed/'.$video->video }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group mb-3 row">
+                                <label for="videoName_{{ $index }}" class="col-3 col-form-label">Название видео</label>
+                                <div class="col-sm-9">
+                                    <input class="form-control videoName" type="text" id="videoName_{{ $index }}" placeholder="Название видео" autocomplete="off" disabled value="{{ $video->videoName }}">
+                                </div>
+                            </div>
+                            <div class="form-group mb-3 row">
+                                <label for="videoDate_{{ $index }}" class="col-3 col-form-label">Дата видео</label>
+                                <div class="col-sm-9">
+                                    <input class="form-control videoDate" type="date" id="videoDate_{{ $index }}" placeholder="Дата видео" disabled value="{{ $video->videoDate }}">
+                                </div>
+                            </div>
+                            <button class="btn btn-danger delete" type="button" video-id="{{ $video->id }}">Удалить</button>
+                            <hr class="mt-4">
+                        </li>
+                        @endforeach
+                    </ul>
+                    <p class="mb-4">Для добавления видео нажмите кнопку <strong>добавить</strong></p>
+                    <button class="btn btn-primary" type="button" id="addVideo">Добавить</button>
                 </div>
             </div>
             <hr>
@@ -108,8 +170,13 @@
 <script>
     $(document).ready(function(){
         var postCount = {{ !empty($page)? $page->posts->count(): 0}};
+        var photoCount = {{ !empty($unit)? $unit->photos->count(): 0}};
+        var videoCount = {{ !empty($unit)? $unit->photos->count(): 0}};
+
         var postToDelete = [];
         var deletePostPhoto = [];
+        var photoToDelete = [];
+        var videoToDelete = [];
 
         $("form").delegate("#postList input[type='file']", "change", function(e){
             if(e.currentTarget.files[0] && e.currentTarget.files[0].size > {{ $photo_size * 1024 }} ){
@@ -128,6 +195,14 @@
                 deletePostPhoto.push($(this).attr('deletePostPhoto'));
             }
 
+            if($(this).attr('photo-id')){
+                photoToDelete.push($(this).attr('photo-id'));
+            }
+
+            if($(this).attr('video-id')){
+                videoToDelete.push($(this).attr('video-id'));
+            }
+
             var $parent = $(this).parent();
             $parent.slideUp(300, function(){ $(this).remove()});
         });
@@ -137,6 +212,67 @@
         });
 
         //Фотографии
+        $("#addPhoto").on("click", function(){
+            $("#photoList").append('<li class="my-4 photoBlock" style="display: none" id="photoBlock_'+ photoCount +'">'
+                + '<div class="mb-3">'
+                    + '<div class="row mb-1">'
+                        +   '<span class="offset-3 col-9"><small>Максимальный вес файла: {{ $photo_size }} КБ. Допустимые расширения: {{ $photo_ext }}</small></span>'
+                        + '</div>'
+                    + '<div class="row">'
+                    + '<label for="photo_'+ photoCount +'" class="col-sm-3 col-form-label">Фото*</label>'
+                    + '<div class="col-sm-9">'
+                        + '<input type="file" name="photo" id="photo_'+ photoCount +'" class="photo" accept="{{  '.'.str_replace(', ', ', .', $photo_ext) }}">'
+                    + '</div>'
+                    + '</div>'
+                + '</div>'
+                + '<div class="form-group mb-3 row">'
+                + '<label for="photoName_'+ photoCount +'" class="col-3 col-form-label">Название фотографии</label>'
+                    + '<div class="col-sm-9">'
+                        + '<input class="form-control photoName" type="text" id="photoName_'+ photoCount +'" placeholder="Название фотографии" autocomplete="off">'
+                    + '</div>'
+                + '</div>'
+                + '<div class="form-group mb-3 row">'
+                + '<label for="photoDate_'+ photoCount +'" class="col-3 col-form-label">Дата фотографии</label>'
+                    + '<div class="col-sm-9">'
+                        + '<input class="form-control photoDate" type="date" id="photoDate_'+ photoCount +'" placeholder="Дата фотографии">'
+                    + '</div>'
+                + '</div>'
+                + '<button class="btn btn-danger delete" type="button">Удалить</button>'
+                + '<hr class="mt-4">'
+            + '</li>');
+            $("#photoBlock_" + photoCount).slideDown(300);
+            photoCount++;
+        });
+
+        //Видео
+        $("#addVideo").on("click", function(){
+            $("#videoList").append('<li class="my-4 videoBlock" style="display: none" id="videoBlock_'+ videoCount +'">'
+                + '<div class="form-group mb-3 row">'
+                    + '<label for="video_'+ videoCount +'" class="col-3 col-form-label">Видео*</label>'
+                    + '<div class="col-sm-9">'
+                        + '<input class="form-control video" type="text" id="video_'+ videoCount +'" placeholder="Ссылка на видео с YouTube" autocomplete="off" class="video">'
+                    + '</div>'
+                + '</div>'
+                + '<div class="form-group mb-3 row">'
+                + '<label for="videoName_'+ videoCount +'" class="col-3 col-form-label">Название видео</label>'
+                    + '<div class="col-sm-9">'
+                        + '<input class="form-control videoName" type="text" id="videoName_'+ videoCount +'" placeholder="Название видео" autocomplete="off">'
+                    + '</div>'
+                + '</div>'
+                + '<div class="form-group mb-3 row">'
+                + '<label for="videoDate_'+ videoCount +'" class="col-3 col-form-label">Дата видео</label>'
+                    + '<div class="col-sm-9">'
+                        + '<input class="form-control videoDate" type="date" id="videoDate_'+ videoCount +'" placeholder="Дата видео">'
+                    + '</div>'
+                + '</div>'
+                + '<button class="btn btn-danger delete" type="button">Удалить</button>'
+                + '<hr class="mt-4">'
+            + '</li>');
+            $("#videoBlock_" + videoCount).slideDown(300);
+            videoCount++;
+        });
+
+        //Записи
         $("#addPost").on("click", function(){
             $("#postList").append('<li class="my-4 postBlock" style="display: none" id="postBlock_'+ postCount +'">'
                 + '<div class="form-group mb-3 row">'
@@ -182,6 +318,36 @@
 
             var post = [];
             var postUpdate = [];
+
+            var photo = [];
+            var video = [];
+
+            //Начадл добавления данных о фото
+            $(".photoBlock").each(function(i, ell){
+                photo.push({
+                    "photoDate": $(this).find(".photoDate").val(),
+                    "photoName": $(this).find(".photoName").val(),
+                    "id": ell.id.replace("photoBlock_", "")
+                });
+                formData.append("photo_" + i, $(this).find(".photo")[0].files[0]);
+            });
+            formData.append("photo", JSON.stringify(photo));
+            //Конец добавления данных о фото
+
+            //Начадл добавления данных о видео
+            $(".videoBlock").each(function(i, ell){
+                video.push({
+                    "videoDate": $(this).find(".videoDate").val(),
+                    "videoName": $(this).find(".videoName").val(),
+                    "video": $(this).find(".video").val(),
+                    "id": ell.id.replace("videoBlock_", "")
+                });
+            });
+            formData.append("video", JSON.stringify(video));
+            //Конец добавления данных о видео
+
+            formData.append('photoToDelete', photoToDelete);
+            formData.append('videoToDelete', videoToDelete);
 
             //Начадл добавления данных о фото
             $(".postBlock").each(function(i, ell){
@@ -240,6 +406,8 @@
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                     success: function(data){
+                        $('#photoList').html(data.photos);
+                        $('#videoList').html(data.videos);
                         $('#postList').html(data.posts);
                         if (data.success) {
                             $('#success-message').fadeIn(300).delay(2000).fadeOut(300);

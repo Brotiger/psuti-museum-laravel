@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class archiveVideo extends Model
+class ArchivePhoto extends Model
 {
     use HasFactory;
 }

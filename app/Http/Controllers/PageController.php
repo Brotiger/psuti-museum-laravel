@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use App\Models\ArchiveVideo;
+use App\Models\ArchivePhoto;
 
 use PhotoService;
 
@@ -131,6 +133,50 @@ class PageController extends Controller
                 }
             }
 
+            if($request->input("photo")){
+                $photos = json_decode($request->input("photo"), true);
+                
+                $photoCountCheck = 0;
+                foreach($photos as $photo){
+                    if(Str::of($photo["id"])->trim()->isEmpty()) continue;
+                    if(!$request->file("photo_" . $photoCountCheck) || (filesize($request->file("photo_" . $photoCountCheck)) < $photo_size * 1024) != 1){
+                        $errors[] = "photo_" . $photo["id"];
+                        continue;
+                    }
+
+                    if(!is_null($photo_ext)){
+                        $ext = $request->file('photo_'.$photoCountCheck)->getClientOriginalExtension();
+                        $extError = true;
+                        foreach($photo_ext as $value){
+                            if($ext == $value){
+                                $extError = false;
+                            }
+                        }
+
+                        if($extError){
+                            $errors[] = "photo_" . $photo["id"];
+                        }
+                    }
+
+                    if($photo["photoName"] && Str::of($photo["photoName"])->trim()->isEmpty()) $errors[] = "photoName_" . $photo["id"];
+                    if($photo["photoDate"] && Str::of($photo["photoDate"])->trim()->isEmpty()) $errors[] = "photoDate_" . $photo["id"];
+                    $photoCountCheck++;
+                }
+            }
+
+            if($request->input("video")){
+                $videos = json_decode($request->input("video"), true);
+                
+                $videoCountCheck = 0;
+                foreach($videos as $video){
+                    if(Str::of($video["id"])->trim()->isEmpty()) continue;
+                    if($video["videoName"] && Str::of($video["videoName"])->trim()->isEmpty()) $errors[] = "videoName_" . $video["id"];
+                    if($video["videoDate"] && Str::of($video["videoDate"])->trim()->isEmpty()) $errors[] = "videoDate_" . $video["id"];
+                    if(!$video["video"] || Str::of($video["video"])->trim()->isEmpty() || !preg_match('~^https:\/\/www.youtube.com\/watch\?v=([a-zA-Z0-9\-\_]+)~', $video["video"])) $errors[] = "video_" . $video["id"];
+                    $videoCountCheck++;
+                }
+            }
+
             if($request->input("postUpdate")){
                 $posts = json_decode($request->input("postUpdate"), true);
                 
@@ -238,6 +284,69 @@ class PageController extends Controller
                             }
                         }
                     }
+
+                    if($request->input("photo")){
+                        $photos = json_decode($request->input("photo"), true);
+
+                        $photoCountData = 0;
+
+                        foreach($photos as $photo){
+                            
+                            $reqPhotoName = "photo_" . $photoCountData;
+
+                            $photoPath = PhotoService::resize($request, $reqPhotoName, 'uploads/page/photo', 2300);
+
+                            $newPhoto = new ArchivePhoto;
+                            $newPhoto->page_id = $editPage->first()->id;
+                            $newPhoto->photo = $photoPath;
+                            if(Str::of($photo["photoDate"])->trim()->isNotEmpty()) $newPhoto->photoDate = trim($photo["photoDate"]);
+                            if(Str::of($photo["photoName"])->trim()->isNotEmpty()) $newPhoto->photoName = trim($photo["photoName"]);
+                            $newPhoto->save();
+                            $photoCountData++;
+                        }
+                    }
+
+                    if($request->input("video")){
+                        $videos = json_decode($request->input("video"), true);
+
+                        $videoCountData = 0;
+
+                        foreach($videos as $video){
+                            $newVideo = new ArchiveVideo;
+                            $newVideo->page_id = $editPage->first()->id;
+                            preg_match('~^https:\/\/www.youtube.com\/watch\?v=([a-zA-Z0-9\-\_]+)~', $video['video'], $matches);
+                            $newVideo->video = $matches[1];
+                            if(Str::of($video["videoDate"])->trim()->isNotEmpty()) $newVideo->videoDate = trim($video["videoDate"]);
+                            if(Str::of($video["videoName"])->trim()->isNotEmpty()) $newVideo->videoName = trim($video["videoName"]);
+                            $newVideo->save();
+                            $videoCountData++;
+                        }
+                    }
+
+                    if($request->input("photoToDelete")){
+                        $photoToDelete = explode(',',$request->input("photoToDelete"));
+
+                        #Сохраняем каждую запись о образовании
+                        foreach($photoToDelete as $index => $photo){
+                            $oldPhoto = ArchivePhoto::where('id', $photo);
+                            if($oldPhoto->exists()){
+                                Storage::disk('public')->delete($oldPhoto->first()->photo);
+                                $oldPhoto->delete();
+                            }
+                        }
+                    }
+
+                    if($request->input("videoToDelete")){
+                        $videoToDelete = explode(',',$request->input("videoToDelete"));
+
+                        #Сохраняем каждую запись о образовании
+                        foreach($videoToDelete as $index => $video){
+                            $oldVideo = ArchiveVideo::where('id', $video);
+                            if($oldVideo->exists()){
+                                $oldVideo->delete();
+                            }
+                        }
+                    }
                 });
 
             $page = Page::where("id", $request->input("id"))->first();
@@ -246,6 +355,14 @@ class PageController extends Controller
                 'page' => $page,
                 'photo_size' => $photo_size,
             'photo_ext' => $photo_ext? implode(', ', $photo_ext) : 'любые',
+            ])->render();
+
+            $response['photos'] = view('ajax.pagePhotos', [
+                'page' => $page
+            ])->render();
+
+            $response['videos'] = view('ajax.pageVideos', [
+                'page' => $page
             ])->render();
 
             #Проверка успешно ли прошла транзакция

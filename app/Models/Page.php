@@ -12,4 +12,12 @@ class Page extends Model
     public function posts(){
         return $this->hasMany('App\Models\Post');
     }
+
+    public function photos(){
+        return $this->hasMany('App\Models\ArchivePhoto');
+    }
+
+    public function videos(){
+        return $this->hasMany('App\Models\ArchiveVideo');
+    }
 }

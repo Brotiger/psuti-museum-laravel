@@ -20,6 +20,9 @@ class CreateArchivePhotosTable extends Migration
             $table->foreign("page_id")
             ->references("id")
             ->on("pages");
+            $table->string('photoName')->nullable();
+            $table->string('photo');
+            $table->date('photoDate')->nullable();
         });
     }
 
