@@ -3,7 +3,7 @@
 @endsection
 <x-app-layout>
     <div class="container">
-        <div class="alert alert-success" style="display: none" role="alert" id="success-message">Информация на странице успешно обновлена.<i class="bi bi-x-circle" close></i></div>
+        <div class="alert alert-success" style="display: none" role="alert" id="success-message">Информация о странице успешно обновлена.<i class="bi bi-x-circle" close></i></div>
         <div class="alert alert-warning" style="display: none" role="alert" id="error-global-message">Ошибка! Некоторые поля заполненны не верно. Проверьте вкладки - "Страница", "Фото архив", "Видео архив"<i class="bi bi-x-circle" close></i></div>
         <div class="alert alert-warning" style="display: none" role="alert" id="error-body-message">Ошибка! Тело запроса превышает максимум который может обработать web сервер, сократите количество прикрепляемых файлов.<i class="bi bi-x-circle" close></i></div>
         <div class="alert alert-danger" style="display: none" role="alert" id="error-message">Ошибка сервера, сделайте скриншот данного сообщения и отправьте системнному администратором на следующий адрес - @php echo env('ADMIN_MAIL') @endphp.<div id="server-error-file"></div><div id="server-error-line"></div><div id="server-error-message"></div><i class="bi bi-x-circle" close></i></div>
@@ -15,6 +15,7 @@
                     <button class="tablinks" onclick="openCity(event, 'page')" type="button" id="defaultTab">Страница</button>
                     <button class="tablinks" onclick="openCity(event, 'photoArchive')" type="button">Фото архив</button>
                     <button class="tablinks" onclick="openCity(event, 'videoArchive')" type="button">Видео архив</button>
+                    <button class="tablinks" onclick="openCity(event, 'history')" type="button">История от первого лица</button>
                 </div>
                 <hr>
                 <div id="page" class="tabcontent">
@@ -133,6 +134,31 @@
                     <p class="mb-4">Для добавления видео нажмите кнопку <strong>добавить</strong></p>
                     <button class="btn btn-primary" type="button" id="addVideo">Добавить</button>
                 </div>
+                <div id="history" class="tabcontent">
+                    <h2 class="h2 my-4">История</h2>
+                    <ul id="historyList">
+                        @foreach($page->history as $index => $history)
+                        <li class="my-4 historyBlockOld" id="historyBlock_{{ $index }}">
+                            <div class="form-group mb-3 row">
+                                <label for="commentAuth_{{ $index }}" class="col-3 col-form-label">Автор</label>
+                                <div class="col-sm-9 mb-3">
+                                    <input class="form-control commentAuth" type="text" id="commentAuth_{{ $index }}" placeholder="Автор" autocomplete="off" disabled value="{{ isset($history->user->name) ? $history->user->name : $history->user->email }}">
+                                </div>
+                                <label for="comment_{{ $index }}" class="col-3 col-form-label">История</label>
+                                <div class="col-sm-9">
+                                    <textarea class="form-control border border-secondary rounded-0 comment" id="comment_{{ $index }}" rows="7" disabled placeholder="История">{{ $history->comment }}</textarea>
+                                </div>
+                            </div>
+                            @if($user->id == $history->addUserId)
+                                <button class="btn btn-danger delete" type="button" history-id="{{ $history->id }}">Удалить</button>
+                            @endif
+                            <hr class="mt-4">
+                        </li>
+                        @endforeach
+                    </ul>
+                    <p class="mb-4">Для добавления истории нажмите кнопку <strong>добавить</strong></p>
+                    <button class="btn btn-primary" type="button" id="addHistory">Добавить</button>
+                </div>
             </div>
             <hr>
             <div class="form-group mt-4">
@@ -170,13 +196,15 @@
 <script>
     $(document).ready(function(){
         var postCount = {{ !empty($page)? $page->posts->count(): 0}};
-        var photoCount = {{ !empty($unit)? $unit->photos->count(): 0}};
-        var videoCount = {{ !empty($unit)? $unit->photos->count(): 0}};
+        var photoCount = {{ !empty($page)? $page->photos->count(): 0}};
+        var videoCount = {{ !empty($page)? $page->photos->count(): 0}};
+        var historyCount = {{ !empty($page)? $page->history->count(): 0}};
 
         var postToDelete = [];
         var deletePostPhoto = [];
         var photoToDelete = [];
         var videoToDelete = [];
+        var historyToDelete = [];
 
         $("form").delegate("#postList input[type='file']", "change", function(e){
             if(e.currentTarget.files[0] && e.currentTarget.files[0].size > {{ $photo_size * 1024 }} ){
@@ -203,12 +231,41 @@
                 videoToDelete.push($(this).attr('video-id'));
             }
 
+            if($(this).attr('history-id')){
+                historyToDelete.push($(this).attr('history-id'));
+            }
+
             var $parent = $(this).parent();
             $parent.slideUp(300, function(){ $(this).remove()});
         });
 
         $(".editPageForm").delegate("input, textarea", "click", function(){
                 $(this).removeClass("errorField");
+        });
+
+        //История от первого лица
+        $("#addHistory").on("click", function(){
+            $("#historyList").append('<li class="my-4 historyBlock" style="display: none" id="historyBlock_'+ historyCount +'">'
+                        @if(!isset($user->name))
+                        + '<div class="row mb-1">'
+                            + '<span class="offset-3 col-9"><small>Укажите имя в настройках профиля</small></span>'
+                        + '</div>'
+                        @endif
+                    + '<div class="form-group mb-3 row">'
+                        + '<label for="commentAuth_'+ historyCount +'" class="col-3 col-form-label">Автор</label>'
+                        + '<div class="col-sm-9 mb-3">'
+                            + '<input class="form-control commentAuth" type="text" id="commentAuth_'+ historyCount +'" placeholder="Автор" autocomplete="off" disabled value="{{ isset($user->name) ? $user->name : $user->email }}">'
+                        + '</div>'
+                        + '<label for="comment_'+ historyCount +'" class="col-3 col-form-label">История*</label>'
+                        + '<div class="col-sm-9">'
+                            + '<textarea class="form-control border border-secondary rounded-0 comment" id="comment_'+ historyCount +'" rows="7" placeholder="История"></textarea>'
+                        + '</div>'
+                    + '</div>'
+                    + '<button class="btn btn-danger delete" type="button" history-id="'+ historyCount +'">Удалить</button>'
+                    + '<hr class="mt-4">'
+            + '</li>');
+            $("#historyBlock_" + historyCount).slideDown(300);
+            historyCount++;
         });
 
         //Фотографии
@@ -321,6 +378,7 @@
 
             var photo = [];
             var video = [];
+            var history = [];
 
             //Начадл добавления данных о фото
             $(".photoBlock").each(function(i, ell){
@@ -346,8 +404,19 @@
             formData.append("video", JSON.stringify(video));
             //Конец добавления данных о видео
 
+            //Начадл добавления данных о истории
+            $(".historyBlock").each(function(i, ell){
+                history.push({
+                    "comment": $(this).find(".comment").val(),
+                    "id": ell.id.replace("historyBlock_", "")
+                });
+            });
+            formData.append("history", JSON.stringify(history));
+            //Конец добавления данных о истории
+
             formData.append('photoToDelete', photoToDelete);
             formData.append('videoToDelete', videoToDelete);
+            formData.append('historyToDelete', historyToDelete);
 
             //Начадл добавления данных о фото
             $(".postBlock").each(function(i, ell){
@@ -409,11 +478,16 @@
                         $('#photoList').html(data.photos);
                         $('#videoList').html(data.videos);
                         $('#postList').html(data.posts);
+                        $('#historyList').html(data.history);
                         if (data.success) {
                             $('#success-message').fadeIn(300).delay(2000).fadeOut(300);
                             $('#counter').text(Number($('#counter').text()) + 1);
                             postToDelete = [];
+                            deletePostPhoto = [];
+                            photoToDelete = [];
                             videoToDelete = [];
+                            historyToDelete = [];
+                            $('textarea.comment').attr('disabled', true);
                         } else if(data.errors){
                                 $('#error-global-message').fadeIn(300).delay(2000).fadeOut(300);
                                 data.errors.forEach(function(ell){

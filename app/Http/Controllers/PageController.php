@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Page;
 use App\Models\Employee;
 use App\Models\Unit;
+use App\Models\History;
 use App\Models\Event;
 use App\Models\User;
 use App\Models\Post;
@@ -53,6 +54,8 @@ class PageController extends Controller
         $photo_ext = env('IMG_EXT', null);
         if($photo_ext != null) $photo_ext = explode(',', $photo_ext);
 
+        $user = User::where("id", Auth::user()->id)->get()->first();
+
         $params = [
             'id' => $id,
             'photo_size' => $photo_size,
@@ -61,6 +64,7 @@ class PageController extends Controller
             'units_search' => $units_search,
             'events_search' => $events_search,
             'site' => $site,
+            'user' => $user,
         ];
 
         if(isset($id)){
@@ -208,6 +212,16 @@ class PageController extends Controller
                 }
             }
 
+            #Проверяем информацию о научных званиях
+            if($request->input("history")){
+                $histories = json_decode($request->input("history"), true);
+                
+                foreach($histories as $history){
+                    if(Str::of($history["id"])->trim()->isEmpty()) continue;
+                    if(Str::of($history["comment"])->trim()->isEmpty()) $errors[] = "comment_" . $history["id"];
+                }
+            }
+
             #Если поля вальдны, сохраняем их в бд
             if(empty($errors)){
                 $exception = DB::transaction(function() use ($request){
@@ -231,6 +245,18 @@ class PageController extends Controller
                             if(Str::of($post["title"])->trim()->isNotEmpty()) $newPost->title = trim($post["title"]);
                             if(Str::of($post["description"])->trim()->isNotEmpty()) $newPost->description = trim($post["description"]);
                             $newPost->save();
+                        }
+                    }
+
+                    if($request->input("history")){
+                        $histories = json_decode($request->input("history"), true);
+
+                        foreach($histories as $history){
+                            $newHistory = new History;
+                            $newHistory->page_id = $editPage->first()->id;
+                            $newHistory->addUserId =  Auth::user()->id;
+                            $newHistory->comment = trim($history["comment"]);
+                            $newHistory->save();
                         }
                     }
 
@@ -281,6 +307,21 @@ class PageController extends Controller
                                     Storage::disk('public')->delete($oldPost->first()->photo);
                                 }
                                 $oldPost->delete();
+                            }
+                        }
+                    }
+
+                    if($request->input("historyToDelete")){
+                        $historyToDelete = explode(',',$request->input("historyToDelete"));
+
+                        foreach($historyToDelete as $index => $history){
+                            $oldHistory = History::where('id', $history);
+                            if(Auth::user()->id != $oldHistory->first()->addUserId){
+                                continue; //при попытке удалить не свою запись
+                            }
+
+                            if($oldHistory->exists()){
+                                $oldHistory->delete();
                             }
                         }
                     }
@@ -363,6 +404,11 @@ class PageController extends Controller
 
             $response['videos'] = view('ajax.pageVideos', [
                 'page' => $page
+            ])->render();
+
+            $response['history'] = view('ajax.history', [
+                'page' => $page,
+                'user' => $user
             ])->render();
 
             #Проверка успешно ли прошла транзакция

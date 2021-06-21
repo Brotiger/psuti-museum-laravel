@@ -19,7 +19,8 @@ class CreateArchivePhotosTable extends Migration
             $table->bigInteger("page_id")->unsigned();
             $table->foreign("page_id")
             ->references("id")
-            ->on("pages");
+            ->on("pages")
+            ->onDelete('cascade');
             $table->string('photoName')->nullable();
             $table->string('photo');
             $table->date('photoDate')->nullable();

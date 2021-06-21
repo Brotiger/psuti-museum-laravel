@@ -20,4 +20,8 @@ class Page extends Model
     public function videos(){
         return $this->hasMany('App\Models\ArchiveVideo');
     }
+
+    public function history(){
+        return $this->hasMany('App\Models\History');
+    }
 }
