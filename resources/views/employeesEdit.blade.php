@@ -1,6 +1,5 @@
 <x-app-layout>
     <div class="container">
-        <div class="alert alert-primary position-fixed bottom-1 right-1" role="alert">Вы внесли:<br><strong id="counter">{{ $counter }}</strong> сотрудников</div>
         <div class="alert alert-success" style="display: none" role="alert" id="success-message">Информация о сотруднике успешно обновлена.<i class="bi bi-x-circle" close></i></div>
         <div class="alert alert-warning" style="display: none" role="alert" id="error-global-message">Ошибка! Некоторые поля заполненны не верно.<i class="bi bi-x-circle" close></i></div>
         <div class="alert alert-warning" style="display: none" role="alert" id="error-body-message">Ошибка! Тело запроса превышает максимум который может обработать web сервер, сократите количество прикрепляемых файлов.<i class="bi bi-x-circle" close></i></div>

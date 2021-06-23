@@ -481,7 +481,6 @@
                         $('#historyList').html(data.history);
                         if (data.success) {
                             $('#success-message').fadeIn(300).delay(2000).fadeOut(300);
-                            $('#counter').text(Number($('#counter').text()) + 1);
                             postToDelete = [];
                             deletePostPhoto = [];
                             photoToDelete = [];

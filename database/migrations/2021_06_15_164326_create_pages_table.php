@@ -17,6 +17,10 @@ class CreatePagesTable extends Migration
             $table->id();
             $table->timestamps();
             $table->string("title")->unique();
+            $table->bigInteger("addUserId")->unsigned()->nullable();
+            $table->foreign("addUserId")
+            ->references("id")
+            ->on("users");
         });
     }
 

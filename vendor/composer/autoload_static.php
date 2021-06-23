@@ -724,6 +724,8 @@ class ComposerStaticInit5ff96a96f1d2ecf3c6cf6d1364879b02
         'App\\Models\\UnitPhoto' => __DIR__ . '/../..' . '/app/Models/UnitPhoto.php',
         'App\\Models\\UnitVideo' => __DIR__ . '/../..' . '/app/Models/UnitVideo.php',
         'App\\Models\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
+        'App\\Models\\UserLimit' => __DIR__ . '/../..' . '/app/Models/UserLimit.php',
+        'App\\Models\\UserRight' => __DIR__ . '/../..' . '/app/Models/UserRight.php',
         'App\\Models\\Video' => __DIR__ . '/../..' . '/app/Models/Video.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',
         'App\\Providers\\AuthServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AuthServiceProvider.php',

@@ -1,6 +1,5 @@
 <x-app-layout>
     <div class="container">
-        <div class="alert alert-primary position-fixed bottom-1 right-1" role="alert">Вы внесли:<br><strong id="counter">{{ $counter }}</strong> сотрудников</div>
         <div class="alert alert-success" style="display: none" role="alert" id="success-message">Сотрудник успешно добавлен.<i class="bi bi-x-circle" close></i></div>
         <div class="alert alert-warning" style="display: none" role="alert" id="error-global-message">Ошибка! Некоторые поля заполненны не верно.<i class="bi bi-x-circle" close></i></div>
         <div class="alert alert-warning" style="display: none" role="alert" id="error-limit-message">Ошибка! Лимит на данную таблицу превышен, для увиличения лимита свяжитесь с системным администратором.<i class="bi bi-x-circle" close></i></div>
@@ -619,7 +618,6 @@
                     success: function(data){
                         if (data.success) {
                             $('#success-message').fadeIn(300).delay(2000).fadeOut(300);
-                            $('#counter').text(Number($('#counter').text()) + 1);
                             $('#searchEmp').click();
                             resetForm();
                         } else if(data.errors){

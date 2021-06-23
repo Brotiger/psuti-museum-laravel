@@ -1,6 +1,5 @@
 <x-app-layout>
     <div class="container">
-        <div class="alert alert-primary position-fixed bottom-1 right-1" role="alert">Вы внесли:<br><strong id="counter">{{ $counter }}</strong> событий</div>
         <div class="alert alert-success" style="display: none" role="alert" id="success-message">Информация о событии успешно обновлена.<i class="bi bi-x-circle" close></i></div>
         <div class="alert alert-warning" style="display: none" role="alert" id="error-global-message">Ошибка! Некоторые поля заполненны не верно.<i class="bi bi-x-circle" close></i></div>
         <div class="alert alert-warning" style="display: none" role="alert" id="error-body-message">Ошибка! Тело запроса превышает максимум который может обработать web сервер, сократите количество прикрепляемых файлов.<i class="bi bi-x-circle" close></i></div>
@@ -275,7 +274,6 @@
                         $('#videoList').html(data.videos);
                         if (data.success) {
                             $('#success-message').fadeIn(300).delay(2000).fadeOut(300);
-                            $('#counter').text(Number($('#counter').text()) + 1);
                             photoToDelete = [];
                             videoToDelete = [];
                         } else if(data.errors){

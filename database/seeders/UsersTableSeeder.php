@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 
 class UsersTableSeeder extends Seeder
 {
@@ -15,13 +15,22 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
-        DB::table("users")->insert([
+        $user = User::create([
             'name' => 'Дмитрий',
             'email' => 'dimka@bdima.ru',
             'password' => Hash::make('123123'),
-            'empLimit' => 100000,
-            'unitLimit' => 100000,
-            'graduateLimit' => 100000,
         ]);
+
+        $user->limits()->create();
+        $user->rights()->create();
+
+        $user = User::create([
+            'name' => 'Дмитрий2',
+            'email' => 'dimka@bdima2.ru',
+            'password' => Hash::make('123123'),
+        ]);
+
+        $user->limits()->create();
+        $user->rights()->create();
     }
 }

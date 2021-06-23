@@ -45,10 +45,15 @@ class CreateNewUser implements CreatesNewUsers
             $message->subject('Регистрация на сайте '. $_SERVER['SERVER_NAME']);
         });
         
-        return User::create([
-           // 'name' => $input['name'],
+        $user = User::create([
+            'name' => $input['name'],
             'email' => $input['email'],
             'password' => Hash::make($password),
         ]);
+
+        $user->limits()->create();
+        $user->rights()->create();
+
+        return $user;
     }
 }

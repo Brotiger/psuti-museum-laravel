@@ -89,21 +89,35 @@ class PageController extends Controller
             "success" => false 
         ];
 
+        $access = false;
+
         $errors = [];
 
         $photo_size = env('IMG_SIZE', 0);
 
         $photo_ext = env('IMG_EXT', null);
+        
         if($photo_ext != null) $photo_ext = explode(',', $photo_ext);
 
         $user = User::where("id", Auth::user()->id)->get()->first();
         
         if(isset($request)){
-            if(!$request->input("id") ||  !Page::where([
+
+            if (!$request->input("id")){
+                return redirect(route('pages_list'));
+            }
+
+            $page = Page::where([
                 ['id', $request->input("id")],
-                ])->exists())
+            ]);
+
+            if(!$page->exists())
             {
                 return redirect(route('pages_list'));
+            }
+
+            if($page->first()->addUserId == Auth::user()->id || Auth::user()->rights['root'] || (Auth::user()->rights['empAdmin'] != null && time() <= strtotime(Auth::user()->rights['empAdmin']))){
+                $access = true;
             }
             
             if($request->input("post")){

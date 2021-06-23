@@ -1,6 +1,5 @@
 <x-app-layout>
     <div class="container">
-        <div class="alert alert-primary position-fixed bottom-1 right-1" role="alert">Вы внесли:<br><strong id="counter">{{ $counter }}</strong> файлов</div>
         <div class="alert alert-danger" style="display: none" role="alert" id="error-message">Ошибка сервера, свяжитесь с системным администратором.</div>
         <div class="mt-5 dbList">
             <h1 class="h1">Список добавленных вами выпускников</h1>

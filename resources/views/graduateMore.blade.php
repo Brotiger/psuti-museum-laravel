@@ -1,6 +1,5 @@
 <x-app-layout>
     <div class="container">
-        <div class="alert alert-primary position-fixed bottom-1 right-1" role="alert">Вы внесли:<br><strong id="counter">{{ $counter }}</strong> файлов</div>
         <form enctype="multipart/form-data" class="moreGraduateForm mt-5 pb-4">
             <h1 class="h1">Подробная информация о выпускнике</h1>
             <div class="my-4">

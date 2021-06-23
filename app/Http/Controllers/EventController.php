@@ -57,9 +57,7 @@ class EventController extends Controller
         $file_ext = env('FILE_EXT', null);
         if($file_ext != null) $file_ext = explode(',', $file_ext);
 
-        $counter = Event::where('addUserId', Auth::user()->id)->get()->count();
         $params = [
-            'counter' => $counter,
             'id' => $id,
             'file_size' => $file_size,
             'photo_size' => $photo_size,
@@ -72,10 +70,18 @@ class EventController extends Controller
         ];
 
         if(isset($id)){
-            $event = Event::where([
+            $eventParams = [
                 ['id', $id],
-                ['addUserId', Auth::user()->id]
-            ]);
+            ];
+
+            if(!Auth::user()->rights['root']){
+                if(Auth::user()->rights['eventAdmin'] == null || time() > strtotime(Auth::user()->rights['eventAdmin'])){
+                    $eventParams[] = ['addUserId', Auth::user()->id];
+                }
+            }
+
+            $event = Event::where($eventParams);
+
             if($event->exists()){
                 $params['id'] = $id;
                 $params['event'] = $event->get()->first();
@@ -102,10 +108,7 @@ class EventController extends Controller
         $file_ext = env('FILE_EXT', null);
         if($file_ext != null) $file_ext = explode(',', $file_ext);
 
-        $counter = Event::where('addUserId', Auth::user()->id)->get()->count();
-
         $params = [
-            'counter' => $counter,
             'file_size' => $file_size,
             'photo_size' => $photo_size,
             'file_ext' => $file_ext? implode(', ', $file_ext) : 'любые',
@@ -121,11 +124,14 @@ class EventController extends Controller
 
     public function events_list(Request $request){
 
-        $counter = Event::where('addUserId', Auth::user()->id)->get()->count();
+        $filter = [];
 
-        $filter = [
-            ['addUserId', Auth::user()->id]
-        ];
+        if(!Auth::user()->rights['root']){
+            if(Auth::user()->rights['eventAdmin'] == null || time() > strtotime(Auth::user()->rights['eventAdmin'])){
+                $filter[] = ['addUserId', Auth::user()->id];
+            }
+        }
+
         $next_query = [
             'name' => '',
             'dateFrom' => '',
@@ -150,7 +156,6 @@ class EventController extends Controller
         return view('eventsList', [
             'events' => $events,
             'next_query' => $next_query,
-            'counter' => $counter,
             'site' => env('DB_SITE', 'pguty')
         ]);
     }
@@ -166,9 +171,13 @@ class EventController extends Controller
         $user = User::where("id", Auth::user()->id)->get()->first();
 
         //Если лимит превышен
-        if($user['eventLimit'] <= 0){
-            $response['errors'][] = 'limit'; 
-            return $response;
+        if(!Auth::user()->rights['root']){
+            if(Auth::user()->rights['eventAdmin'] == null || time() > strtotime(Auth::user()->rights['eventAdmin'])){
+                if($user->limits['eventLimit'] <= 0){
+                    $response['errors'][] = 'limit'; 
+                    return $response;
+                }
+            }
         }
 
         if(isset($request)){
@@ -285,9 +294,13 @@ class EventController extends Controller
             if($exception){
                 $response['success'] = false;
             }else{
-                if($user['eventLimit'] > 0){
-                    $user->eventLimit = $user['eventLimit'] - 1;
-                    $user->save();
+                if(!Auth::user()->rights['root']){
+                    if(Auth::user()->rights['eventAdmin'] == null || time() > strtotime(Auth::user()->rights['eventAdmin'])){
+                        if($user->limits['eventLimit'] > 0){
+                            $user->limits->eventLimit = $user->limits['eventLimit'] - 1;
+                            $user->save();
+                        }
+                    }
                 }
                 $response['success'] = true;
             }
@@ -319,10 +332,23 @@ class EventController extends Controller
         $user = User::where("id", Auth::user()->id)->get()->first();
 
         if(isset($request)){
-            if(!$request->input("id") ||  !Event::where([
-                ['addUserId', Auth::user()->id],
-                ['id', $request->input("id")],
-                ])->exists())
+            $eventParams = [];
+
+            if(!Auth::user()->rights['root']){
+                if(Auth::user()->rights['eventAdmin'] == null || time() > strtotime(Auth::user()->rights['eventAdmin'])){
+                    $eventParams[] = ['addUserId', Auth::user()->id];
+                }
+            }
+
+            if(!$request->input("id")){
+                $eventParams[] = [
+                    'id' => $request->input("id")
+                ];
+            }else{
+                return redirect(route('events_list'));  
+            }
+
+            if(!$request->input("id") ||  !Event::where($eventParams)->exists())  
             {
                 return redirect(route('events_list'));
             }
@@ -382,7 +408,7 @@ class EventController extends Controller
                     $photoTmp = EventPhoto::where('id', $photo);
 
                     if($photoTmp->exists()){
-                        if($photoTmp->first()->event->addUserId != Auth::user()->id){
+                        if($photoTmp->first()->event->addUserId != Auth::user()->id || !Auth::user()->rights['root'] || (Auth::user()->rights['eventAdmin'] != null && time() <= strtotime(Auth::user()->rights['eventAdmin']))){
                             return; // в случае не санкционированного изменения просто прерывать процесс
                         }
                     }
@@ -397,7 +423,7 @@ class EventController extends Controller
                     $videoTmp = EventVideo::where('id', $video);
 
                     if($videoTmp->exists()){
-                        if($videoTmp->first()->event->addUserId != Auth::user()->id){
+                        if($videoTmp->first()->event->addUserId != Auth::user()->id || !Auth::user()->rights['root'] || (Auth::user()->rights['eventAdmin'] != null && time() <= strtotime(Auth::user()->rights['eventAdmin']))){
                             return; // в случае не санкционированного изменения просто прерывать процесс
                         }
                     }

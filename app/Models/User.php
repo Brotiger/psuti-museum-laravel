@@ -58,4 +58,12 @@ class User extends Authenticatable
     protected $appends = [
         'profile_photo_url',
     ];
+
+    public function limits(){
+        return $this->hasOne('App\Models\UserLimit');
+    }
+
+    public function rights(){
+        return $this->hasOne('App\Models\UserRight');
+    }
 }

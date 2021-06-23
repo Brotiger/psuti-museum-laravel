@@ -56,6 +56,8 @@ return array(
     'App\\Models\\UnitPhoto' => $baseDir . '/app/Models/UnitPhoto.php',
     'App\\Models\\UnitVideo' => $baseDir . '/app/Models/UnitVideo.php',
     'App\\Models\\User' => $baseDir . '/app/Models/User.php',
+    'App\\Models\\UserLimit' => $baseDir . '/app/Models/UserLimit.php',
+    'App\\Models\\UserRight' => $baseDir . '/app/Models/UserRight.php',
     'App\\Models\\Video' => $baseDir . '/app/Models/Video.php',
     'App\\Providers\\AppServiceProvider' => $baseDir . '/app/Providers/AppServiceProvider.php',
     'App\\Providers\\AuthServiceProvider' => $baseDir . '/app/Providers/AuthServiceProvider.php',

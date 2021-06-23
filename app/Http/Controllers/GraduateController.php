@@ -16,17 +16,21 @@ use Illuminate\Support\Facades\Validator;
 class GraduateController extends Controller
 {
     public function more_graduate($id = null){
-        $counter = User::where("id", Auth::user()->id)->get()->first()->graduateCount;
-
-        $params = [
-            'counter' => $counter,
-        ];
+        $params = [];
 
         if(isset($id)){
-            $graduate = Graduate::where([
+            $graduateParams = [
                 ['id', $id],
-                ['addUserId', Auth::user()->id]
-            ]);
+            ];
+
+            if(!Auth::user()->rights['root']){
+                if(Auth::user()->rights['graduateAdmin'] == null || time() > strtotime(Auth::user()->rights['graduateAdmin'])){
+                    $graduateParams[] = ['addUserId', Auth::user()->id];
+                }
+            }
+
+            $graduate = Graduate::where($graduateParams);
+
             if($graduate->exists()){
                 $params['graduate'] = $graduate->get()->first();
             }else{
@@ -38,9 +42,14 @@ class GraduateController extends Controller
     }
 
     public function graduates_list(Request $request){
-        $filter = [
-            ['addUserId', Auth::user()->id]
-        ];
+        $filter = [];
+
+        if(!Auth::user()->rights['root']){
+            if(Auth::user()->rights['graduateAdmin'] == null || time() > strtotime(Auth::user()->rights['graduateAdmin'])){
+                $filter[] = ['addUserId', Auth::user()->id];
+            }
+        }
+
         if($request->input("firstName") != null) $filter[] = ["firstName", "like", '%' . $request->input("firstName") . '%'];
         if($request->input("lastName") != null) $filter[] = ["lastName", "like", '%' . $request->input("lastName") . '%'];
         if($request->input("registrationNumber") != null) $filter[] = ["registrationNumber", "like", '%' . $request->input("registrationNumber") . '%'];
@@ -52,11 +61,6 @@ class GraduateController extends Controller
         if($request->input("exitYearFrom") != null) $filter[] = ["exitYear", ">=", $request->input("exitYearFrom")];
         if($request->input("exitYearTo") != null) $filter[] = ["exitYear", "<", $request->input("exitYearTo")];
 
-        $counter = User::where("id", Auth::user()->id)->get()->first()->graduateCount;
-
-        $filter = [
-            ['addUserId', Auth::user()->id]
-        ];
         $next_query = [
             'firstName' => '',
             'lastName' => '',
@@ -116,7 +120,6 @@ class GraduateController extends Controller
         return view('graduatesList', [
             'graduates' => $graduates,
             'next_query' => $next_query,
-            'counter' => $counter,
             'site' => env('DB_SITE', 'pguty')
         ]);
     }
@@ -139,9 +142,13 @@ class GraduateController extends Controller
         $user = User::where("id", Auth::user()->id)->get()->first();
 
         //Если лимит превышен
-        if($user['graduateLimit'] <= 0){
-            $response['errors'][] = 'limit'; 
-            return $response;
+        if(!Auth::user()->rights['root']){
+            if(Auth::user()->rights['graduateAdmin'] == null || time() > strtotime(Auth::user()->rights['graduateAdmin'])){
+                if($user->limits['graduateLimit'] <= 0){
+                    $response['errors'][] = 'limit'; 
+                    return $response;
+                }
+            }
         }
 
         if(isset($request)){
@@ -161,10 +168,13 @@ class GraduateController extends Controller
             if($exception){
                 $response['success'] = false;
             }else{
-                if($user['graduateLimit'] > 0){
-                    $user->empLimit = $user['graduateLimit'] - 1;
-                    $user->graduateCount = $user->graduateCount + 1;
-                    $user->save();
+                if(!Auth::user()->rights['root']){
+                    if(Auth::user()->rights['graduateAdmin'] == null || time() > strtotime(Auth::user()->rights['graduateAdmin'])){
+                        if($user->limits['graduateLimit'] > 0){
+                            $user->limits->graduateLimit = $user->limits['graduateLimit'] - 1;
+                            $user->save();
+                        }
+                    }
                 }
                 $response['success'] = true;
             }
