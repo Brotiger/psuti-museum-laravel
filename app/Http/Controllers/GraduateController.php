@@ -23,10 +23,14 @@ class GraduateController extends Controller
                 ['id', $id],
             ];
 
-            if(!Auth::user()->rights['root']){
-                if(Auth::user()->rights['graduateAdmin'] == null || time() > strtotime(Auth::user()->rights['graduateAdmin'])){
-                    $graduateParams[] = ['addUserId', Auth::user()->id];
-                }
+            $admin = false;
+
+            if(Auth::user()->rights['root'] || (Auth::user()->rights['graduateAdmin'] != null && time() <= strtotime(Auth::user()->rights['graduateAdmin'].' 23:59:59'))){
+                $admin = true;
+            }
+
+            if(!$admin){
+                $graduateParams[] = ['addUserId', Auth::user()->id];
             }
 
             $graduate = Graduate::where($graduateParams);
@@ -44,10 +48,14 @@ class GraduateController extends Controller
     public function graduates_list(Request $request){
         $filter = [];
 
-        if(!Auth::user()->rights['root']){
-            if(Auth::user()->rights['graduateAdmin'] == null || time() > strtotime(Auth::user()->rights['graduateAdmin'])){
-                $filter[] = ['addUserId', Auth::user()->id];
-            }
+        $admin = false;
+
+        if(Auth::user()->rights['root'] || (Auth::user()->rights['graduateAdmin'] != null && time() <= strtotime(Auth::user()->rights['graduateAdmin'].' 23:59:59'))){
+            $admin = true;
+        }
+
+        if(!$admin){
+            $filter[] = ['addUserId', Auth::user()->id];
         }
 
         if($request->input("firstName") != null) $filter[] = ["firstName", "like", '%' . $request->input("firstName") . '%'];
@@ -141,13 +149,16 @@ class GraduateController extends Controller
 
         $user = User::where("id", Auth::user()->id)->get()->first();
 
-        //Если лимит превышен
-        if(!Auth::user()->rights['root']){
-            if(Auth::user()->rights['graduateAdmin'] == null || time() > strtotime(Auth::user()->rights['graduateAdmin'])){
-                if($user->limits['graduateLimit'] <= 0){
-                    $response['errors'][] = 'limit'; 
-                    return $response;
-                }
+        $admin = false;
+
+        if(Auth::user()->rights['root'] || (Auth::user()->rights['graduateAdmin'] != null && time() <= strtotime(Auth::user()->rights['graduateAdmin'].' 23:59:59'))){
+            $admin = true;
+        }
+
+        if(!$admin){
+            if($user->limits['graduateLimit'] <= 0){
+                $response['errors'][] = 'limit'; 
+                return $response;
             }
         }
 
@@ -168,12 +179,10 @@ class GraduateController extends Controller
             if($exception){
                 $response['success'] = false;
             }else{
-                if(!Auth::user()->rights['root']){
-                    if(Auth::user()->rights['graduateAdmin'] == null || time() > strtotime(Auth::user()->rights['graduateAdmin'])){
-                        if($user->limits['graduateLimit'] > 0){
-                            $user->limits->graduateLimit = $user->limits['graduateLimit'] - 1;
-                            $user->save();
-                        }
+                if(!$admin){
+                    if($user->limits['graduateLimit'] > 0){
+                        $user->limits->graduateLimit = $user->limits['graduateLimit'] - 1;
+                        $user->save();
                     }
                 }
                 $response['success'] = true;

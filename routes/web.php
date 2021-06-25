@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\GraduateController;
 use App\Http\Middleware\fileCompressionMiddleware;
@@ -53,3 +54,7 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/more_graduate/{id}', [Gra
 Route::middleware(['auth:sanctum', 'verified'])->get('/pages', [PageController::class, "pages_list"])->name('pages_list');
 Route::middleware(['auth:sanctum', 'verified'])->get('/pages/more/{id}', [PageController::class, "edit_page"])->name('edit_page');
 Route::middleware(['auth:sanctum', 'verified'])->post("/update_page", [PageController::class, "update_page"])->name('update_page');
+
+Route::middleware(['auth:sanctum', 'verified'])->get('/users', [UserController::class, "users_list"])->name('users_list');
+Route::middleware(['auth:sanctum', 'verified'])->get('/users/more/{id}', [UserController::class, "edit_user"])->name('edit_user');
+Route::middleware(['auth:sanctum', 'verified'])->post("/update_user", [UserController::class, "update_user"])->name('update_user');

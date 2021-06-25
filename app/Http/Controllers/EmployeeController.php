@@ -89,6 +89,8 @@ class EmployeeController extends Controller
         $units_search = Unit::orderBy('fullUnitName')->limit(15)->get();
         $events_search = Event::orderBy('name')->limit(15)->get();
 
+        $admin = false;
+
         $file_size = env('FILE_SIZE', 0);
         $photo_size = env('IMG_SIZE', 0);
 
@@ -116,10 +118,12 @@ class EmployeeController extends Controller
                 ['id', $id],
             ];
 
-            if(!Auth::user()->rights['root']){
-                if(Auth::user()->rights['empAdmin'] == null || time() > strtotime(Auth::user()->rights['empAdmin'])){
-                    $empParams[] = ['addUserId', Auth::user()->id];
-                }
+            if(Auth::user()->rights['root'] || (Auth::user()->rights['empAdmin'] != null && time() <= strtotime(Auth::user()->rights['empAdmin'].' 23:59:59'))){
+                $admin = true;
+            }
+
+            if(!$admin){
+                $empParams[] = ['addUserId', Auth::user()->id];
             }
 
             $employee = Employee::where($empParams);
@@ -143,10 +147,14 @@ class EmployeeController extends Controller
 
         $filter = [];
 
-        if(!Auth::user()->rights['root']){
-            if(Auth::user()->rights['empAdmin'] == null || time() > strtotime(Auth::user()->rights['empAdmin'])){
-                $filter[] = ['addUserId', Auth::user()->id];
-            }
+        $admin = false;
+
+        if(Auth::user()->rights['root'] || (Auth::user()->rights['empAdmin'] != null && time() <= strtotime(Auth::user()->rights['empAdmin'].' 23:59:59'))){
+            $admin = true;
+        }
+
+        if(!$admin){
+            $filter[] = ['addUserId', Auth::user()->id];
         }
 
         $next_query = [
@@ -216,14 +224,18 @@ class EmployeeController extends Controller
         $errors = [];
 
         $user = User::where("id", Auth::user()->id)->get()->first();
+
+        $admin = false;
+
+        if(Auth::user()->rights['root'] || (Auth::user()->rights['empAdmin'] != null && time() <= strtotime(Auth::user()->rights['empAdmin'].' 23:59:59'))){
+            $admin = true;
+        }
         
         //Если лимит превышен
-        if(!Auth::user()->rights['root']){
-            if(Auth::user()->rights['empAdmin'] == null || time() > strtotime(Auth::user()->rights['empAdmin'])){
-                if($user->limits['empLimit'] <= 0){
-                    $response['errors'][] = 'limit'; 
-                    return $response;
-                }
+        if(!$admin){
+            if($user->limits['empLimit'] <= 0){
+                $response['errors'][] = 'limit'; 
+                return $response;
             }
         }
 
@@ -616,12 +628,10 @@ class EmployeeController extends Controller
                 if($exception){
                     $response['success'] = false;
                 }else{
-                    if(!Auth::user()->rights['root']){
-                        if(Auth::user()->rights['empAdmin'] == null || time() > strtotime(Auth::user()->rights['empAdmin'])){
-                            if($user->limits->empLimit > 0){
-                                $user->limits->empLimit = $user->limits->empLimit - 1;
-                                $user->save();
-                            }
+                    if(!$admin){
+                        if($user->limits->empLimit > 0){
+                            $user->limits->empLimit = $user->limits->empLimit - 1;
+                            $user->save();
                         }
                     }
                     $response['success'] = true;
@@ -643,6 +653,8 @@ class EmployeeController extends Controller
 
         $errors = [];
 
+        $admin = false;
+
         $user = User::where("id", Auth::user()->id)->get()->first();
 
         $file_path = null;
@@ -661,10 +673,12 @@ class EmployeeController extends Controller
                 ['id', $request->input("id")],
             ];
 
-            if(!Auth::user()->rights['root']){
-                if(Auth::user()->rights['empAdmin'] == null || time() > strtotime(Auth::user()->rights['empAdmin'])){
-                    $empParams[] = ['addUserId', Auth::user()->id];
-                }
+            if(Auth::user()->rights['root'] || (Auth::user()->rights['empAdmin'] != null && time() <= strtotime(Auth::user()->rights['empAdmin'].' 23:59:59'))){
+                $admin = true;
+            }
+
+            if(!$admin){
+                $empParams[] = ['addUserId', Auth::user()->id];
             }
 
             if(!$request->input("id") ||  !Employee::where($empParams)->exists())
@@ -764,8 +778,19 @@ class EmployeeController extends Controller
                     $photoTmp = Photo::where('id', $photo);
 
                     if($photoTmp->exists()){
-                        if($photoTmp->first()->employee->addUserId != Auth::user()->id || !Auth::user()->rights['root'] || (Auth::user()->rights['empAdmin'] != null && time() <= strtotime(Auth::user()->rights['empAdmin']))){
-                            return; // в случае не санкционированного изменения просто прерывать процесс
+
+                        $noRight = true;
+
+                        if($photoTmp->first()->employee->addUserId == Auth::user()->id){
+                            $noRight = false; 
+                        }
+
+                        if($admin){
+                            $noRight = false;
+                        }
+
+                        if($noRight){
+                            return;
                         }
                     }
                 }
@@ -779,8 +804,19 @@ class EmployeeController extends Controller
                     $videoTmp = Video::where('id', $video);
 
                     if($videoTmp->exists()){
-                        if($videoTmp->first()->employee->addUserId != Auth::user()->id || !Auth::user()->rights['root'] || (Auth::user()->rights['empAdmin'] != null && time() <= strtotime(Auth::user()->rights['empAdmin']))){
-                            return; // в случае не санкционированного изменения просто прерывать процесс
+
+                        $noRight = true;
+
+                        if($videoTmp->first()->employee->addUserId == Auth::user()->id){
+                            $noRight = false;
+                        }
+
+                        if($admin){
+                            $noRight = false;
+                        }
+
+                        if($noRight){
+                            return;
                         }
                     }
                 }
@@ -794,8 +830,19 @@ class EmployeeController extends Controller
                     $autobiographyTmp = AutobiographyFile::where('id', $autobiography);
 
                     if($autobiographyTmp->exists()){
-                        if($autobiographyTmp->first()->employee->addUserId != Auth::user()->id || !Auth::user()->rights['root'] || (Auth::user()->rights['empAdmin'] != null && time() <= strtotime(Auth::user()->rights['empAdmin']))){
-                            return; // в случае не санкционированного изменения просто прерывать процесс
+
+                        $noRight = true;
+
+                        if($autobiographyTmp->first()->employee->addUserId == Auth::user()->id){
+                            $noRight = false;
+                        }
+
+                        if($admin){
+                            $noRight = false;
+                        }
+
+                        if($noRight){
+                            return;
                         }
                     }
                 }

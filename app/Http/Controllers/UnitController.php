@@ -72,10 +72,14 @@ class UnitController extends Controller
                 ['id', $id],
             ];
 
-            if(!Auth::user()->rights['root']){
-                if(Auth::user()->rights['unitAdmin'] == null || time() > strtotime(Auth::user()->rights['unitAdmin'])){
-                    $unitParams[] = ['addUserId', Auth::user()->id];
-                }
+            $admin = false;
+
+            if(Auth::user()->rights['root'] || (Auth::user()->rights['unitAdmin'] != null && time() <= strtotime(Auth::user()->rights['unitAdmin'].' 23:59:59'))){
+                $admin = true;
+            }
+
+            if(!$admin){
+                $unitParams[] = ['addUserId', Auth::user()->id];
             }
 
             $unit = Unit::where($unitParams);
@@ -95,10 +99,14 @@ class UnitController extends Controller
 
         $filter = [];
 
-        if(!Auth::user()->rights['root']){
-            if(Auth::user()->rights['unitAdmin'] == null || time() > strtotime(Auth::user()->rights['unitAdmin'])){
-                $filter[] = ['addUserId', Auth::user()->id];
-            }
+        $admin = false;
+
+        if(Auth::user()->rights['root'] || (Auth::user()->rights['unitAdmin'] != null && time() <= strtotime(Auth::user()->rights['unitAdmin'].' 23:59:59'))){
+            $admin = true;
+        }
+
+        if(!$admin){
+            $filter[] = ['addUserId', Auth::user()->id];
         }
 
         $next_query = [
@@ -186,13 +194,16 @@ class UnitController extends Controller
 
         $user = User::where("id", Auth::user()->id)->get()->first();
 
-        //Если лимит превышен
-        if(!Auth::user()->rights['root']){
-            if(Auth::user()->rights['unitAdmin'] == null || time() > strtotime(Auth::user()->rights['unitAdmin'])){
-                if($user->limits['unitLimit'] <= 0){
-                    $response['errors'][] = 'limit'; 
-                    return $response;
-                }
+        $admin = false;
+
+        if(Auth::user()->rights['root'] || (Auth::user()->rights['unitAdmin'] != null && time() <= strtotime(Auth::user()->rights['unitAdmin'].' 23:59:59'))){
+            $admin = true;
+        }
+
+        if(!$admin){
+            if($user->limits['unitLimit'] <= 0){
+                $response['errors'][] = 'limit'; 
+                return $response;
             }
         }
 
@@ -314,12 +325,10 @@ class UnitController extends Controller
             if($exception){
                 $response['success'] = false;
             }else{
-                if(!Auth::user()->rights['root']){
-                    if(Auth::user()->rights['unitAdmin'] == null || time() > strtotime(Auth::user()->rights['unitAdmin'])){
-                        if($user->limits['unitLimit'] > 0){
-                            $user->limits->unitLimit = $user->limits['unitLimit'] - 1;
-                            $user->save();
-                        }
+                if(!$admin){
+                    if($user->limits['unitLimit'] > 0){
+                        $user->limits->unitLimit = $user->limits['unitLimit'] - 1;
+                        $user->save();
                     }
                 }
                 $response['success'] = true;
@@ -354,10 +363,14 @@ class UnitController extends Controller
         if(isset($request)){
             $unitParams = [];
 
-            if(!Auth::user()->rights['root']){
-                if(Auth::user()->rights['unitAdmin'] == null || time() > strtotime(Auth::user()->rights['unitAdmin'])){
-                    $unitParams[] = ['addUserId', Auth::user()->id];
-                }
+            $admin = false;
+
+            if(Auth::user()->rights['root'] || (Auth::user()->rights['unitAdmin'] != null && time() <= strtotime(Auth::user()->rights['unitAdmin'].' 23:59:59'))){
+                $admin = true;
+            }
+
+            if(!$admin){
+                $unitParams[] = ['addUserId', Auth::user()->id];
             }
 
             if(!$request->input("id")){
@@ -431,8 +444,19 @@ class UnitController extends Controller
                     $photoTmp = UnitPhoto::where('id', $photo);
 
                     if($photoTmp->exists()){
-                        if($photoTmp->first()->unit->addUserId != Auth::user()->id || !Auth::user()->rights['root'] || (Auth::user()->rights['unitAdmin'] != null && time() <= strtotime(Auth::user()->rights['unitAdmin']))){
-                            return; // в случае не санкционированного изменения просто прерывать процесс
+
+                        $noRight = true;
+
+                        if($photoTmp->first()->unit->addUserId == Auth::user()->id){
+                            $noRight = false;
+                        }
+
+                        if($admin){
+                            $noRight = false;
+                        }
+
+                        if($noRight){
+                            return;
                         }
                     }
                 }
@@ -446,8 +470,19 @@ class UnitController extends Controller
                     $videoTmp = UnitVideo::where('id', $video);
 
                     if($videoTmp->exists()){
-                        if($videoTmp->first()->unit->addUserId != Auth::user()->id || !Auth::user()->rights['root'] || (Auth::user()->rights['unitAdmin'] != null && time() <= strtotime(Auth::user()->rights['unitAdmin']))){
-                            return; // в случае не санкционированного изменения просто прерывать процесс
+
+                        $noRight = true;
+
+                        if($videoTmp->first()->unit->addUserId == Auth::user()->id){
+                            $noRight = false;
+                        }
+
+                        if($admin){
+                            $noRight = false;
+                        }
+
+                        if($noRight){
+                            return;
                         }
                     }
                 }

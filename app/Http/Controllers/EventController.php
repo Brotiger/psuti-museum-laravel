@@ -74,10 +74,14 @@ class EventController extends Controller
                 ['id', $id],
             ];
 
-            if(!Auth::user()->rights['root']){
-                if(Auth::user()->rights['eventAdmin'] == null || time() > strtotime(Auth::user()->rights['eventAdmin'])){
-                    $eventParams[] = ['addUserId', Auth::user()->id];
-                }
+            $admin = false;
+
+            if(Auth::user()->rights['root'] || (Auth::user()->rights['eventAdmin'] != null && time() <= strtotime(Auth::user()->rights['eventAdmin'].' 23:59:59'))){
+                $admin = true;
+            }
+
+            if(!$admin){
+                $eventParams[] = ['addUserId', Auth::user()->id];
             }
 
             $event = Event::where($eventParams);
@@ -126,10 +130,14 @@ class EventController extends Controller
 
         $filter = [];
 
-        if(!Auth::user()->rights['root']){
-            if(Auth::user()->rights['eventAdmin'] == null || time() > strtotime(Auth::user()->rights['eventAdmin'])){
-                $filter[] = ['addUserId', Auth::user()->id];
-            }
+        $admin = false;
+
+        if(Auth::user()->rights['root'] || (Auth::user()->rights['eventAdmin'] != null && time() <= strtotime(Auth::user()->rights['eventAdmin'].' 23:59:59'))){
+            $admin = true;
+        }
+
+        if(!$admin){
+            $filter[] = ['addUserId', Auth::user()->id];
         }
 
         $next_query = [
@@ -170,13 +178,16 @@ class EventController extends Controller
 
         $user = User::where("id", Auth::user()->id)->get()->first();
 
-        //Если лимит превышен
-        if(!Auth::user()->rights['root']){
-            if(Auth::user()->rights['eventAdmin'] == null || time() > strtotime(Auth::user()->rights['eventAdmin'])){
-                if($user->limits['eventLimit'] <= 0){
-                    $response['errors'][] = 'limit'; 
-                    return $response;
-                }
+        $admin = false;
+
+        if(Auth::user()->rights['root'] || (Auth::user()->rights['eventAdmin'] != null && time() <= strtotime(Auth::user()->rights['eventAdmin'].' 23:59:59'))){
+            $admin = true;
+        }
+
+        if(!$admin){
+            if($user->limits['eventLimit'] <= 0){
+                $response['errors'][] = 'limit'; 
+                return $response;
             }
         }
 
@@ -294,12 +305,10 @@ class EventController extends Controller
             if($exception){
                 $response['success'] = false;
             }else{
-                if(!Auth::user()->rights['root']){
-                    if(Auth::user()->rights['eventAdmin'] == null || time() > strtotime(Auth::user()->rights['eventAdmin'])){
-                        if($user->limits['eventLimit'] > 0){
-                            $user->limits->eventLimit = $user->limits['eventLimit'] - 1;
-                            $user->save();
-                        }
+                if(!$admin){
+                    if($user->limits['eventLimit'] > 0){
+                        $user->limits->eventLimit = $user->limits['eventLimit'] - 1;
+                        $user->save();
                     }
                 }
                 $response['success'] = true;
@@ -334,10 +343,14 @@ class EventController extends Controller
         if(isset($request)){
             $eventParams = [];
 
-            if(!Auth::user()->rights['root']){
-                if(Auth::user()->rights['eventAdmin'] == null || time() > strtotime(Auth::user()->rights['eventAdmin'])){
-                    $eventParams[] = ['addUserId', Auth::user()->id];
-                }
+            $admin = false;
+
+            if(Auth::user()->rights['root'] || (Auth::user()->rights['eventAdmin'] != null && time() <= strtotime(Auth::user()->rights['eventAdmin'].' 23:59:59'))){
+                $admin = true;
+            }
+
+            if(!$admin){
+                $eventParams[] = ['addUserId', Auth::user()->id];
             }
 
             if(!$request->input("id")){
@@ -408,8 +421,19 @@ class EventController extends Controller
                     $photoTmp = EventPhoto::where('id', $photo);
 
                     if($photoTmp->exists()){
-                        if($photoTmp->first()->event->addUserId != Auth::user()->id || !Auth::user()->rights['root'] || (Auth::user()->rights['eventAdmin'] != null && time() <= strtotime(Auth::user()->rights['eventAdmin']))){
-                            return; // в случае не санкционированного изменения просто прерывать процесс
+
+                        $noRight = true;
+
+                        if($photoTmp->first()->event->addUserId == Auth::user()->id){
+                            $noRight = false;
+                        }
+
+                        if($admin){
+                            $noRight = false;
+                        }
+
+                        if($noRight){
+                            return;
                         }
                     }
                 }
@@ -423,8 +447,19 @@ class EventController extends Controller
                     $videoTmp = EventVideo::where('id', $video);
 
                     if($videoTmp->exists()){
-                        if($videoTmp->first()->event->addUserId != Auth::user()->id || !Auth::user()->rights['root'] || (Auth::user()->rights['eventAdmin'] != null && time() <= strtotime(Auth::user()->rights['eventAdmin']))){
-                            return; // в случае не санкционированного изменения просто прерывать процесс
+
+                        $noRight = true;
+
+                        if($videoTmp->first()->event->addUserId == Auth::user()->id){
+                            $noRight = false;
+                        }
+
+                        if($admin){
+                            $noRight = false;
+                        }
+
+                        if($noRight){
+                            return;
                         }
                     }
                 }

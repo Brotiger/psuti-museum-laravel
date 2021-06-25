@@ -1,4 +1,4 @@
-.moreGraduateForm, .addEmpForm, .editEmpForm, .addUnitForm, .editUnitForm, .addGraduateForm, .editPageForm{
+.moreGraduateForm, .addEmpForm, .editEmpForm, .addUnitForm, .editUnitForm, .addGraduateForm, .editPageForm, .editUserForm{
     margin: 0 auto;
     width: 650px;
 }
@@ -51,7 +51,7 @@ img{
     display: none;
     position: absolute;
     background-color: #f9f9f9;
-    min-width: 160px;
+    width: 210px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
   }

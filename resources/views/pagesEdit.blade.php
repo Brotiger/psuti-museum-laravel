@@ -20,29 +20,37 @@
                 <hr>
                 <div id="page" class="tabcontent">
                     <h2 class="h2 my-4">Записи</h2>
+                    @if(isset($page->posts) && !$access)
+                        <p>Записей пока что нету</p>
+                        <hr class="mt-3">
+                    @endif
                     <ul id="postList">
                         @foreach($page->posts as $index => $post)
                         <li class="my-4 postBlockOld" id="postBlock_{{ $index }}" record-id='{{ $post->id }}'>
                             <div class="form-group mb-3 row">
                                 <label for="title_{{ $index }}" class="col-3 col-form-label">Заголовок</label>
                                     <div class="col-sm-9">
-                                        <input class="form-control title" type="text" id="title_{{ $index }}" placeholder="Заголовок" autocomplete="off" value="{{ $post->title }}">
+                                        <input class="form-control title" type="text" id="title_{{ $index }}" placeholder="Заголовок" autocomplete="off" value="{{ $post->title }}" @php if(!$access) echo "disabled" @endphp>
                                     </div>
                                 </div>
                                 <div class="form-group mb-3 row">
                                     <label for="description_{{ $index }}" class="col-3 col-form-label">Описание*</label>
                                     <div class="col-sm-9">
-                                        <textarea class="form-control border border-secondary rounded-0 description" id="description_{{ $index }}" rows="14" placeholder="Описание">{{ !empty($post)? $post->description : '' }}</textarea>
+                                        <textarea class="form-control border border-secondary rounded-0 description" id="description_{{ $index }}" rows="14" placeholder="Описание" @php if(!$access) echo "disabled" @endphp>{{ !empty($post)? $post->description : '' }}</textarea>
                                     </div>
+                                    @if($access)
                                     <span class="offset-3 col-9"><small>Для добавления ссылки в описании, поставьте курсор в то место где хотите создать ссылку и выбирите один из вариантов предложенных ниже</small></span>
                                     <div class="col-sm-9 offset-3 mt-2">
                                         <input type="button" class="btn btn-primary" value="Сотрудники" addEmpHref>
                                         <input type="button" class="btn btn-primary mx-1" value="Подразделения" addUnitHref>
                                         <input type="button" class="btn btn-primary" value="События" addEventHref>
                                     </div>
+                                    @endif
                                 </div>
                                 <div class="mb-3 row">
-                                    <label for="post_{{ $index }}" class="col-sm-3 col-form-label">Фото</label>
+                                    @if(!$access && $post->photo)
+                                        <label for="post_{{ $index }}" class="col-sm-3 col-form-label">Фото</label>
+                                    @endif
                                     <div class="col-sm-9">
                                     @if($post->photo)
                                         <div>
@@ -50,26 +58,37 @@
                                             <button class="btn btn-danger delete" type="button" deletePostPhoto="{{ $post->id }}">Удалить</button>
                                         </div>
                                     @endif
-                                    <div class="row mb-1">
-                                        <span><small>Максимальный вес файла: {{ $photo_size }} КБ. Допустимые расширения: {{ $photo_ext }}</small></span>
-                                    </div>
-                                    <div class="row">
-                                        <div>
-                                            <input type="file" name="photo" id="post_{{ $index }}" class="post" accept="{{  '.'.str_replace(', ', ', .', $photo_ext) }}">
+                                    @if($access)
+                                        <div class="row mb-1">
+                                            <span><small>Максимальный вес файла: {{ $photo_size }} КБ. Допустимые расширения: {{ $photo_ext }}</small></span>
                                         </div>
-                                    </div>
+                                        <div class="row">
+                                            <div>
+                                                <input type="file" name="photo" id="post_{{ $index }}" class="post" accept="{{  '.'.str_replace(', ', ', .', $photo_ext) }}">
+                                            </div>
+                                        </div>
+                                    @endif
                                     </div>
                                 </div>
-                            <button class="btn btn-danger delete" type="button" post-id="{{ $post->id }}">Удалить</button>
+                            @if($access)
+                                <button class="btn btn-danger delete" type="button" post-id="{{ $post->id }}">Удалить</button>
+                            @endif
                             <hr class="mt-4">
                         </li>
                         @endforeach
                     </ul>
-                    <p class="mb-4">Для добавления записи нажмите кнопку <strong>добавить</strong></p>
-                    <button class="btn btn-primary" type="button" id="addPost">Добавить</button>
+                    @if($access)
+                        <p class="mb-4">Для добавления записи нажмите кнопку <strong>добавить</strong></p>
+                        <button class="btn btn-primary" type="button" id="addPost">Добавить</button>
+                        <hr class="mt-4">
+                    @endif
                 </div>
                 <div id="photoArchive" class="tabcontent">
                         <h2 class="h2 my-4">Фотографии</h2>
+                        @if(isset($page->photos) && !$access)
+                            <p>Фотографий пока что нету</p>
+                            <hr class="mt-3">
+                        @endif
                         <ul id="photoList">
                             @foreach($page->photos as $index => $photo)
                             <li class="my-4 photoBlockOld" id="photoBlock_{{ $index }}">
@@ -93,16 +112,25 @@
                                         <input class="form-control photoDate" type="date" id="photoDate_{{ $index }}" placeholder="Дата фотографии" disabled value="{{ $photo->photoDate }}">
                                     </div>
                                 </div>
-                                <button class="btn btn-danger delete" type="button" photo-id="{{ $photo->id }}">Удалить</button>
+                                @if($access)
+                                    <button class="btn btn-danger delete" type="button" photo-id="{{ $photo->id }}">Удалить</button>
+                                @endif
                                 <hr class="mt-4">
                             </li>
                             @endforeach
                         </ul>
-                        <p class="mb-4">Для добавления фотографии нажмите кнопку <strong>добавить</strong></p>
-                        <button class="btn btn-primary" type="button" id="addPhoto">Добавить</button>
+                        @if($access)
+                            <p class="mb-4">Для добавления фотографии нажмите кнопку <strong>добавить</strong></p>
+                            <button class="btn btn-primary" type="button" id="addPhoto">Добавить</button>
+                            <hr class="mt-4">
+                        @endif
                 </div>
                 <div id="videoArchive" class="tabcontent">
                     <h2 class="h2 my-4">Видео</h2>
+                    @if(isset($page->videos) && !$access)
+                        <p>Видео пока что нету</p>
+                        <hr class="mt-3">
+                    @endif
                     <ul id="videoList">
                         @foreach($page->videos as $index => $video)
                         <li class="my-4 videoBlockOld" id="videoBlock_{{ $index }}">
@@ -126,13 +154,18 @@
                                     <input class="form-control videoDate" type="date" id="videoDate_{{ $index }}" placeholder="Дата видео" disabled value="{{ $video->videoDate }}">
                                 </div>
                             </div>
-                            <button class="btn btn-danger delete" type="button" video-id="{{ $video->id }}">Удалить</button>
+                            @if($access)
+                                <button class="btn btn-danger delete" type="button" video-id="{{ $video->id }}">Удалить</button>
+                            @endif
                             <hr class="mt-4">
                         </li>
                         @endforeach
                     </ul>
-                    <p class="mb-4">Для добавления видео нажмите кнопку <strong>добавить</strong></p>
-                    <button class="btn btn-primary" type="button" id="addVideo">Добавить</button>
+                    @if($access)
+                        <p class="mb-4">Для добавления видео нажмите кнопку <strong>добавить</strong></p>
+                        <button class="btn btn-primary" type="button" id="addVideo">Добавить</button>
+                        <hr class="mt-4">
+                    @endif
                 </div>
                 <div id="history" class="tabcontent">
                     <h2 class="h2 my-4">История</h2>
@@ -149,7 +182,7 @@
                                     <textarea class="form-control border border-secondary rounded-0 comment" id="comment_{{ $index }}" rows="7" disabled placeholder="История">{{ $history->comment }}</textarea>
                                 </div>
                             </div>
-                            @if($user->id == $history->addUserId)
+                            @if($user->id == $history->addUserId || $admin)
                                 <button class="btn btn-danger delete" type="button" history-id="{{ $history->id }}">Удалить</button>
                             @endif
                             <hr class="mt-4">
@@ -158,9 +191,9 @@
                     </ul>
                     <p class="mb-4">Для добавления истории нажмите кнопку <strong>добавить</strong></p>
                     <button class="btn btn-primary" type="button" id="addHistory">Добавить</button>
+                    <hr class="mt-4">
                 </div>
             </div>
-            <hr>
             <div class="form-group mt-4">
                 <button class="btn btn-primary mb-4" type="submit">Сохранить</button>
             </div>
@@ -429,10 +462,11 @@
                     formData.append("post_" + post[post.length - 1]['id'], $(this).find(".post")[0].files[0]);
                 }
             });
-
+            
             formData.append("post", JSON.stringify(post));
             //Конец добавления данных о фото
 
+            @if($access)
             //Начадл добавления данных о фото
             $(".postBlockOld").each(function(i, ell){
                 postUpdate.push({
@@ -445,7 +479,8 @@
                     formData.append("post_" + postUpdate[postUpdate.length - 1]['id'], $(this).find(".post")[0].files[0]);
                 }
             });
-
+            @endif
+            
             formData.append("postUpdate", JSON.stringify(postUpdate));
             //Конец добавления данных о фото
 

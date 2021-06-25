@@ -18,7 +18,8 @@ class CreateUnitEmployeesTable extends Migration
             $table->bigInteger("unit_id")->unsigned();
             $table->foreign("unit_id")
             ->references("id")
-            ->on("units");
+            ->on("units")
+            ->onDelete('cascade');
             $table->bigInteger("employee_id")->unsigned();
             $table->foreign("employee_id")
             ->references("id")

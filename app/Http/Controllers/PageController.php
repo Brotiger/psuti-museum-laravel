@@ -45,6 +45,8 @@ class PageController extends Controller
     public function edit_page($id = null){
         $site = env('DB_SITE', 'pguty');
 
+        $access = false;
+
         $employees_search = Employee::orderBy('lastName')->limit(15)->get();
         $units_search = Unit::orderBy('fullUnitName')->limit(15)->get();
         $events_search = Event::orderBy('name')->limit(15)->get();
@@ -71,7 +73,14 @@ class PageController extends Controller
             $page = Page::where([
                 ['id', $id],
             ]);
+
             if($page->exists()){
+
+                if($page->first()->addUserId == Auth::user()->id || Auth::user()->rights['root'] || (Auth::user()->rights['pageAdmin'] != null && time() <= strtotime(Auth::user()->rights['pageAdmin'].' 23:59:59'))){
+                    $access = true;
+                }
+
+                $params['access'] = $access;
                 $params['id'] = $id;
                 $params['page'] = $page->get()->first();
             }else{
@@ -90,6 +99,7 @@ class PageController extends Controller
         ];
 
         $access = false;
+        $admin = false;
 
         $errors = [];
 
@@ -116,12 +126,18 @@ class PageController extends Controller
                 return redirect(route('pages_list'));
             }
 
-            if($page->first()->addUserId == Auth::user()->id || Auth::user()->rights['root'] || (Auth::user()->rights['empAdmin'] != null && time() <= strtotime(Auth::user()->rights['empAdmin']))){
+            if($page->first()->addUserId == Auth::user()->id || Auth::user()->rights['root'] || (Auth::user()->rights['pageAdmin'] != null && time() <= strtotime(Auth::user()->rights['pageAdmin'].' 23:59:59'))){
                 $access = true;
+            }
+
+            if(Auth::user()->rights['root'] || (Auth::user()->rights['pageAdmin'] != null && time() <= strtotime(Auth::user()->rights['pageAdmin'].' 23:59:59'))){
+                $admin = true; //для проверки права удаления коментрариев
             }
             
             if($request->input("post")){
                 $posts = json_decode($request->input("post"), true);
+
+                if($posts && !$access) return;
                 
                 foreach($posts as $post){
                     if(Str::of($post["id"])->trim()->isEmpty()) continue;
@@ -153,6 +169,8 @@ class PageController extends Controller
 
             if($request->input("photo")){
                 $photos = json_decode($request->input("photo"), true);
+
+                if($photos && !$access) return;
                 
                 $photoCountCheck = 0;
                 foreach($photos as $photo){
@@ -184,6 +202,8 @@ class PageController extends Controller
 
             if($request->input("video")){
                 $videos = json_decode($request->input("video"), true);
+
+                if($videos && !$access) return;
                 
                 $videoCountCheck = 0;
                 foreach($videos as $video){
@@ -197,6 +217,8 @@ class PageController extends Controller
 
             if($request->input("postUpdate")){
                 $posts = json_decode($request->input("postUpdate"), true);
+
+                if($posts && !$access) return;
                 
                 foreach($posts as $post){
                     if(Str::of($post["id"])->trim()->isEmpty()) continue;
@@ -226,7 +248,6 @@ class PageController extends Controller
                 }
             }
 
-            #Проверяем информацию о научных званиях
             if($request->input("history")){
                 $histories = json_decode($request->input("history"), true);
                 
@@ -240,6 +261,13 @@ class PageController extends Controller
             if(empty($errors)){
                 $exception = DB::transaction(function() use ($request){
                     $editPage = Page::where("id", $request->input("id"));
+
+                    $access = false;
+
+                    if($editPage->first()->addUserId == Auth::user()->id || Auth::user()->rights['root'] || (Auth::user()->rights['pageAdmin'] != null && time() <= strtotime(Auth::user()->rights['pageAdmin'].' 23:59:59'))){
+                        $access = true;
+                    }
+
                     $newPostInfo = [];
 
                     if($request->input("post")){
@@ -277,6 +305,8 @@ class PageController extends Controller
                     if($request->input("deletePostPhoto")){
                         $deletePostPhoto = explode(',',$request->input("deletePostPhoto"));
 
+                        if($deletePostPhoto && !$access) return;
+
                         foreach($deletePostPhoto as $index => $post){
                             $oldPost = Post::where('id', $post);
                             if($oldPost->exists()){
@@ -292,6 +322,8 @@ class PageController extends Controller
 
                     if($request->input("postUpdate")){
                         $posts = json_decode($request->input("postUpdate"), true);
+
+                        if($posts && !$access) return;
 
                         foreach($posts as $post){
                             $newPostInfo = [];
@@ -314,6 +346,8 @@ class PageController extends Controller
                     if($request->input("postToDelete")){
                         $postToDelete = explode(',',$request->input("postToDelete"));
 
+                        if($postToDelete && !$access) return;
+
                         foreach($postToDelete as $index => $post){
                             $oldPost = Post::where('id', $post);
                             if($oldPost->exists()){
@@ -330,8 +364,23 @@ class PageController extends Controller
 
                         foreach($historyToDelete as $index => $history){
                             $oldHistory = History::where('id', $history);
-                            if(Auth::user()->id != $oldHistory->first()->addUserId){
-                                continue; //при попытке удалить не свою запись
+                            
+                            $noRights = true;
+
+                            if(Auth::user()->id == $oldHistory->first()->addUserId){
+                                $noRights = false;
+                            }
+
+                            if(Auth::user()->rights['root']){
+                                $noRights = false;
+                            }
+
+                            if(Auth::user()->rights['pageAdmin'] != null && time() <= strtotime(Auth::user()->rights['pageAdmin'].' 23:59:59')){
+                                $noRights = false;
+                            }
+
+                            if($noRights){
+                                continue;
                             }
 
                             if($oldHistory->exists()){
@@ -381,6 +430,8 @@ class PageController extends Controller
                     if($request->input("photoToDelete")){
                         $photoToDelete = explode(',',$request->input("photoToDelete"));
 
+                        if($photoToDelete && !$access) return;
+
                         #Сохраняем каждую запись о образовании
                         foreach($photoToDelete as $index => $photo){
                             $oldPhoto = ArchivePhoto::where('id', $photo);
@@ -393,6 +444,8 @@ class PageController extends Controller
 
                     if($request->input("videoToDelete")){
                         $videoToDelete = explode(',',$request->input("videoToDelete"));
+
+                        if($videoToDelete && !$access) return;
 
                         #Сохраняем каждую запись о образовании
                         foreach($videoToDelete as $index => $video){
@@ -409,20 +462,25 @@ class PageController extends Controller
             $response['posts'] = view('ajax.pagePosts', [
                 'page' => $page,
                 'photo_size' => $photo_size,
-            'photo_ext' => $photo_ext? implode(', ', $photo_ext) : 'любые',
+                'access' => $access,
+                'photo_ext' => $photo_ext? implode(', ', $photo_ext) : 'любые',
             ])->render();
 
             $response['photos'] = view('ajax.pagePhotos', [
+                'access' => $access,
                 'page' => $page
             ])->render();
 
             $response['videos'] = view('ajax.pageVideos', [
+                'access' => $access,
                 'page' => $page
             ])->render();
 
             $response['history'] = view('ajax.history', [
+                'access' => $access,
                 'page' => $page,
-                'user' => $user
+                'user' => $user,
+                'admin' => $admin
             ])->render();
 
             #Проверка успешно ли прошла транзакция
