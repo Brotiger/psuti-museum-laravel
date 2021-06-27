@@ -43,10 +43,13 @@ class Employee extends Model
 
     public function units(){
         return $this->hasMany('App\Models\UnitEmployee');
-        //return $this->belongsToMany('App\Models\Unit');
     }
 
     public function videos(){
         return $this->hasMany('App\Models\Video');
+    }
+
+    public function user(){
+        return $this->hasOne('App\Models\User', 'id', 'addUserId');
     }
 }

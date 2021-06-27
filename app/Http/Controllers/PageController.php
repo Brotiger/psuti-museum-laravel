@@ -56,7 +56,9 @@ class PageController extends Controller
         $photo_ext = env('IMG_EXT', null);
         if($photo_ext != null) $photo_ext = explode(',', $photo_ext);
 
-        $user = User::where("id", Auth::user()->id)->get()->first();
+        $me = User::where("id", Auth::user()->id)->get()->first();
+
+        $users_search = User::where([['id', '<>', Auth::user()->id]])->orderBy('name')->limit(15)->get();
 
         $params = [
             'id' => $id,
@@ -66,10 +68,17 @@ class PageController extends Controller
             'units_search' => $units_search,
             'events_search' => $events_search,
             'site' => $site,
-            'user' => $user,
+            'me' => $me,
+            'users_search' => $users_search
         ];
 
         if(isset($id)){
+            $admin = false;
+
+            if(Auth::user()->rights['root'] || (Auth::user()->rights['pageAdmin'] != null && time() <= strtotime(Auth::user()->rights['pageAdmin'].' 23:59:59'))){
+                $admin = true;
+            }
+
             $page = Page::where([
                 ['id', $id],
             ]);
@@ -83,6 +92,9 @@ class PageController extends Controller
                 $params['access'] = $access;
                 $params['id'] = $id;
                 $params['page'] = $page->get()->first();
+                $params['addUser'] = $page->get()->first()->addUserId;
+                $params['user'] = $page->first()->user;
+                $params['admin'] = $admin;
             }else{
                 return redirect(route('pages_list'));
             }
@@ -132,6 +144,13 @@ class PageController extends Controller
 
             if(Auth::user()->rights['root'] || (Auth::user()->rights['pageAdmin'] != null && time() <= strtotime(Auth::user()->rights['pageAdmin'].' 23:59:59'))){
                 $admin = true; //для проверки права удаления коментрариев
+            }
+
+            if($request->input('addUserId')){
+                if(!$admin) return;
+                if($request->input('addUserId') != 'no'){
+                    if($request->input('addUserId') == Auth::user()->id) return;
+                }
             }
             
             if($request->input("post")){
@@ -262,6 +281,8 @@ class PageController extends Controller
                 $exception = DB::transaction(function() use ($request){
                     $editPage = Page::where("id", $request->input("id"));
 
+                    $newPageInfo = [];
+
                     $access = false;
 
                     if($editPage->first()->addUserId == Auth::user()->id || Auth::user()->rights['root'] || (Auth::user()->rights['pageAdmin'] != null && time() <= strtotime(Auth::user()->rights['pageAdmin'].' 23:59:59'))){
@@ -269,6 +290,16 @@ class PageController extends Controller
                     }
 
                     $newPostInfo = [];
+
+                    if($request->input('addUserId')){
+                        if($request->input('addUserId') == 'no'){
+                            $newPageInfo["addUserId"] = null;
+                        }else{
+                            $newPageInfo["addUserId"] = $request->input('addUserId');
+                        }
+                    }
+
+                    $editPage->update($newPageInfo);
 
                     if($request->input("post")){
                         $posts = json_decode($request->input("post"), true);

@@ -24,4 +24,8 @@ class Page extends Model
     public function history(){
         return $this->hasMany('App\Models\History');
     }
+
+    public function user(){
+        return $this->hasOne('App\Models\User', 'id', 'addUserId');
+    }
 }

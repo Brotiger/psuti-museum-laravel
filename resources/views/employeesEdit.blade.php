@@ -7,6 +7,9 @@
         @include('components.addHref')
         <form enctype="multipart/form-data" id="addEmpForm" class="editEmpForm mt-5">
             <h1 class="h1">Редактирование сотрудника</h1>
+            @if($admin)
+                @include('components.changeOwner')
+            @endif
             <div class="my-4">
                 <h2 class="h2 mb-4">Персональная информация</h2>
                 <div class="mb-3">
@@ -391,6 +394,9 @@
         </form>
     </div>
 </x-app-layout>
+@if($admin)
+    @include('components.js.changeOwner')
+@endif
 @include('components.js.addHref')
 <script src="/js/hideMessage.js"></script>
 <script>

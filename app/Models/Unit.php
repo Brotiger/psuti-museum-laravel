@@ -16,4 +16,8 @@ class Unit extends Model
     public function videos(){
         return $this->hasMany('App\Models\UnitVideo');
     }
+
+    public function user(){
+        return $this->hasOne('App\Models\User', 'id', 'addUserId');
+    }
 }

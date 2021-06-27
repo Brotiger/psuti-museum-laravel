@@ -58,3 +58,4 @@ Route::middleware(['auth:sanctum', 'verified'])->post("/update_page", [PageContr
 Route::middleware(['auth:sanctum', 'verified'])->get('/users', [UserController::class, "users_list"])->name('users_list');
 Route::middleware(['auth:sanctum', 'verified'])->get('/users/more/{id}', [UserController::class, "edit_user"])->name('edit_user');
 Route::middleware(['auth:sanctum', 'verified'])->post("/update_user", [UserController::class, "update_user"])->name('update_user');
+Route::middleware(['auth:sanctum', 'verified'])->get('/search_user', [UserController::class, "search_user"])->name('search_user');

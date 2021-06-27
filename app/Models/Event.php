@@ -16,4 +16,8 @@ class Event extends Model
     public function videos(){
         return $this->hasMany('App\Models\EventVideo');
     }
+
+    public function user(){
+        return $this->hasOne('App\Models\User', 'id', 'addUserId');
+    }
 }

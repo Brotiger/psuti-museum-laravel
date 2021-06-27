@@ -56,6 +56,8 @@ class UnitController extends Controller
         $file_ext = env('FILE_EXT', null);
         if($file_ext != null) $file_ext = explode(',', $file_ext);
 
+        $users_search = User::where([['id', '<>', Auth::user()->id]])->orderBy('name')->limit(15)->get();
+
         $params = [
             'id' => $id,
             'file_size' => $file_size,
@@ -65,8 +67,10 @@ class UnitController extends Controller
             'employees_search' => $employees_search,
             'units_search' => $units_search,
             'events_search' => $events_search,
+            'users_search' => $users_search,
             'site' => $site,
         ];
+
         if(isset($id)){
             $unitParams = [
                 ['id', $id],
@@ -87,6 +91,9 @@ class UnitController extends Controller
             if($unit->exists()){
                 $params['id'] = $id;
                 $params['unit'] = $unit->get()->first();
+                $params['user'] = $unit->first()->user;
+                $params['addUser'] = $unit->get()->first()->addUserId;
+                $params['admin'] = $admin;
             }else{
                 return redirect(route('units_list'));
             }
@@ -361,7 +368,9 @@ class UnitController extends Controller
         $user = User::where("id", Auth::user()->id)->get()->first();
 
         if(isset($request)){
-            $unitParams = [];
+            $unitParams = [
+                'id' => $request->input("id")
+            ];
 
             $admin = false;
 
@@ -369,16 +378,15 @@ class UnitController extends Controller
                 $admin = true;
             }
 
-            if(!$admin){
-                $unitParams[] = ['addUserId', Auth::user()->id];
+            if($request->input('addUserId')){
+                if(!$admin) return;
+                if($request->input('addUserId') != 'no'){
+                    if($request->input('addUserId') == Auth::user()->id) return;
+                }
             }
 
-            if(!$request->input("id")){
-                $unitParams[] = [
-                    'id' => $request->input("id")
-                ];
-            }else{
-                return redirect(route('units_list'));  
+            if(!$admin){
+                $unitParams[] = ['addUserId', Auth::user()->id];
             }
 
             if(!$request->input("id") ||  !Unit::where($unitParams)->exists())  
@@ -500,6 +508,14 @@ class UnitController extends Controller
                     if(Str::of($request->input("description"))->trim()->isNotEmpty()) $newUnitInfo['description'] = trim($request->input("description"));
                     if(Str::of($request->input("creationDate"))->trim()->isNotEmpty()) $newUnitInfo['creationDate'] = trim($request->input("creationDate"));
                     if(Str::of($request->input("terminationDate"))->trim()->isNotEmpty()) $newUnitInfo['terminationDate'] = trim($request->input("terminationDate"));
+
+                    if($request->input('addUserId')){
+                        if($request->input('addUserId') == 'no'){
+                            $newUnitInfo["addUserId"] = null;
+                        }else{
+                            $newUnitInfo["addUserId"] = $request->input('addUserId');
+                        }
+                    }
 
                     if($request->input("photo")){
                         $photos = json_decode($request->input("photo"), true);

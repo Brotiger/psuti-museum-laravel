@@ -7,6 +7,9 @@
         @include('components.addHref')
         <form enctype="multipart/form-data" id="editUnitForm" class="editUnitForm mt-5">
             <h1 class="h1">Редактирование подразделения</h1>
+            @if($admin)
+                @include('components.changeOwner')
+            @endif
             <div class="my-4">
                 <h2 class="h2 mb-4">Общая информация</h2>
                 <div class="mb-3">
@@ -134,6 +137,9 @@
 </x-app-layout>
 @include('components.js.addHref')
 <script src="/js/hideMessage.js"></script>
+@if($admin)
+    @include('components.js.changeOwner')
+@endif
 <script>
     $(document).ready(function(){
         var photoCount = {{ !empty($unit)? $unit->photos->count(): 0}};

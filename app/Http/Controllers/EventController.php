@@ -57,6 +57,8 @@ class EventController extends Controller
         $file_ext = env('FILE_EXT', null);
         if($file_ext != null) $file_ext = explode(',', $file_ext);
 
+        $users_search = User::where([['id', '<>', Auth::user()->id]])->orderBy('name')->limit(15)->get();
+
         $params = [
             'id' => $id,
             'file_size' => $file_size,
@@ -67,6 +69,7 @@ class EventController extends Controller
             'units_search' => $units_search,
             'events_search' => $events_search,
             'site' => $site,
+            'users_search' => $users_search
         ];
 
         if(isset($id)){
@@ -89,6 +92,9 @@ class EventController extends Controller
             if($event->exists()){
                 $params['id'] = $id;
                 $params['event'] = $event->get()->first();
+                $params['addUser'] = $event->get()->first()->addUserId;
+                $params['admin'] = $admin;
+                $params['user'] = $event->first()->user;
             }else{
                 return redirect(route('events_list'));
             }
@@ -341,7 +347,9 @@ class EventController extends Controller
         $user = User::where("id", Auth::user()->id)->get()->first();
 
         if(isset($request)){
-            $eventParams = [];
+            $eventParams = [
+                'id' => $request->input("id")
+            ];
 
             $admin = false;
 
@@ -349,16 +357,15 @@ class EventController extends Controller
                 $admin = true;
             }
 
-            if(!$admin){
-                $eventParams[] = ['addUserId', Auth::user()->id];
+            if($request->input('addUserId')){
+                if(!$admin) return;
+                if($request->input('addUserId') != 'no'){
+                    if($request->input('addUserId') == Auth::user()->id) return;
+                }
             }
 
-            if(!$request->input("id")){
-                $eventParams[] = [
-                    'id' => $request->input("id")
-                ];
-            }else{
-                return redirect(route('events_list'));  
+            if(!$admin){
+                $eventParams[] = ['addUserId', Auth::user()->id];
             }
 
             if(!$request->input("id") ||  !Event::where($eventParams)->exists())  
@@ -474,6 +481,14 @@ class EventController extends Controller
                     if(Str::of($request->input("name"))->trim()->isNotEmpty()) $newEventInfo['name'] = trim($request->input("name"));;
                     if(Str::of($request->input("description"))->trim()->isNotEmpty()) $newEventInfo['description'] = trim($request->input("description"));
                     if(Str::of($request->input("date"))->trim()->isNotEmpty()) $newEventInfo['date'] = trim($request->input("date"));
+
+                    if($request->input('addUserId')){
+                        if($request->input('addUserId') == 'no'){
+                            $newEventInfo["addUserId"] = null;
+                        }else{
+                            $newEventInfo["addUserId"] = $request->input('addUserId');
+                        }
+                    }
 
                     if($request->input("photo")){
                         $photos = json_decode($request->input("photo"), true);

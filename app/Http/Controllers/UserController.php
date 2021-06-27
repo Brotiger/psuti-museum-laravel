@@ -11,6 +11,26 @@ use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
+    public function search_user(Request $request){
+        $filter = [
+            ['id', '<>', Auth::user()->id]
+        ];
+
+        if($request->input("name") != null){
+            $filter[] = ["name", "like", '%' . $request->input("name") . '%'];
+        }
+
+        if($request->input("email") != null){
+            $filter[] = ["email", "like", '%' . $request->input("email") . '%'];
+        }
+
+        $users_search = User::where($filter)->orderBy('name')->limit(15)->get();
+
+        return view('ajax.searchUser', [
+            'users_search' => $users_search
+        ])->render();
+    }
+
     public function users_list(Request $request){
 
         $filter = [
@@ -90,7 +110,7 @@ class UserController extends Controller
 
         $params = [
             'root' => $user->rights['root'],
-            'access' => $access
+            'access' => $access,
         ];
 
         if(isset($id)){

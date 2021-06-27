@@ -10,6 +10,9 @@
         @include('components.addHref')
         <form enctype="multipart/form-data" id="editPageForm" class="editPageForm mt-5">
             <h1 class="h1">Редактирование страницы - {{ $page->title }}</h1>
+            @if($admin)
+                @include('components.changeOwner')
+            @endif
             <div class="my-4">
                 <div class="tab">
                     <button class="tablinks" onclick="openCity(event, 'page')" type="button" id="defaultTab">Страница</button>
@@ -182,7 +185,7 @@
                                     <textarea class="form-control border border-secondary rounded-0 comment" id="comment_{{ $index }}" rows="7" disabled placeholder="История">{{ $history->comment }}</textarea>
                                 </div>
                             </div>
-                            @if($user->id == $history->addUserId || $admin)
+                            @if($me->id == $history->addUserId || $admin)
                                 <button class="btn btn-danger delete" type="button" history-id="{{ $history->id }}">Удалить</button>
                             @endif
                             <hr class="mt-4">
@@ -202,6 +205,9 @@
 </x-app-layout>
 @include('components.js.addHref')
 <script src="/js/hideMessage.js"></script>
+@if($admin)
+    @include('components.js.changeOwner')
+@endif
 <script>
     function openCity(evt, cityName) {
         // Declare all variables
@@ -279,7 +285,7 @@
         //История от первого лица
         $("#addHistory").on("click", function(){
             $("#historyList").append('<li class="my-4 historyBlock" style="display: none" id="historyBlock_'+ historyCount +'">'
-                        @if(!isset($user->name))
+                        @if(!isset($me->name))
                         + '<div class="row mb-1">'
                             + '<span class="offset-3 col-9"><small>Укажите имя в настройках профиля</small></span>'
                         + '</div>'
@@ -287,7 +293,7 @@
                     + '<div class="form-group mb-3 row">'
                         + '<label for="commentAuth_'+ historyCount +'" class="col-3 col-form-label">Автор</label>'
                         + '<div class="col-sm-9 mb-3">'
-                            + '<input class="form-control commentAuth" type="text" id="commentAuth_'+ historyCount +'" placeholder="Автор" autocomplete="off" disabled value="{{ isset($user->name) ? $user->name : $user->email }}">'
+                            + '<input class="form-control commentAuth" type="text" id="commentAuth_'+ historyCount +'" placeholder="Автор" autocomplete="off" disabled value="{{ isset($me->name) ? $me->name : $me->email }}">'
                         + '</div>'
                         + '<label for="comment_'+ historyCount +'" class="col-3 col-form-label">История*</label>'
                         + '<div class="col-sm-9">'
@@ -496,6 +502,10 @@
             for(let pair of formData.entries()) {
                 sizeCount += (typeof pair[1] === "string") ? pair[1].length : pair[1].size;
             }
+
+            $('[data-field]').each(function(i, ell){
+                formData.append(ell.id, $(this).val());
+            });
             
             if(sizeCount < @php echo env("MAX_BODY_SIZE", 0) @endphp * 1024){
                 let res = $.ajax({

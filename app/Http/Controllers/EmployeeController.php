@@ -101,6 +101,9 @@ class EmployeeController extends Controller
         if($file_ext != null) $file_ext = explode(',', $file_ext);
 
         $units = Unit::orderBy('fullUnitName')->get();
+
+        $users_search = User::where([['id', '<>', Auth::user()->id]])->orderBy('name')->limit(15)->get();
+
         $params = [
             'units' => $units,
             'id' => $id,
@@ -112,7 +115,9 @@ class EmployeeController extends Controller
             'units_search' => $units_search,
             'events_search' => $events_search,
             'site' => $site,
+            'users_search' => $users_search
         ];
+
         if(isset($id)){
             $empParams = [
                 ['id', $id],
@@ -127,14 +132,19 @@ class EmployeeController extends Controller
             }
 
             $employee = Employee::where($empParams);
-            $personals = $employee->first()->personals->first();
-            if($personals){
-                $personals = $personals->file;
-            }
+            
             if($employee->exists()){
+                $personals = $employee->first()->personals->first();
+                if($personals){
+                    $personals = $personals->file;
+                }
+                
                 $params['id'] = $id;
                 $params['employee'] = $employee->get()->first();
+                $params['addUser'] = $employee->get()->first()->addUserId;
                 $params['personals'] = $personals;
+                $params['user'] = $employee->first()->user;
+                $params['admin'] = $admin;
             }else{
                 return redirect(route('employees_list'));
             }
@@ -684,7 +694,14 @@ class EmployeeController extends Controller
             if(!$request->input("id") ||  !Employee::where($empParams)->exists())
             {
                 //Если пользователь пытается отредактировать не свою запись
-                return redirect(route('employees_list'));
+                return;
+            }
+
+            if($request->input('addUserId')){
+                if(!$admin) return;
+                if($request->input('addUserId') != 'no'){
+                    if($request->input('addUserId') == Auth::user()->id) return;
+                }
             }
 
             if($request->file("image")){
@@ -963,6 +980,14 @@ class EmployeeController extends Controller
                 $exception = DB::transaction(function() use ($request){
                     $editEmployee = Employee::where("id", $request->input("id"));
                     $newEmpInfo = [];
+
+                    if($request->input('addUserId')){
+                        if($request->input('addUserId') == 'no'){
+                            $newEmpInfo["addUserId"] = null;
+                        }else{
+                            $newEmpInfo["addUserId"] = $request->input('addUserId');
+                        }
+                    }
                     
                     #Дописать удаление фотографии в случае не удачно транзакции
                     if($request->input("deleteImg")){
