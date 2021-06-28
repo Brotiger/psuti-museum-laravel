@@ -11,6 +11,8 @@
 
     $('.deleteRecordYes').on('click', function(){
         $('tr[row-record-id="'+ recordId +'"]').hide();
+        let formData = new FormData();
+        formData.append('id', recordId);
 
         let res = $.ajax({
             type: "POST",
@@ -18,7 +20,7 @@
             cache: false,
             contentType: false,
             processData: false,
-            data: ['id', recordId],
+            data: formData,
             dataType: 'json',
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

@@ -99,6 +99,36 @@ return [
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],
+
+        'employee' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/employee.log'),
+            'level' => 'info',
+        ],
+
+        'event' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/event.log'),
+            'level' => 'info',
+        ],
+
+        'unit' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/unit.log'),
+            'level' => 'info',
+        ],
+
+        'graduate' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/graduate.log'),
+            'level' => 'info',
+        ],
+
+        'user' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/user.log'),
+            'level' => 'info',
+        ],
     ],
 
 ];

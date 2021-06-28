@@ -1,5 +1,9 @@
 <x-app-layout>
-    <div class="container">
+    @if($admin)
+        @include('components.deleteRecord')
+        <input type="hidden" value="{{ route('delete_event') }}" id="routeToDelete">
+    @endif
+    <div class="container-fluid px-4">
         <div class="alert alert-danger" style="display: none" role="alert" id="error-message">Ошибка сервера, свяжитесь с системным администратором.</div>
         <div class="mt-5 dbList">
             <h1 class="h1">Список добавленных вами событий</h1>
@@ -10,7 +14,8 @@
                 <thead>
                     <tr>
                         <th>Название события</th>
-                        <th colspan="4">Дата события</th>
+                        <th colspan="2">Дата события</th>
+                        <th colspan="2">Действия</th>
                     </tr>
                     <tr>
                         <form method="GET" action="{{ route('events_list') }}">
@@ -23,16 +28,22 @@
                 @if($events->count() > 0)
                 <tbody id="eventsTable">
                     @foreach($events as $event)
-                        <tr class="recordRow" event-id="{{ $event->id }}">
+                        <tr class="recordRow" row-record-id="{{ $event->id }}">
                             <td>{{ $event->name }}</td>
                             <td colspan="2">{{ !empty($event->date)? date('m-d-Y', strtotime($event->date)) : '' }}</td>
+                            <td width="40">
+                                @if($admin)
+                                    <button class="form-control btn btn-danger" deleteRecord record-id="{{ $event->id }}"><i class="bi bi-x"></i></button>
+                                @endif
+                            </td>
+                            <td width="40"><button class="form-control btn btn-primary" viewRecord record-id="{{ $event->id }}"><i class="bi bi-pencil-square"></i></button></td>
                         </tr>
                     @endforeach
                 </tbody>
                 @endif
             </table>
             @if($events->count() == 0)
-            <p>
+            <p class="text-center">
                 Ничего не найдено
             </p>
             @endif
@@ -40,11 +51,14 @@
         {{ $events->appends($next_query)->links() }}
     </div>
 </x-app-layout>
+@if($admin)
+    @include('components.js.deleteRecord')
+@endif
 <script>
     $(document).ready(function(){
-        $('#eventsTable').delegate('.recordRow', 'click', function(){
-            let unitId = $(this).attr('event-id')
-            window.location.href = '/events/{{ $site }}/more/' + unitId;
+        $('#eventsTable').delegate('[viewRecord]', 'click', function(){
+            let recordId = $(this).attr('record-id')
+            window.location.href = '/events/{{ $site }}/more/' + recordId;
         });
 
         $('#reset').on('click', function(){

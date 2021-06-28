@@ -3,7 +3,7 @@
         @include('components.deleteRecord')
         <input type="hidden" value="{{ route('delete_employee') }}" id="routeToDelete">
     @endif
-    <div class="container">
+    <div class="container-fluid px-4">
         <div class="alert alert-danger" style="display: none" role="alert" id="error-message">Ошибка сервера, свяжитесь с системным администратором.</div>
         <div class="mt-5 dbList">
             <h1 class="h1">Список добавленных вами сотрудников</h1>
@@ -52,7 +52,7 @@
                 @endif
             </table>
             @if($employees->count() == 0)
-            <p>
+            <p class="text-center">
                 Ничего не найдено
             </p>
             @endif
@@ -66,8 +66,8 @@
 <script>
     $(document).ready(function(){
         $('#employeesTable').delegate('[viewRecord]', 'click', function(event){
-            let empId = $(this).attr('record-id')
-            window.location.href = '/employees/{{ $site }}/more/' + empId;
+            let recordId = $(this).attr('record-id')
+            window.location.href = '/employees/{{ $site }}/more/' + recordId;
         });
         $('#reset').on('click', function(){
             $("[filter-field]").each(function(){

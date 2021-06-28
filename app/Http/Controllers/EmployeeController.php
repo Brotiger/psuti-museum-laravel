@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 
 use PhotoService;
 
@@ -164,26 +165,37 @@ class EmployeeController extends Controller
             return;
         }
 
-        $employee = Employee::where(['id', $request->input('id')]);
-        
-        if($employee->exists()){
-            Storage::disk('public')->delete($employee->first()->img);
+        $employee = Employee::where('id', $request->input('id'))->first();
 
-            foreach($employees->photos as $photo){
+        if($employee->exists()){
+            Storage::disk('public')->delete($employee->img);
+
+            foreach($employee->photos as $photo){
                 Storage::disk('public')->delete($photo->photo);
             }
 
-            foreach($employees->autobiographys as $autobiography){
+            foreach($employee->autobiographys as $autobiography){
                 Storage::disk('public')->delete($autobiography->file);
             }
 
-            foreach($employees->personals as $personal){
+            foreach($employee->personals as $personal){
                 Storage::disk('public')->delete($personal->file);
             }
 
             $employee->delete();
+
+            Log::channel('employee')->info('Delete employee', [
+                'who_id' => Auth::user()->id,
+                'who_email' => Auth::user()->email,
+                'who_name' => isset(Auth::user()->name)? Auth::user()->name : '',
+                'employee_id' => $employee->id,
+                'employee_first_name' => $employee->firstName,
+                'employee_last_name' => $employee->lastName,
+                'employee_second_name' => isset($employee->secondName)? $employee->secondName : '',
+            ]);
         }
         
+        return true;
     }
 
     public function employees_list(Request $request){

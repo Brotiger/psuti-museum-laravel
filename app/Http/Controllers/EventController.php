@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Employee;
 use App\Models\Unit;
+use Illuminate\Support\Facades\Log;
 
 use PhotoService;
 
@@ -170,7 +171,8 @@ class EventController extends Controller
         return view('eventsList', [
             'events' => $events,
             'next_query' => $next_query,
-            'site' => env('DB_SITE', 'pguty')
+            'site' => env('DB_SITE', 'pguty'),
+            'admin' => $admin
         ]);
     }
 
@@ -325,6 +327,39 @@ class EventController extends Controller
             }
             return $response;
         }
+    }
+
+    public function delete_event(Request $request){
+        $admin = false;
+
+        if(Auth::user()->rights['root'] || (Auth::user()->rights['empAdmin'] != null && time() <= strtotime(Auth::user()->rights['empAdmin'].' 23:59:59'))){
+            $admin = true;
+        }
+
+        if(!$admin){
+            return;
+        }
+
+        $event = Event::where('id', $request->input('id'))->first();
+
+        if($event->exists()){
+
+            foreach($event->photos as $photo){
+                Storage::disk('public')->delete($photo->photo);
+            }
+
+            $event->delete();
+
+            Log::channel('event')->info('Delete event', [
+                'who_id' => Auth::user()->id,
+                'who_email' => Auth::user()->email,
+                'who_name' => isset(Auth::user()->name)? Auth::user()->name : '',
+                'event_id' => $event->id,
+                'event_name' => $event->name,
+            ]);
+        }
+        
+        return true;
     }
 
     public function update_event(Request $request){

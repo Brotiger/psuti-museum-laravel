@@ -46,6 +46,7 @@ Route::middleware(['auth:sanctum', 'verified'])->post('/add_event', [EventContro
 Route::middleware(['auth:sanctum', 'verified'])->get('/events/'. env('DB_SITE', 'pguty') .'/more/{id}', [EventController::class, "edit_event"])->name('edit_event');
 Route::middleware(['auth:sanctum', 'verified'])->post("/update_event", [EventController::class, "update_event"])->name('update_event');
 Route::middleware(['auth:sanctum', 'verified'])->get('/search_event', [EventController::class, "search_event"])->name('search_event');
+Route::middleware(['auth:sanctum', 'verified'])->post('/delete_event', [EventController::class, "delete_event"])->name('delete_event');
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/graduate', [GraduateController::class, "index"])->name('graduate');
 Route::middleware(['auth:sanctum', 'verified'])->get('/graduates/'. env('DB_SITE', 'pguty'), [GraduateController::class, "graduates_list"])->name('graduates_list');

@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="container">
+    <div class="container-fluid px-4">
         <div class="alert alert-danger" style="display: none" role="alert" id="error-message">Ошибка сервера, свяжитесь с системным администратором.</div>
         <div class="mt-5 dbList">
             <h1 class="h1">Список страниц</h1>
@@ -29,7 +29,7 @@
                 @endif
             </table>
             @if($pages->count() == 0)
-            <p>
+            <p class="text-center">
                 Ничего не найдено
             </p>
             @endif
