@@ -1,11 +1,12 @@
 <x-app-layout>
+    @if($admin)
+        @include('components.deleteRecord')
+        <input type="hidden" value="{{ route('delete_employee') }}" id="routeToDelete">
+    @endif
     <div class="container">
         <div class="alert alert-danger" style="display: none" role="alert" id="error-message">Ошибка сервера, свяжитесь с системным администратором.</div>
         <div class="mt-5 dbList">
             <h1 class="h1">Список добавленных вами сотрудников</h1>
-            <div class="row mb-1">
-                <span class="col-9"><small>Для того что бы отредактировать информацию о сотруднике нажмите на него</small></span>
-            </div>
             <table class="table table-hover">
                 <thead>
                     <tr>
@@ -14,7 +15,8 @@
                         <th>Отчество</th>
                         <th>Дата рождения</th>
                         <th>Дата приема</th>
-                        <th colspan="2">Дата увольнения</th>
+                        <th>Дата увольнения</th>
+                        <th colspan="2">Действия</th>
                     </tr>
                     <tr>
                         <form method="GET" action="{{route('employees_list')}}">
@@ -31,13 +33,19 @@
                 @if($employees->count() > 0)
                 <tbody id="employeesTable">
                     @foreach($employees as $employee)
-                        <tr class="recordRow" employee-id="{{ $employee->id }}">
+                        <tr class="recordRow" row-record-id="{{ $employee->id }}">
                             <td>{{ $employee->lastName }}</td>
                             <td>{{ $employee->firstName }}</td>
                             <td>{{ $employee->secondName }}</td>
                             <td>{{ !empty($employee->dateBirthday)? date('m-d-Y', strtotime($employee->dateBirthday)) : '' }}</td>
                             <td>{{ !empty($employee->hired)? date('m-d-Y', strtotime($employee->hired)) : '' }}</td>
-                            <td colspan="2">{{ !empty($employee->fired)? date('m-d-Y', strtotime($employee->fired)) : '' }}</td>
+                            <td>{{ !empty($employee->fired)? date('m-d-Y', strtotime($employee->fired)) : '' }}</td>
+                            <td width="40">
+                                @if($admin)
+                                    <button class="form-control btn btn-danger" deleteRecord record-id="{{ $employee->id }}"><i class="bi bi-x"></i></button>
+                                @endif
+                            </td>
+                            <td width="40"><button class="form-control btn btn-primary" viewRecord record-id="{{ $employee->id }}"><i class="bi bi-pencil-square"></i></button></td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -52,10 +60,13 @@
         {{ $employees->appends($next_query)->links() }}
     </div>
 </x-app-layout>
+@if($admin)
+    @include('components.js.deleteRecord')
+@endif
 <script>
     $(document).ready(function(){
-        $('#employeesTable').delegate('.recordRow', 'click', function(){
-            let empId = $(this).attr('employee-id')
+        $('#employeesTable').delegate('[viewRecord]', 'click', function(event){
+            let empId = $(this).attr('record-id')
             window.location.href = '/employees/{{ $site }}/more/' + empId;
         });
         $('#reset').on('click', function(){

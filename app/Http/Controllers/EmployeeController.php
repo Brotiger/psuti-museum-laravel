@@ -153,6 +153,39 @@ class EmployeeController extends Controller
         return view('employeesEdit', $params);
     }
 
+    public function delete_employee(Request $request){
+        $admin = false;
+
+        if(Auth::user()->rights['root'] || (Auth::user()->rights['empAdmin'] != null && time() <= strtotime(Auth::user()->rights['empAdmin'].' 23:59:59'))){
+            $admin = true;
+        }
+
+        if(!$admin){
+            return;
+        }
+
+        $employee = Employee::where(['id', $request->input('id')]);
+        
+        if($employee->exists()){
+            Storage::disk('public')->delete($employee->first()->img);
+
+            foreach($employees->photos as $photo){
+                Storage::disk('public')->delete($photo->photo);
+            }
+
+            foreach($employees->autobiographys as $autobiography){
+                Storage::disk('public')->delete($autobiography->file);
+            }
+
+            foreach($employees->personals as $personal){
+                Storage::disk('public')->delete($personal->file);
+            }
+
+            $employee->delete();
+        }
+        
+    }
+
     public function employees_list(Request $request){
 
         $filter = [];
@@ -221,7 +254,8 @@ class EmployeeController extends Controller
         return view('employeesList', [
             'employees' => $employees,
             'next_query' => $next_query,
-            'site' => env('DB_SITE', 'pguty')
+            'site' => env('DB_SITE', 'pguty'),
+            'admin' => $admin
         ]);
     }
 

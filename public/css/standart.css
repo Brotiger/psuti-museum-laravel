@@ -110,3 +110,7 @@ img{
   .table-btn{
     max-width: 42px;
   }
+
+  td{
+    vertical-align: middle;
+  }

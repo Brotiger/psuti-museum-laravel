@@ -33,6 +33,7 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/employee', [EmployeeContr
 Route::middleware(['auth:sanctum', 'verified'])->get('/employees/'. env('DB_SITE' , 'pguty') .'/more/{id}', [EmployeeController::class, "edit_employee"])->name('edit_employee');
 Route::middleware(['auth:sanctum', 'verified'])->get('/employees/'. env('DB_SITE', 'pguty'), [EmployeeController::class, "employees_list"])->name('employees_list');
 Route::middleware(['auth:sanctum', 'verified'])->get('/search_employee', [EmployeeController::class, "search_employee"])->name('search_employee');
+Route::middleware(['auth:sanctum', 'verified'])->post('/delete_employee', [EmployeeController::class, "delete_employee"])->name('delete_employee');
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/unit', [UnitController::class, 'index'])->name('unit');
 Route::middleware(['auth:sanctum', 'verified'])->get('/units/'. env('DB_SITE', 'pguty') .'/more/{id}', [UnitController::class, "edit_unit"])->name('edit_unit');
