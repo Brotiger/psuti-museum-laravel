@@ -33,7 +33,7 @@
                             <td colspan="2">{{ !empty($event->date)? date('m-d-Y', strtotime($event->date)) : '' }}</td>
                             <td width="40">
                                 @if($admin)
-                                    <button class="form-control btn btn-danger" deleteRecord record-id="{{ $event->id }}"><i class="bi bi-x"></i></button>
+                                    <button class="form-control btn btn-danger" deleteRecord record-id="{{ $event->id }}"><i class="bi bi-trash-fill"></i></button>
                                 @endif
                             </td>
                             <td width="40"><button class="form-control btn btn-primary" viewRecord record-id="{{ $event->id }}"><i class="bi bi-pencil-square"></i></button></td>

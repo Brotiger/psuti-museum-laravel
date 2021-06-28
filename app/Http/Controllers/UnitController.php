@@ -14,6 +14,8 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 use PhotoService;
 
@@ -160,7 +162,8 @@ class UnitController extends Controller
         return view('unitsList', [
             'units' => $units,
             'next_query' => $next_query,
-            'site' => env('DB_SITE', 'pguty')
+            'site' => env('DB_SITE', 'pguty'),
+            'admin' => $admin
         ]);
     }
 
@@ -346,6 +349,39 @@ class UnitController extends Controller
             }
             return $response;
         }
+    }
+
+    public function delete_unit(Request $request){
+        $admin = false;
+
+        if(Auth::user()->rights['root'] || (Auth::user()->rights['unitAdmin'] != null && time() <= strtotime(Auth::user()->rights['unitAdmin'].' 23:59:59'))){
+            $admin = true;
+        }
+
+        if(!$admin){
+            return;
+        }
+
+        $unit = Unit::where('id', $request->input('id'))->first();
+
+        if($unit->exists()){
+
+            foreach($unit->photos as $photo){
+                Storage::disk('public')->delete($photo->photo);
+            }
+
+            $unit->delete();
+
+            Log::channel('unit')->info('Delete unit', [
+                'who_id' => Auth::user()->id,
+                'who_email' => Auth::user()->email,
+                'who_name' => isset(Auth::user()->name)? Auth::user()->name : '',
+                'unit_id' => $unit->id,
+                'unit_name' => $unit->fullUnitName,
+            ]);
+        }
+        
+        return true;
     }
 
     public function update_unit(Request $request){

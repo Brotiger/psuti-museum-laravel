@@ -8,6 +8,7 @@ use App\Models\UserLimit;
 use App\Models\UserRight;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -38,9 +39,14 @@ class UserController extends Controller
         ];
 
         $access = false;
+        $root = false;
 
         if(Auth::user()->rights['root'] || (Auth::user()->rights['unitAdmin'] != null && time() <= strtotime(Auth::user()->rights['unitAdmin'].' 23:59:59')) || (Auth::user()->rights['empAdmin'] != null && time() <= strtotime(Auth::user()->rights['empAdmin'].' 23:59:59')) || (Auth::user()->rights['eventAdmin'] != null && time() <= strtotime(Auth::user()->rights['eventAdmin'].' 23:59:59'))){
             $access = true;
+        }
+
+        if(Auth::user()->rights['root']){
+            $root = true;
         }
 
         $user = Auth::user()->rights['root'];
@@ -67,8 +73,47 @@ class UserController extends Controller
             'user' => $user,
             'users' => $users,
             'next_query' => $next_query,
-            'access' => $access
+            'access' => $access,
+            'root' => $root
         ]);
+    }
+
+    public function delete_user(Request $request){
+        $root = false;
+
+        if(Auth::user()->rights['root']){
+            $root = true;
+        }
+
+        if(!$root){
+            return;
+        }
+
+        $user = User::where('id', $request->input('id'))->first();
+
+        if($user->exists()){
+
+            if($user->rights['root']){
+                return;
+            }
+    
+            if($user->id == Auth::user()->id){
+                return;
+            }
+
+            $user->delete();
+
+            Log::channel('user')->info('Delete user', [
+                'who_id' => Auth::user()->id,
+                'who_email' => Auth::user()->email,
+                'who_name' => isset(Auth::user()->name)? Auth::user()->name : '',
+                'user_id' => $user->id,
+                'unit_email' => $user->email,
+                'unit_name' => $user->name,
+            ]);
+        }
+        
+        return true;
     }
 
     public function edit_user($id = null){
@@ -149,14 +194,14 @@ class UserController extends Controller
                     'id' => $request->input("id")
                 ];
             }else{
-                return redirect(route('users_list'));  
+                return;  
             }
 
             $editUser = User::where($userParams);
 
             if(!$editUser->exists())
             {
-                return redirect(route('users_list'));
+                return;
             }
 
             if(Auth::user()->id == $request->input("id")){

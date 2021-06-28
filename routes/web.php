@@ -39,6 +39,7 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/unit', [UnitController::c
 Route::middleware(['auth:sanctum', 'verified'])->get('/units/'. env('DB_SITE', 'pguty') .'/more/{id}', [UnitController::class, "edit_unit"])->name('edit_unit');
 Route::middleware(['auth:sanctum', 'verified'])->get('/units/'. env('DB_SITE', 'pguty'), [UnitController::class, "units_list"])->name('units_list');
 Route::middleware(['auth:sanctum', 'verified'])->get('/search_unit', [UnitController::class, "search_unit"])->name('search_unit');
+Route::middleware(['auth:sanctum', 'verified'])->post('/delete_unit', [UnitController::class, "delete_unit"])->name('delete_unit');
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/event', [EventController::class, 'index'])->name('event');
 Route::middleware(['auth:sanctum', 'verified'])->get('/events/'. env('DB_SITE', 'pguty'), [EventController::class, 'events_list'])->name('events_list');
@@ -51,7 +52,8 @@ Route::middleware(['auth:sanctum', 'verified'])->post('/delete_event', [EventCon
 Route::middleware(['auth:sanctum', 'verified'])->get('/graduate', [GraduateController::class, "index"])->name('graduate');
 Route::middleware(['auth:sanctum', 'verified'])->get('/graduates/'. env('DB_SITE', 'pguty'), [GraduateController::class, "graduates_list"])->name('graduates_list');
 Route::middleware(['auth:sanctum', 'verified'])->post("/add_graduate", [GraduateController::class, "add_graduate"])->name('add_graduate');
-Route::middleware(['auth:sanctum', 'verified'])->get('/more_graduate/{id}', [GraduateController::class, "more_graduate"])->name('more_graduate');
+Route::middleware(['auth:sanctum', 'verified'])->get('/graduates/'.env('DB_SITE', 'pguty').'/more/{id}', [GraduateController::class, "more_graduate"])->name('more_graduate');
+Route::middleware(['auth:sanctum', 'verified'])->post('/delete_graduate', [GraduateController::class, "delete_graduate"])->name('delete_graduate');
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/pages', [PageController::class, "pages_list"])->name('pages_list');
 Route::middleware(['auth:sanctum', 'verified'])->get('/pages/more/{id}', [PageController::class, "edit_page"])->name('edit_page');
@@ -61,3 +63,4 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/users', [UserController::
 Route::middleware(['auth:sanctum', 'verified'])->get('/users/more/{id}', [UserController::class, "edit_user"])->name('edit_user');
 Route::middleware(['auth:sanctum', 'verified'])->post("/update_user", [UserController::class, "update_user"])->name('update_user');
 Route::middleware(['auth:sanctum', 'verified'])->get('/search_user', [UserController::class, "search_user"])->name('search_user');
+Route::middleware(['auth:sanctum', 'verified'])->post('/delete_user', [UserController::class, "delete_user"])->name('delete_user');

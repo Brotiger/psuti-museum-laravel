@@ -1,4 +1,8 @@
 <x-app-layout>
+    @if($admin)
+        @include('components.deleteRecord')
+        <input type="hidden" value="{{ route('delete_unit') }}" id="routeToDelete">
+    @endif
     <div class="container-fluid px-4">
         <div class="alert alert-danger" style="display: none" role="alert" id="error-message">Ошибка сервера, свяжитесь с системным администратором.</div>
         <div class="mt-5 dbList">
@@ -13,7 +17,8 @@
                         <th>Сокращенное название подразделения</th>
                         <th>Тип подразделения</th>
                         <th>Дата создания</th>
-                        <th colspan="2">Дата прекращения</th>
+                        <th>Дата прекращения</th>
+                        <th colspan="2">Действия</th>
                     </tr>
                     <tr>
                         <form method="GET" action="{{route('units_list')}}">
@@ -29,12 +34,18 @@
                 @if($units->count() > 0)
                 <tbody id="unitsTable">
                     @foreach($units as $unit)
-                        <tr class="recordRow" unit-id="{{ $unit->id }}">
+                        <tr class="recordRow" row-record-id="{{ $unit->id }}">
                             <td>{{ $unit->fullUnitName }}</td>
                             <td>{{ $unit->shortUnitName }}</td>
                             <td>{{ $unit->typeUnit }}</td>
                             <td>{{ !empty($unit->creationDate)? date('m-d-Y', strtotime($unit->creationDate)) : '' }}</td>
-                            <td colspan="2">{{ !empty($unit->terminationDate)? date('m-d-Y', strtotime($unit->terminationDate)) : '' }}</td>
+                            <td>{{ !empty($unit->terminationDate)? date('m-d-Y', strtotime($unit->terminationDate)) : '' }}</td>
+                            <td width="40">
+                                @if($admin)
+                                    <button class="form-control btn btn-danger" deleteRecord record-id="{{ $unit->id }}"><i class="bi bi-trash-fill"></i></button>
+                                @endif
+                            </td>
+                            <td width="40"><button class="form-control btn btn-primary" viewRecord record-id="{{ $unit->id }}"><i class="bi bi-pencil-square"></i></button></td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -49,11 +60,14 @@
         {{ $units->appends($next_query)->links() }}
     </div>
 </x-app-layout>
+@if($admin)
+    @include('components.js.deleteRecord')
+@endif
 <script>
     $(document).ready(function(){
-        $('#unitsTable').delegate('.recordRow', 'click', function(){
-            let unitId = $(this).attr('unit-id')
-            window.location.href = '/units/{{ $site }}/more/' + unitId;
+        $('#unitsTable').delegate('[viewRecord]', 'click', function(){
+            let recordId = $(this).attr('record-id')
+            window.location.href = '/units/{{ $site }}/more/' + recordId;
         });
 
         $('#reset').on('click', function(){

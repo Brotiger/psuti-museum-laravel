@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\GraduateCount;
 use App\Models\Graduate;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 
 class GraduateController extends Controller
 {
@@ -128,8 +129,40 @@ class GraduateController extends Controller
         return view('graduatesList', [
             'graduates' => $graduates,
             'next_query' => $next_query,
-            'site' => env('DB_SITE', 'pguty')
+            'site' => env('DB_SITE', 'pguty'),
+            'admin' => $admin
         ]);
+    }
+
+    public function delete_graduate(Request $request){
+        $admin = false;
+
+        if(Auth::user()->rights['root'] || (Auth::user()->rights['eventAdmin'] != null && time() <= strtotime(Auth::user()->rights['eventAdmin'].' 23:59:59'))){
+            $admin = true;
+        }
+
+        if(!$admin){
+            return;
+        }
+
+        $graduate = Graduate::where('id', $request->input('id'))->first();
+
+        if($graduate->exists()){
+
+            $graduate->delete();
+
+            Log::channel('graduate')->info('Delete graduate', [
+                'who_id' => Auth::user()->id,
+                'who_email' => Auth::user()->email,
+                'who_name' => isset(Auth::user()->name)? Auth::user()->name : '',
+                'graduate_id' => $graduate->id,
+                'graduate_first_name' => isset($graduate->firstName)? $graduate->firstName : '',
+                'graduate_last_name' => isset($graduate->lastName)? $graduate->lastName : '',
+                'graduate_second_name' => isset($graduate->secondName)? $graduate->secondName : '',
+            ]);
+        }
+        
+        return true;
     }
 
     public function index(){

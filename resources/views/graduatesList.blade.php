@@ -1,4 +1,8 @@
 <x-app-layout>
+    @if($admin)
+        @include('components.deleteRecord')
+        <input type="hidden" value="{{ route('delete_graduate') }}" id="routeToDelete">
+    @endif
     <div class="container-fluid px-4">
         <div class="alert alert-danger" style="display: none" role="alert" id="error-message">Ошибка сервера, свяжитесь с системным администратором.</div>
         <div class="mt-5 dbList">
@@ -15,7 +19,8 @@
                         <th>Регистрационный номер</th>
                         <th>Дата рождения</th>
                         <th>Год поступления</th>
-                        <th colspan="2">Год окончания</th>
+                        <th>Год окончания</th>
+                        <th colspan="2">Действия</th>
                     </tr>
                     <tr>
                         <form method="GET" action="{{route('graduates_list')}}">
@@ -33,14 +38,20 @@
                 @if($graduates->count() > 0)
                 <tbody id="graduatesTable">
                     @foreach($graduates as $graduate)
-                        <tr class="recordRow" graduate-id="{{ $graduate->id }}">
+                        <tr class="recordRow" row-record-id="{{ $graduate->id }}">
                             <td>{{ $graduate->lastName }}</td>
                             <td>{{ $graduate->firstName }}</td>
                             <td>{{ $graduate->secondName }}</td>
                             <td>{{ $graduate->registrationNumber }}</td>
                             <td>{{ !empty($graduate->dateBirthday)? date('m-d-Y', strtotime($graduate->dateBirthday)) : '' }}</td>
                             <td>{{ $graduate->enteredYear }}</td>
-                            <td colspan=2>{{ $graduate->exitYear }}</td>
+                            <td>{{ $graduate->exitYear }}</td>
+                            <td width="40">
+                                @if($admin)
+                                    <button class="form-control btn btn-danger" deleteRecord record-id="{{ $graduate->id }}"><i class="bi bi-trash-fill"></i></button>
+                                @endif
+                            </td>
+                            <td width="40"><button class="form-control btn btn-primary" viewRecord record-id="{{ $graduate->id }}"><i class="bi bi-pencil-square"></i></button></td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -55,11 +66,14 @@
         {{ $graduates->appends($next_query)->links() }}
     </div>
 </x-app-layout>
+@if($admin)
+    @include('components.js.deleteRecord')
+@endif
 <script>
     $(document).ready(function(){
-        $('#graduatesTable').delegate('.recordRow', 'click', function(){
-            let graduateId = $(this).attr('graduate-id')
-            window.location.href = '/graduates/{{ $site }}/more/' + graduateId;
+        $('#graduatesTable').delegate('[viewRecord]', 'click', function(){
+            let recordId = $(this).attr('record-id')
+            window.location.href = '/graduates/{{ $site }}/more/' + recordId;
         });
 
         $('#reset').on('click', function(){

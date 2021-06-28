@@ -1,4 +1,8 @@
 <x-app-layout>
+    @if($root)
+        @include('components.deleteRecord')
+        <input type="hidden" value="{{ route('delete_user') }}" id="routeToDelete">
+    @endif
     <div class="container-fluid px-4">
         <div class="alert alert-danger" style="display: none" role="alert" id="error-message">Ошибка сервера, свяжитесь с системным администратором.</div>
         <div class="mt-5 dbList">
@@ -11,7 +15,8 @@
                 <thead>
                     <tr>
                         <th>ФИО</th>
-                        <th colspan="3">Email</th>
+                        <th>Email</th>
+                        <th colspan="2">Действия</th>
                     </tr>
                     <tr>
                         <form method="GET" action="{{route('users_list')}}">
@@ -24,9 +29,19 @@
                 @if($users->count() > 0 && $access)
                 <tbody id="usersTable">
                     @foreach($users as $user)
-                        <tr class="recordRow" user-id="{{ $user->id }}">
+                        <tr class="recordRow" row-record-id="{{ $user->id }}">
                             <td>{{ $user->name }}</td>
-                            <td colspan="3">{{ $user->email }}</td>
+                            <td>{{ $user->email }}</td>
+                            <td width="40">
+                                @if($root && !$user->rights['root'])
+                                    <button class="form-control btn btn-danger" deleteRecord record-id="{{ $user->id }}"><i class="bi bi-trash-fill"></i></button>
+                                @endif
+                            </td>
+                            <td width="40">
+                                @if(!$user->rights['root'])
+                                    <button class="form-control btn btn-primary" viewRecord record-id="{{ $user->id }}"><i class="bi bi-pencil-square"></i></button>
+                                @endif
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -48,11 +63,14 @@
         {{ $users->appends($next_query)->links() }}
     </div>
 </x-app-layout>
+@if($root)
+    @include('components.js.deleteRecord')
+@endif
 <script>
     $(document).ready(function(){
-        $('#usersTable').delegate('.recordRow', 'click', function(){
-            let userId = $(this).attr('user-id')
-            window.location.href = '/users/more/' + userId;
+        $('#usersTable').delegate('[viewRecord]', 'click', function(){
+            let recordId = $(this).attr('record-id')
+            window.location.href = '/users/more/' + recordId;
         });
         $('#reset').on('click', function(){
             $("[filter-field]").each(function(){

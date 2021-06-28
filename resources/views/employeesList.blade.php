@@ -42,7 +42,7 @@
                             <td>{{ !empty($employee->fired)? date('m-d-Y', strtotime($employee->fired)) : '' }}</td>
                             <td width="40">
                                 @if($admin)
-                                    <button class="form-control btn btn-danger" deleteRecord record-id="{{ $employee->id }}"><i class="bi bi-x"></i></button>
+                                    <button class="form-control btn btn-danger" deleteRecord record-id="{{ $employee->id }}"><i class="bi bi-trash-fill"></i></button>
                                 @endif
                             </td>
                             <td width="40"><button class="form-control btn btn-primary" viewRecord record-id="{{ $employee->id }}"><i class="bi bi-pencil-square"></i></button></td>

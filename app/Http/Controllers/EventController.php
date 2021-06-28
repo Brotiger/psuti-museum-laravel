@@ -332,7 +332,7 @@ class EventController extends Controller
     public function delete_event(Request $request){
         $admin = false;
 
-        if(Auth::user()->rights['root'] || (Auth::user()->rights['empAdmin'] != null && time() <= strtotime(Auth::user()->rights['empAdmin'].' 23:59:59'))){
+        if(Auth::user()->rights['root'] || (Auth::user()->rights['eventAdmin'] != null && time() <= strtotime(Auth::user()->rights['eventAdmin'].' 23:59:59'))){
             $admin = true;
         }
 
