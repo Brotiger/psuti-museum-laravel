@@ -7,9 +7,6 @@
         <div class="alert alert-danger" style="display: none" role="alert" id="error-message">Ошибка сервера, свяжитесь с системным администратором.</div>
         <div class="mt-5 dbList">
             <h1 class="h1">Список добавленных вами событий</h1>
-            <div class="row mb-1">
-                <span class="col-9"><small>Для того что бы отредактировать информацию о событии нажмите на него</small></span>
-            </div>
             <table class="table table-hover">
                 <thead>
                     <tr>

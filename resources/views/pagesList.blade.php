@@ -3,13 +3,11 @@
         <div class="alert alert-danger" style="display: none" role="alert" id="error-message">Ошибка сервера, свяжитесь с системным администратором.</div>
         <div class="mt-5 dbList">
             <h1 class="h1">Список страниц</h1>
-            <div class="row mb-1">
-                <span class="col-9"><small>Для того что бы отредактировать информацию на странице нажмите на нее</small></span>
-            </div>
             <table class="table table-hover">
                 <thead>
                     <tr>
-                        <th colspan='3'>Название страницы</th>
+                        <th>Название страницы</th>
+                        <th colspan="2">Действия</th>
                     </tr>
                     <tr>
                         <form method="GET" action="{{ route('pages_list') }}">
@@ -22,7 +20,9 @@
                 <tbody id="pagesTable">
                     @foreach($pages as $page)
                         <tr class="recordRow" page-id="{{ $page->id }}">
-                            <td colspan='3'>{{ $page->title }}</td>
+                            <td>{{ $page->title }}</td>
+                            <td width="40"></td>
+                            <td width="40"><button class="form-control btn btn-primary" viewRecord record-id="{{ $page->id }}"><i class="bi bi-pencil-square"></i></button></td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -39,9 +39,9 @@
 </x-app-layout>
 <script>
     $(document).ready(function(){
-        $('#pagesTable').delegate('.recordRow', 'click', function(){
-            let unitId = $(this).attr('page-id')
-            window.location.href = '/pages/more/' + unitId;
+        $('#pagesTable').delegate('[viewRecord]', 'click', function(){
+            let recordId = $(this).attr('record-id')
+            window.location.href = '/pages/more/' + recordId;
         });
 
         $('#reset').on('click', function(){

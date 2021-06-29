@@ -8,9 +8,6 @@
         <div class="mt-5 dbList">
         @if($access)
             <h1 class="h1">Список пользователей</h1>
-            <div class="row mb-1">
-                <span class="col-9"><small>Для того что бы отредактировать права пользователя нажмите на него</small></span>
-            </div>
             <table class="table table-hover">
                 <thead>
                     <tr>
@@ -60,7 +57,9 @@
             </p>
             @endif
         </div>
-        {{ $users->appends($next_query)->links() }}
+        @if(!$access)
+            {{ $users->appends($next_query)->links() }}
+        @endif
     </div>
 </x-app-layout>
 @if($root)
