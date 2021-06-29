@@ -20,7 +20,8 @@ class CreatePagesTable extends Migration
             $table->bigInteger("addUserId")->unsigned()->nullable();
             $table->foreign("addUserId")
             ->references("id")
-            ->on("users");
+            ->on("users")
+            ->onDelete("set null");
         });
     }
 

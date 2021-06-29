@@ -3,7 +3,7 @@
     <div class="form-group mb-3 row">
         <label for="commentAuth_{{ $index }}" class="col-3 col-form-label">Автор</label>
         <div class="col-sm-9 mb-3">
-            <input class="form-control commentAuth" type="text" id="commentAuth_{{ $index }}" placeholder="Автор" autocomplete="off" disabled value="{{ isset($history->user->name) ? $history->user->name : $history->user->email }}">
+            <input class="form-control commentAuth" type="text" id="commentAuth_{{ $index }}" placeholder="Автор" autocomplete="off" disabled value="{{ isset($history->user)? (isset($history->user->name) ? $history->user->name : $history->user->email) : 'Без автора (автор удален)' }}">
         </div>
         <label for="comment_{{ $index }}" class="col-3 col-form-label">История</label>
         <div class="col-sm-9">

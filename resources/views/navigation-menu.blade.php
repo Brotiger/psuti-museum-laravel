@@ -10,21 +10,21 @@
                     </a>
                 </div>
                 <div class="dropdown">
-                    <button class="dropbtn">Списки</button>
-                    <div class="dropdown-content">
-                        <a href="{{ route('employees_list') }}">Список сотрудников</a>
-                        <a href="{{ route('units_list') }}">Список подразделений</a>
-                        <a href="{{ route('events_list') }}">Список событий</a>
-                        <a href="{{ route('graduates_list') }}">Список выпускников</a>
-                    </div>
-                </div>
-                <div class="dropdown">
                     <button class="dropbtn">Добавление</button>
                     <div class="dropdown-content">
                         <a href="{{ route('employee') }}">Добавить сотрудника</a>
                         <a href="{{ route('unit') }}">Добавить подразделение</a>
                         <a href="{{ route('event') }}">Добавить событие</a>
                         <a href="{{ route('graduate') }}">Добавить выпускников</a>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <button class="dropbtn">Списки</button>
+                    <div class="dropdown-content">
+                        <a href="{{ route('employees_list') }}">Список сотрудников</a>
+                        <a href="{{ route('units_list') }}">Список подразделений</a>
+                        <a href="{{ route('events_list') }}">Список событий</a>
+                        <a href="{{ route('graduates_list') }}">Список выпускников</a>
                     </div>
                 </div>
                 <div class="dropdown">

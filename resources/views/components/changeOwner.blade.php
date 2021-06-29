@@ -39,6 +39,6 @@
     </div>
     <div class="px-0">
         <input type="button" class="btn btn-danger closeModal" value="Закрыть">
-        <input type="button" class="btn btn-primary addModalHref" value="Сохранить" id="saveChangeOwner">
+        <input type="button" class="btn btn-primary addModalHref" value="Выбрать" id="saveChangeOwner">
     </div>
 </div>

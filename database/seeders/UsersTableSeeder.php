@@ -32,5 +32,14 @@ class UsersTableSeeder extends Seeder
 
         $user->limits()->create();
         $user->rights()->create();
+
+        $user = User::create([
+            'name' => 'Дмитрий3',
+            'email' => 'dimka@bdima3.ru',
+            'password' => Hash::make('123123'),
+        ]);
+
+        $user->limits()->create();
+        $user->rights()->create();
     }
 }

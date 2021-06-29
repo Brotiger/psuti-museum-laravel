@@ -20,15 +20,16 @@
             </div>
             @endif
         </div>
+        @if($post->photo || $access)
         <div class="mb-3 row">
-            @if(!$access && $post->photo)
-                <label for="post_{{ $index }}" class="col-sm-3 col-form-label">Фото</label>
-            @endif
+            <label for="post_{{ $index }}" class="col-sm-3 col-form-label">Фото</label>
             <div class="col-sm-9">
             @if($post->photo)
                 <div>
-                    <img src="{{ '/storage/'.$post->photo }}"  class="mb-1">
-                    <button class="btn btn-danger delete" type="button" deletePostPhoto="{{ $post->id }}">Удалить</button>
+                    <img src="{{ '/storage/'.$post->photo }}">
+                    @if($access)
+                        <button class="btn btn-danger delete mt-3" type="button" deletePostPhoto="{{ $post->id }}">Удалить</button>
+                    @endif
                 </div>
             @endif
             @if($access)
@@ -43,8 +44,9 @@
             @endif
             </div>
         </div>
+        @endif
         @if($access)
-        <button class="btn btn-danger delete" type="button" post-id="{{ $post->id }}">Удалить</button>
+            <button class="btn btn-danger delete" type="button" post-id="{{ $post->id }}">Удалить</button>
         @endif
         <hr class="mt-4">
     </li>
