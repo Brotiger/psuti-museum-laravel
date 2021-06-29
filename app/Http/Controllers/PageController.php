@@ -43,7 +43,7 @@ class PageController extends Controller
     }
 
     public function edit_page($id = null){
-        $site = env('DB_SITE', 'pguty');
+        $site = 'pguty';
 
         $access = false;
 
