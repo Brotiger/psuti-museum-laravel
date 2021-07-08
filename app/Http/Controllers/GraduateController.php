@@ -214,8 +214,7 @@ class GraduateController extends Controller
             }else{
                 if(!$admin){
                     if($user->limits['graduateLimit'] > 0){
-                        $user->limits->graduateLimit = $user->limits['graduateLimit'] - 1;
-                        $user->save();
+                        $user->limits->update(["graduateLimit" => $user->limits->graduateLimit - 1]);
                     }
                 }
                 $response['success'] = true;

@@ -337,8 +337,7 @@ class UnitController extends Controller
             }else{
                 if(!$admin){
                     if($user->limits['unitLimit'] > 0){
-                        $user->limits->unitLimit = $user->limits['unitLimit'] - 1;
-                        $user->save();
+                        $user->limits->update(["unitLimit" => $user->limits->unitLimit - 1]);
                     }
                 }
                 $response['success'] = true;

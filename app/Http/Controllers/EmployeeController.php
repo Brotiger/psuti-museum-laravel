@@ -686,8 +686,7 @@ class EmployeeController extends Controller
                 }else{
                     if(!$admin){
                         if($user->limits->empLimit > 0){
-                            $user->limits->empLimit = $user->limits->empLimit - 1;
-                            $user->save();
+                            $user->limits->update(["empLimit" => $user->limits->empLimit - 1]);
                         }
                     }
                     $response['success'] = true;

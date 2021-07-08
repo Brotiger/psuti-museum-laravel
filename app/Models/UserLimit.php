@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class UserLimit extends Model
 {
     use HasFactory;
+
+    protected $fillable = ['empLimit', 'eventLimit', 'unitLimit', 'graduateLimit'];
 }

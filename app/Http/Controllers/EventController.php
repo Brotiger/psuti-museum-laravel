@@ -315,8 +315,7 @@ class EventController extends Controller
             }else{
                 if(!$admin){
                     if($user->limits['eventLimit'] > 0){
-                        $user->limits->eventLimit = $user->limits['eventLimit'] - 1;
-                        $user->save();
+                        $user->limits->update(["eventLimit" => $user->limits->eventLimit - 1]);
                     }
                 }
                 $response['success'] = true;
