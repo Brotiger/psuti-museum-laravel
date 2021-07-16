@@ -145,7 +145,7 @@ class UnitController extends Controller
             $next_query['creationDateFrom'] = $request->input("creationDateFrom");
         }
         if($request->input("creationDateTo") != null){
-            $filter[] = ["creationDate", "<", $request->input("creationDateTo")];
+            $filter[] = ["creationDate", "<=", $request->input("creationDateTo")];
             $next_query['creationDateTo'] = $request->input("creationDateTo");
         }
         if($request->input("terminationDateFrom") != null){
@@ -153,7 +153,7 @@ class UnitController extends Controller
             $next_query['terminationDateFrom'] = $request->input("terminationDateFrom");
         }
         if($request->input("terminationDateTo") != null){
-            $filter[] = ["terminationDate", "<", $request->input("terminationDateTo")];
+            $filter[] = ["terminationDate", "<=", $request->input("terminationDateTo")];
             $next_query['terminationDateTo'] = $request->input("terminationDateTo");
         }
 

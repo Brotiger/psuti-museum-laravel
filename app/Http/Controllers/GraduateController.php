@@ -64,11 +64,11 @@ class GraduateController extends Controller
         if($request->input("registrationNumber") != null) $filter[] = ["registrationNumber", "like", '%' . $request->input("registrationNumber") . '%'];
         if($request->input("secondName") != null) $filter[] = ["secondName", "like", '%' . $request->input("secondName") . '%'];
         if($request->input("dateBirthdayFrom") != null) $filter[] = ["dateBirthday", ">=", $request->input("dateBirthdayFrom")];
-        if($request->input("dateBirthdayTo") != null) $filter[] = ["dateBirthday", "<", $request->input("dateBirthdayTo")];
+        if($request->input("dateBirthdayTo") != null) $filter[] = ["dateBirthday", "<=", $request->input("dateBirthdayTo")];
         if($request->input("enteredYearFrom") != null) $filter[] = ["enteredYear", ">=", $request->input("enteredYearFrom")];
-        if($request->input("enteredYearTo") != null) $filter[] = ["enteredYear", "<", $request->input("enteredYearTo")];
+        if($request->input("enteredYearTo") != null) $filter[] = ["enteredYear", "<=", $request->input("enteredYearTo")];
         if($request->input("exitYearFrom") != null) $filter[] = ["exitYear", ">=", $request->input("exitYearFrom")];
-        if($request->input("exitYearTo") != null) $filter[] = ["exitYear", "<", $request->input("exitYearTo")];
+        if($request->input("exitYearTo") != null) $filter[] = ["exitYear", "<=", $request->input("exitYearTo")];
 
         $next_query = [
             'firstName' => '',

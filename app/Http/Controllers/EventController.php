@@ -33,7 +33,7 @@ class EventController extends Controller
             $filter[] = ["date", ">=", $request->input("dateFrom")];
         }
         if($request->input("dateTo") != null){
-            $filter[] = ["date", "<", $request->input("dateTo")];
+            $filter[] = ["date", "<=", $request->input("dateTo")];
         }
 
         $events_search = Event::where($filter)->orderBy('name')->limit(15)->get();
@@ -162,7 +162,7 @@ class EventController extends Controller
             $next_query['dateFrom'] = $request->input("dateFrom");
         }
         if($request->input("dateTo") != null){
-            $filter[] = ["date", "<", $request->input("dateTo")];
+            $filter[] = ["date", "<=", $request->input("dateTo")];
             $next_query['dateTo'] = $request->input("dateTo");
         }
 

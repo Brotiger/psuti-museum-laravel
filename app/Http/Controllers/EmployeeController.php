@@ -249,7 +249,7 @@ class EmployeeController extends Controller
             $next_query['hiredFrom'] = $request->input("hiredFrom");
         }
         if($request->input("hiredTo") != null){
-            $filter[] = ["hired", "<", $request->input("hiredTo")];
+            $filter[] = ["hired", "<=", $request->input("hiredTo")];
             $next_query['hiredTo'] = $request->input("hiredTo");
         }
         if($request->input("dateBirthdayFrom") != null){
@@ -257,7 +257,7 @@ class EmployeeController extends Controller
             $next_query['dateBirthdayFrom'] = $request->input("dateBirthdayFrom");
         }
         if($request->input("dateBirthdayTo") != null){
-            $filter[] = ["dateBirthday", "<", $request->input("dateBirthdayTo")];
+            $filter[] = ["dateBirthday", "<=", $request->input("dateBirthdayTo")];
             $next_query['dateBirthdayTo'] = $request->input("dateBirthdayTo");
         }
 
