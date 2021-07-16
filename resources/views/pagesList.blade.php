@@ -7,12 +7,13 @@
                 <thead>
                     <tr>
                         <th>Название страницы</th>
-                        <th colspan="2">Действия</th>
+                        <th width="60">Действия</th>
+                        <th width="60"></th>
                     </tr>
                     <tr>
                         <form method="GET" action="{{ route('pages_list') }}">
                             <th><input type="text" class="form-control" placeholder="Название страницы" filter-field autocomplete="off" name="title" value="{{ request()->input('title') }}"></th>
-                            <th width="40"><button class="form-control btn btn-danger" id="reset"><i class="bi bi-arrow-counterclockwise"></i></button></th><th width="40"><button class="form-control btn btn-primary" id="search"><i class="bi bi-search"></i></button></th>
+                            <th><button class="form-control btn btn-danger" id="reset"><i class="bi bi-arrow-counterclockwise"></i></button></th><th><button class="form-control btn btn-primary" id="search"><i class="bi bi-search"></i></button></th>
                         </form>
                     </tr>
                 </thead>
@@ -21,8 +22,8 @@
                     @foreach($pages as $page)
                         <tr class="recordRow" page-id="{{ $page->id }}">
                             <td>{{ $page->title }}</td>
-                            <td width="40"></td>
-                            <td width="40"><button class="form-control btn btn-primary" viewRecord record-id="{{ $page->id }}"><i class="bi bi-pencil-square"></i></button></td>
+                            <td></td>
+                            <td><button class="form-control btn btn-primary" viewRecord record-id="{{ $page->id }}"><i class="bi bi-pencil-square"></i></button></td>
                         </tr>
                     @endforeach
                 </tbody>

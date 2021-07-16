@@ -12,13 +12,14 @@
                     <tr>
                         <th>Название события</th>
                         <th colspan="2">Дата события</th>
-                        <th colspan="2">Действия</th>
+                        <th width="60">Действия</th>
+                        <th width="60"></th>
                     </tr>
                     <tr>
                         <form method="GET" action="{{ route('events_list') }}">
                             <th><input type="text" class="form-control" placeholder="Название события" filter-field autocomplete="off" name="name" value="{{ request()->input('name') }}"></th>
                             <th><input type="date" class="form-control" placeholder="С:" filter-field name="dateFrom" value="{{ request()->input('dateFrom') }}"></th><th><input type="date" class="form-control" placeholder="По:" filter-field name="dateTo" value="{{ request()->input('dateTo') }}"></th>
-                            <th width="40"><button class="form-control btn btn-danger" id="reset"><i class="bi bi-arrow-counterclockwise"></i></button></th><th width="40"><button class="form-control btn btn-primary" id="search"><i class="bi bi-search"></i></button></th>
+                            <th><button class="form-control btn btn-danger" id="reset"><i class="bi bi-arrow-counterclockwise"></i></button></th><th><button class="form-control btn btn-primary" id="search"><i class="bi bi-search"></i></button></th>
                         </form>
                     </tr>
                 </thead>
@@ -28,12 +29,12 @@
                         <tr class="recordRow" row-record-id="{{ $event->id }}">
                             <td>{{ $event->name }}</td>
                             <td colspan="2">{{ !empty($event->date)? date('m-d-Y', strtotime($event->date)) : '' }}</td>
-                            <td width="40">
+                            <td>
                                 @if($admin)
                                     <button class="form-control btn btn-danger" deleteRecord record-id="{{ $event->id }}"><i class="bi bi-trash-fill"></i></button>
                                 @endif
                             </td>
-                            <td width="40"><button class="form-control btn btn-primary" viewRecord record-id="{{ $event->id }}"><i class="bi bi-pencil-square"></i></button></td>
+                            <td><button class="form-control btn btn-primary" viewRecord record-id="{{ $event->id }}"><i class="bi bi-pencil-square"></i></button></td>
                         </tr>
                     @endforeach
                 </tbody>

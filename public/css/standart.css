@@ -113,4 +113,15 @@ img{
 
   td{
     vertical-align: middle;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  table{
+    table-layout: fixed;
+  }
+
+  nav[role="navigation"]{
+    padding-bottom: 15px;
   }

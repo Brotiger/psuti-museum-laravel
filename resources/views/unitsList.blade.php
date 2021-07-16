@@ -15,7 +15,8 @@
                         <th>Тип подразделения</th>
                         <th>Дата создания</th>
                         <th>Дата прекращения</th>
-                        <th colspan="2">Действия</th>
+                        <th width="60">Действия</th>
+                        <th width="60"></th>
                     </tr>
                     <tr>
                         <form method="GET" action="{{route('units_list')}}">
@@ -24,7 +25,7 @@
                             <th><input type="text" class="form-control" placeholder="Тип подразделения" filter-field id="typeUnit" autocomplete="off" name="typeUnit" value="{{ request()->input('typeUnit') }}"></th>
                             <th><input type="date" class="form-control mb-1" placeholder="С:" filter-field id="creationDateFrom" name="creationDateFrom" value="{{ request()->input('creationDateFrom') }}"><input type="date" class="form-control" placeholder="По:" filter-field id="creationDateTo" name="creationDateTo" value="{{ request()->input('CreationDateTo') }}"></th>
                             <th><input type="date" class="form-control mb-1" placeholder="С:" filter-field id="terminationDateFrom" name="terminationDateFrom" value="{{ request()->input('terminationDateFrom') }}"><input type="date" class="form-control" placeholder="По:" filter-field id="terminationDateTo" name="terminationDateTo" value="{{ request()->input('terminationDateTo') }}"></th>
-                            <th width="40"><button class="form-control btn btn-danger" id="reset"><i class="bi bi-arrow-counterclockwise"></i></button></th><th width="40"><button class="form-control btn btn-primary" id="search"><i class="bi bi-search"></i></button></th>
+                            <th><button class="form-control btn btn-danger" id="reset"><i class="bi bi-arrow-counterclockwise"></i></button></th><th><button class="form-control btn btn-primary" id="search"><i class="bi bi-search"></i></button></th>
                         </form>
                     </tr>
                 </thead>
@@ -37,12 +38,12 @@
                             <td>{{ $unit->typeUnit }}</td>
                             <td>{{ !empty($unit->creationDate)? date('m-d-Y', strtotime($unit->creationDate)) : '' }}</td>
                             <td>{{ !empty($unit->terminationDate)? date('m-d-Y', strtotime($unit->terminationDate)) : '' }}</td>
-                            <td width="40">
+                            <td>
                                 @if($admin)
                                     <button class="form-control btn btn-danger" deleteRecord record-id="{{ $unit->id }}"><i class="bi bi-trash-fill"></i></button>
                                 @endif
                             </td>
-                            <td width="40"><button class="form-control btn btn-primary" viewRecord record-id="{{ $unit->id }}"><i class="bi bi-pencil-square"></i></button></td>
+                            <td><button class="form-control btn btn-primary" viewRecord record-id="{{ $unit->id }}"><i class="bi bi-pencil-square"></i></button></td>
                         </tr>
                     @endforeach
                 </tbody>

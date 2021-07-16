@@ -16,7 +16,8 @@
                         <th>Дата рождения</th>
                         <th>Дата приема</th>
                         <th>Дата увольнения</th>
-                        <th colspan="2">Действия</th>
+                        <th width="60">Действия</th>
+                        <th width="60"></th>
                     </tr>
                     <tr>
                         <form method="GET" action="{{route('employees_list')}}">
@@ -26,7 +27,7 @@
                             <th><input type="date" class="form-control mb-1" placeholder="С:" filter-field id="dateBirthdayFrom" name="dateBirthdayFrom" value="{{ request()->input('dateBirthdayFrom') }}"><input type="date" class="form-control" placeholder="По:" filter-field id="dateBirthdayTo" name="dateBirthdayTo" value="{{ request()->input('dateBirthdayTo') }}"></th>
                             <th><input type="date" class="form-control mb-1" placeholder="С:" filter-field id="hiredFrom" name="hiredFrom" value="{{ request()->input('hiredFrom') }}"><input type="date" class="form-control" placeholder="По:" filter-field id="hiredTo" name="hiredTo" value="{{ request()->input('hiredTo') }}"></th>
                             <th><input type="date" placeholder="С:" class="form-control mb-1" filter-field id="firedFrom" name="firedFrom" value="{{ request()->input('firedFrom') }}"><input type="date" placeholder="По:" class="form-control" filter-field id="firedTo" name="firedTo" value="{{ request()->input('firedTo') }}"></th>
-                            <th width="40"><button class="form-control btn btn-danger" id="reset"><i class="bi bi-arrow-counterclockwise"></i></button></th><th width="40"><button class="form-control btn btn-primary" id="search"><i class="bi bi-search"></i></button></th>
+                            <th><button class="form-control btn btn-danger" id="reset"><i class="bi bi-arrow-counterclockwise"></i></button></th><th><button class="form-control btn btn-primary" id="search"><i class="bi bi-search"></i></button></th>
                         </form>
                     </tr>
                 </thead>
@@ -40,12 +41,12 @@
                             <td>{{ !empty($employee->dateBirthday)? date('m-d-Y', strtotime($employee->dateBirthday)) : '' }}</td>
                             <td>{{ !empty($employee->hired)? date('m-d-Y', strtotime($employee->hired)) : '' }}</td>
                             <td>{{ !empty($employee->fired)? date('m-d-Y', strtotime($employee->fired)) : '' }}</td>
-                            <td width="40">
+                            <td>
                                 @if($admin)
                                     <button class="form-control btn btn-danger" deleteRecord record-id="{{ $employee->id }}"><i class="bi bi-trash-fill"></i></button>
                                 @endif
                             </td>
-                            <td width="40"><button class="form-control btn btn-primary" viewRecord record-id="{{ $employee->id }}"><i class="bi bi-pencil-square"></i></button></td>
+                            <td><button class="form-control btn btn-primary" viewRecord record-id="{{ $employee->id }}"><i class="bi bi-pencil-square"></i></button></td>
                         </tr>
                     @endforeach
                 </tbody>

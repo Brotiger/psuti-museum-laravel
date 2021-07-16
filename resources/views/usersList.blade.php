@@ -13,13 +13,14 @@
                     <tr>
                         <th>ФИО</th>
                         <th>Email</th>
-                        <th colspan="2">Действия</th>
+                        <th width="60">Действия</th>
+                        <th width="60"></th>
                     </tr>
                     <tr>
                         <form method="GET" action="{{route('users_list')}}">
                             <th><input type="text" class="form-control" placeholder="ФИО" filter-field id="name" name="name" autocomplete="off" value="{{ request()->input('name') }}"></th>
                             <th><input type="text" class="form-control" placeholder="Email" filter-field id="email" autocomplete="off" name="email" value="{{ request()->input('email') }}"></th>
-                            <th width="40"><button class="form-control btn btn-danger" id="reset"><i class="bi bi-arrow-counterclockwise"></i></button></th><th width="40"><button class="form-control btn btn-primary" id="search"><i class="bi bi-search"></i></button></th>
+                            <th><button class="form-control btn btn-danger" id="reset"><i class="bi bi-arrow-counterclockwise"></i></button></th><th><button class="form-control btn btn-primary" id="search"><i class="bi bi-search"></i></button></th>
                         </form>
                     </tr>
                 </thead>
@@ -29,12 +30,12 @@
                         <tr class="recordRow" row-record-id="{{ $user->id }}">
                             <td>{{ $user->name }}</td>
                             <td>{{ $user->email }}</td>
-                            <td width="40">
+                            <td>
                                 @if($root && !$user->rights['root'])
                                     <button class="form-control btn btn-danger" deleteRecord record-id="{{ $user->id }}"><i class="bi bi-trash-fill"></i></button>
                                 @endif
                             </td>
-                            <td width="40">
+                            <td>
                                 @if(!$user->rights['root'])
                                     <button class="form-control btn btn-primary" viewRecord record-id="{{ $user->id }}"><i class="bi bi-pencil-square"></i></button>
                                 @endif
