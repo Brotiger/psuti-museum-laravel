@@ -111,6 +111,10 @@ img{
     max-width: 42px;
   }
 
+  tr{
+    height: 55px;
+  }
+
   td{
     vertical-align: middle;
     overflow: hidden;
