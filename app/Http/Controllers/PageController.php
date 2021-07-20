@@ -368,7 +368,7 @@ class PageController extends Controller
                                 $newPostInfo['photo'] = $photoPath;
                                 Storage::disk('public')->delete($updatePost->first()->photo);
                             }
-                            if(Str::of($post["title"])->trim()->isNotEmpty()) $newPostInfo['title'] = trim($post["title"]);
+                            $newPostInfo['title'] = trim($post["title"]);
                             if(Str::of($post["description"])->trim()->isNotEmpty()) $newPostInfo['description'] = trim($post["description"]);
                             $updatePost->update($newPostInfo);
                         }
