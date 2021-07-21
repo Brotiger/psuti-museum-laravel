@@ -1049,11 +1049,13 @@ class EmployeeController extends Controller
                     
                     if(Str::of($request->input("firstName"))->trim()->isNotEmpty()) $newEmpInfo['firstName'] = trim($request->input("firstName"));
                     if(Str::of($request->input("lastName"))->trim()->isNotEmpty()) $newEmpInfo['lastName'] = trim($request->input("lastName"));
-                    if(Str::of($request->input("secondName"))->trim()->isNotEmpty()) $newEmpInfo['secondName'] = trim($request->input("secondName"));
-                    if(Str::of($request->input("description"))->trim()->isNotEmpty()) $newEmpInfo['description'] = trim($request->input("description"));
-                    if(Str::of($request->input("dateBirthday"))->trim()->isNotEmpty()) $newEmpInfo['dateBirthday'] = trim($request->input("dateBirthday"));
-                    if(Str::of($request->input("hired"))->trim()->isNotEmpty()) $newEmpInfo['hired'] = trim($request->input("hired"));
-                    if(Str::of($request->input("fired"))->trim()->isNotEmpty()) $newEmpInfo['fired'] = trim($request->input("fired"));
+                    
+                    $newEmpInfo['secondName'] = trim($request->input("secondName"));
+                    $newEmpInfo['description'] = trim($request->input("description"));
+                    
+                    if($request->input("dateBirthday")) $newEmpInfo['dateBirthday'] = trim($request->input("dateBirthday"));
+                    if($request->input("hired")) $newEmpInfo['hired'] = trim($request->input("hired"));
+                    if($request->input("fired")) $newEmpInfo['fired'] = trim($request->input("fired"));
                     #Запись персональных данных
                     $editEmployee->update($newEmpInfo);
 

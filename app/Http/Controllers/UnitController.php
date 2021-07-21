@@ -538,9 +538,9 @@ class UnitController extends Controller
                     $newUnitInfo = [];
 
                     if(Str::of($request->input("fullUnitName"))->trim()->isNotEmpty()) $newUnitInfo['fullUnitName'] = trim($request->input("fullUnitName"));
-                    if(Str::of($request->input("shortUnitName"))->trim()->isNotEmpty()) $newUnitInfo['shortUnitName'] = trim($request->input("shortUnitName"));
-                    if(Str::of($request->input("typeUnit"))->trim()->isNotEmpty()) $newUnitInfo['typeUnit'] = trim($request->input("typeUnit"));
-                    if(Str::of($request->input("description"))->trim()->isNotEmpty()) $newUnitInfo['description'] = trim($request->input("description"));
+                    $newUnitInfo['shortUnitName'] = trim($request->input("shortUnitName"));
+                    $newUnitInfo['typeUnit'] = trim($request->input("typeUnit"));
+                    $newUnitInfo['description'] = trim($request->input("description"));
                     if(Str::of($request->input("creationDate"))->trim()->isNotEmpty()) $newUnitInfo['creationDate'] = trim($request->input("creationDate"));
                     if(Str::of($request->input("terminationDate"))->trim()->isNotEmpty()) $newUnitInfo['terminationDate'] = trim($request->input("terminationDate"));
 

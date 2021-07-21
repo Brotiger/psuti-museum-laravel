@@ -513,7 +513,7 @@ class EventController extends Controller
                     $newEventInfo = [];
 
                     if(Str::of($request->input("name"))->trim()->isNotEmpty()) $newEventInfo['name'] = trim($request->input("name"));;
-                    if(Str::of($request->input("description"))->trim()->isNotEmpty()) $newEventInfo['description'] = trim($request->input("description"));
+                    $newEventInfo['description'] = trim($request->input("description"));
                     if(Str::of($request->input("date"))->trim()->isNotEmpty()) $newEventInfo['date'] = trim($request->input("date"));
 
                     if($request->input('addUserId')){
