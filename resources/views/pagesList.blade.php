@@ -20,10 +20,10 @@
                 @if($pages->count() > 0)
                 <tbody id="pagesTable">
                     @foreach($pages as $page)
-                        <tr class="recordRow" page-id="{{ $page->id }}">
+                        <tr class="recordRow" page-id="{{ $page->alias }}">
                             <td>{{ $page->title }}</td>
                             <td></td>
-                            <td><button class="form-control btn btn-primary" viewRecord record-id="{{ $page->id }}"><i class="bi bi-pencil-square"></i></button></td>
+                            <td><button class="form-control btn btn-primary" viewRecord record="{{ $page->alias }}"><i class="bi bi-pencil-square"></i></button></td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -41,8 +41,8 @@
 <script>
     $(document).ready(function(){
         $('#pagesTable').delegate('[viewRecord]', 'click', function(){
-            let recordId = $(this).attr('record-id')
-            window.location.href = '/pages/more/' + recordId;
+            let record = $(this).attr('record')
+            window.location.href = '/pages/more/' + record;
         });
 
         $('#reset').on('click', function(){

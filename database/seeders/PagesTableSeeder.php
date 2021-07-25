@@ -15,18 +15,19 @@ class PagesTableSeeder extends Seeder
     public function run()
     {
         $pages = [
-            "Филиалы",
-            "СРТТЦ",
-            "Проректоры, деканы, зав. кафедры",
-            "Научная деятельность",
-            "Материально техническая база",
-            "Академия АТИ",
-            'Ассоциация "Телеинфо"',
+            "Филиалы" => "branches",
+            "СРТТЦ" => "SRTTTS",
+            "Проректоры, деканы, зав. кафедры" => "PDZK",
+            "Научная деятельность" => "ScientificActivity",
+            "Материально техническая база" => "MaterialAndTechnicalBase",
+            "Академия АТИ" => "ATIAcademy",
+            'Ассоциация "Телеинфо"' => "Teleinfo",
         ];
 
-        foreach($pages as $page){
+        foreach($pages as $name => $alias){
             DB::table("pages")->insert([
-                'title' => $page,
+                'title' => $name,
+                'alias' => $alias
             ]);
         }
     }

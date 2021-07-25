@@ -56,7 +56,7 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/graduates/'.env('DB_SITE'
 Route::middleware(['auth:sanctum', 'verified'])->post('/delete_graduate', [GraduateController::class, "delete_graduate"])->name('delete_graduate');
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/pages', [PageController::class, "pages_list"])->name('pages_list');
-Route::middleware(['auth:sanctum', 'verified'])->get('/pages/more/{id}', [PageController::class, "edit_page"])->name('edit_page');
+Route::middleware(['auth:sanctum', 'verified'])->get('/pages/more/{alias}', [PageController::class, "edit_page"])->name('edit_page');
 Route::middleware(['auth:sanctum', 'verified'])->post("/update_page", [PageController::class, "update_page"])->name('update_page');
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/users', [UserController::class, "users_list"])->name('users_list');

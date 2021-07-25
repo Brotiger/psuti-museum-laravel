@@ -495,7 +495,7 @@
             formData.append('postToDelete', postToDelete);
             formData.append('deletePostPhoto', deletePostPhoto);
 
-            formData.append('id', '{{ $id }}');
+            formData.append('alias', '{{ $alias }}');
 
             $('#error-global-message, #success-message, #error-limit-message, #error-message, #error-body-message').hide();
 

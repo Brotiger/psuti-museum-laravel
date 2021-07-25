@@ -22,7 +22,9 @@ class UsersTableSeeder extends Seeder
         ]);
 
         $user->limits()->create();
-        $user->rights()->create();
+        $user->rights()->create([
+            'root' => true
+        ]);
 
         $user = User::create([
             'name' => 'Дмитрий2',

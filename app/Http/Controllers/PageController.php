@@ -42,7 +42,7 @@ class PageController extends Controller
         ]);
     }
 
-    public function edit_page($id = null){
+    public function edit_page($alias = null){
         $site = 'pguty';
 
         $access = false;
@@ -61,7 +61,7 @@ class PageController extends Controller
         $users_search = User::where([['id', '<>', Auth::user()->id]])->orderBy('name')->limit(15)->get();
 
         $params = [
-            'id' => $id,
+            'alias' => $alias,
             'photo_size' => $photo_size,
             'photo_ext' => $photo_ext? implode(', ', $photo_ext) : 'любые',
             'employees_search' => $employees_search,
@@ -72,7 +72,7 @@ class PageController extends Controller
             'users_search' => $users_search
         ];
 
-        if(isset($id)){
+        if(isset($alias)){
             $admin = false;
 
             if(Auth::user()->rights['root'] || (Auth::user()->rights['pageAdmin'] != null && time() <= strtotime(Auth::user()->rights['pageAdmin'].' 23:59:59'))){
@@ -80,7 +80,7 @@ class PageController extends Controller
             }
 
             $page = Page::where([
-                ['id', $id],
+                ['alias', $alias],
             ]);
 
             if($page->exists()){
@@ -90,7 +90,7 @@ class PageController extends Controller
                 }
 
                 $params['access'] = $access;
-                $params['id'] = $id;
+                $params['alias'] = $alias;
                 $params['page'] = $page->get()->first();
                 $params['addUser'] = $page->get()->first()->addUserId;
                 $params['user'] = $page->first()->user;
@@ -125,12 +125,12 @@ class PageController extends Controller
         
         if(isset($request)){
 
-            if (!$request->input("id")){
+            if (!$request->input("alias")){
                 return redirect(route('pages_list'));
             }
 
             $page = Page::where([
-                ['id', $request->input("id")],
+                ['alias', $request->input("alias")],
             ]);
 
             if(!$page->exists())
@@ -279,7 +279,7 @@ class PageController extends Controller
             #Если поля вальдны, сохраняем их в бд
             if(empty($errors)){
                 $exception = DB::transaction(function() use ($request){
-                    $editPage = Page::where("id", $request->input("id"));
+                    $editPage = Page::where("alias", $request->input("alias"));
 
                     $newPageInfo = [];
 
@@ -488,7 +488,7 @@ class PageController extends Controller
                     }
                 });
 
-            $page = Page::where("id", $request->input("id"))->first();
+            $page = Page::where("alias", $request->input("alias"))->first();
 
             $response['posts'] = view('ajax.pagePosts', [
                 'page' => $page,
