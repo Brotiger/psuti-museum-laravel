@@ -17,7 +17,6 @@ class PagesTableSeeder extends Seeder
         $pages = [
             "Филиалы" => "branches",
             "СРТТЦ" => "SRTTTS",
-            "Проректоры, деканы, зав. кафедры" => "PDZK",
             "Научная деятельность" => "ScientificActivity",
             "Материально техническая база" => "MaterialAndTechnicalBase",
             "Академия АТИ" => "ATIAcademy",

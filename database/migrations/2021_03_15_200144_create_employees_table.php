@@ -20,6 +20,7 @@ class CreateEmployeesTable extends Migration
             $table->string("firstName");
             $table->string("lastName");
             $table->string("secondName")->nullable();
+            $table->boolean('wwii')->default(false);
         });
     }
 
