@@ -57,6 +57,12 @@
                     </div>
                 </div>
                 <div class="form-group mb-3 row">
+                    <label for="fired" class="col-3 col-form-label">Участник ВОВ</label>
+                    <div class="col-sm-9">
+                        <input class="form-control" type="checkbox" id="wwii" {{ $employee->wwii ? 'checked value=on': 'value=off' }} data-field form-field>
+                    </div>
+                </div>
+                <div class="form-group mb-3 row">
                     <label for="hired" class="col-3 col-form-label">Дата приема</label>
                     <div class="col-sm-9">
                         <input class="form-control" type="date" id="hired" data-field form-field value="{{ !empty($employee)? $employee->hired : '' }}">
@@ -415,6 +421,18 @@
         var autobiographyToDelete = [];
         var deleteImg = false;
         var deletePersonalFile = false;
+
+        $('#wwii').click(function(){
+            let attr = $(this).attr('value');
+
+            if(attr == 'off'){
+                $(this).attr('value', 'on');
+                $(this).attr('checked','checked');
+            }else{
+                $(this).attr('value', 'off');
+                $(this).removeAttr('checked');
+            }
+        })
 
         $("form").delegate("#photoList input[type='file']", "change", function(e){
             if(e.currentTarget.files[0] && e.currentTarget.files[0].size > {{ $photo_size * 1024 }} ){

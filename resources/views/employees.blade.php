@@ -50,6 +50,12 @@
                     </div>
                 </div>
                 <div class="form-group mb-3 row">
+                    <label for="fired" class="col-3 col-form-label">Участник ВОВ</label>
+                    <div class="col-sm-9">
+                        <input class="form-control" type="checkbox" id="wwii" data-field form-field value="off">
+                    </div>
+                </div>
+                <div class="form-group mb-3 row">
                     <label for="hired" class="col-3 col-form-label">Дата приема</label>
                     <div class="col-sm-9">
                         <input class="form-control" type="date" id="hired" data-field form-field>
@@ -179,6 +185,16 @@
         var videoCount = 0;
         var unitCount = 0;
         var autobiographyCount = 0;
+
+        $('#wwii').click(function(){
+            let attr = $(this).attr('value');
+
+            if(attr == 'off'){
+                $(this).attr('value', 'on');
+            }else{
+                $(this).attr('value', 'off');
+            }
+        })
 
         $("form").delegate("#photoList input[type='file']", "change", function(e){
             if(e.currentTarget.files[0] && e.currentTarget.files[0].size > {{ $photo_size * 1024 }} ){
@@ -672,6 +688,9 @@
             $(".videoBlock").slideUp(300, function(){ $(this).remove()});
             $(".unitBlock").slideUp(300, function(){ $(this).remove()});
             $(".autobiographyBlock").slideUp(300, function(){ $(this).remove()});
+            $('#wwii').attr('value', "off");
+            $('#wwii').prop('checked', false);
+
             educationCount = 0;
             academicDegreeCount = 0;
             academicTitleCount = 0;

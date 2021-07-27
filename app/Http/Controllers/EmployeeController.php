@@ -531,6 +531,8 @@ class EmployeeController extends Controller
                     if(Str::of($request->input("dateBirthday"))->trim()->isNotEmpty()) $newEmployee->dateBirthday = trim($request->input("dateBirthday"));
                     if(Str::of($request->input("hired"))->trim()->isNotEmpty()) $newEmployee->hired = trim($request->input("hired"));
                     if(Str::of($request->input("fired"))->trim()->isNotEmpty()) $newEmployee->fired = trim($request->input("fired"));
+
+                    if($request->input("wwii")) $newEmployee->wwii = $request->input("wwii") == 'on' ? true: false;
                     #Запись персональных данных
                     $newEmployee->addUserId = Auth::user()->id;
                     $newEmployee->save();
@@ -1050,6 +1052,8 @@ class EmployeeController extends Controller
                     if(Str::of($request->input("firstName"))->trim()->isNotEmpty()) $newEmpInfo['firstName'] = trim($request->input("firstName"));
                     if(Str::of($request->input("lastName"))->trim()->isNotEmpty()) $newEmpInfo['lastName'] = trim($request->input("lastName"));
                     
+                    if($request->input("wwii")) $newEmpInfo['wwii'] = $request->input("wwii") == 'on' ? true: false;
+
                     $newEmpInfo['secondName'] = trim($request->input("secondName"));
                     $newEmpInfo['description'] = trim($request->input("description"));
                     
