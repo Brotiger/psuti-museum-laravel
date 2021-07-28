@@ -74,9 +74,10 @@
                         }else{
                             $('#error-message').fadeIn(300).delay(2000).fadeOut(300);
                         }
+                        stopLoading();
                     },
-                    error: function(xhr){
-                        if(xhr.status == 422){
+                    error: function(data){
+                        if(data.status == 422){
                             $("#file").addClass("errorField");
                             $('#error-global-message').fadeIn(300).delay(2000).fadeOut(300);
                         }else{
@@ -88,15 +89,17 @@
                                 $('#server-error-file, #server-error-line, #server-error-message').html('');
                             });
                         }
+                        stopLoading();
                     }
                 });
                 if(res.status == 0){
+                    stopLoading();
                     $('#error-message').fadeIn(300).delay(2000).fadeOut(300);
                 }
             }else{
+                stopLoading();
                 $('#error-body-message').fadeIn(300).delay(4000).fadeOut(300);
             }
-            stopLoading();
             scrollTop();
             event.preventDefault();
         });

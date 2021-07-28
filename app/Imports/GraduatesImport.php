@@ -57,8 +57,30 @@ class GraduatesImport implements ToModel, WithHeadingRow
                 $specialtyCode = $row['Код специальности, направления подготовки'];
             }else if(!empty($row['Код специальности по направлению'])){
                 $specialtyCode = $row['Код специальности по направлению'];
-            }else{
+            }else if(!empty($row['Код профессии, специальности'])){
                 $specialtyCode = $row['Код специальности по справочнику'];
+            }else if(!empty($row['Код профессии, специальности'])){
+                $specialtyCode = $row['Код профессии, специальности'];
+            }else{
+                $specialtyCode = null;
+            }
+
+            if(!empty($row['Наименование специальности, направления подготовки'])){
+                $specialtyName = $row['Наименование специальности, направления подготовки'];
+            }else if(!empty($row['Направление подготовки/Специальность'])){
+                $specialtyName = $row['Направление подготовки/Специальность'];
+            }else if(!empty($row['Наименование профессии, специальности'])){
+                $specialtyName = $row['Наименование профессии, специальности'];
+            }else{
+                $specialtyName = null;
+            }
+
+            if(!empty($row['Наименование квалификации'])){
+                $qualificationName = $row['Наименование квалификации'];
+            }else if(!empty($row['Квалификация/Степень'])){
+                $qualificationName = $row['Квалификация/Степень'];
+            }else{
+                $qualificationName = null;
             }
 
             return new Graduate([
@@ -75,8 +97,8 @@ class GraduatesImport implements ToModel, WithHeadingRow
                 'issueDate' => date('Y-m-d', ((int) $row['Дата выдачи'] - 25569) * 86400),
                 'registrationNumber' => $row['Регистрационный номер'],
                 'specialtyCode' => $specialtyCode,
-                'specialtyName' => !empty($row['Наименование специальности, направления подготовки'])? $row['Наименование специальности, направления подготовки'] : $row['Направление подготовки/Специальность'],
-                'qualificationName' => !empty($row['Наименование квалификации'])? $row['Наименование квалификации'] : $row['Квалификация/Степень'], //$row['Наименование квалификации'],//!empty($row['Наименование квалификации'])? $row['Наименование квалификации'] : $row['Квалификация/Степень'],
+                'specialtyName' => $specialtyName,
+                'qualificationName' => $qualificationName,
                 'enteredYear' => $row['Год поступления'],
                 'exitYear' => $row['Год окончания'],
                 'trainingPeriod' => (int) $row['Год окончания'] - (int) $row['Год поступления'],

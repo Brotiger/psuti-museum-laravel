@@ -30,7 +30,7 @@ class CreateGraduatesTable extends Migration
             $table->string('series')->nullable();
             $table->string('number')->nullable();
             $table->date('issueDate')->nullable();
-            $table->string('registrationNumber')->unique()->required();
+            $table->string('registrationNumber')->unique()->required()->nullable();
             $table->string('specialtyCode')->nullable();
             $table->string('specialtyName')->nullable();
             $table->string('qualificationName')->nullable();

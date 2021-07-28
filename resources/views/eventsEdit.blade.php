@@ -290,6 +290,7 @@
                         }else{
                             $('#error-message').fadeIn(300).delay(30000).fadeOut(300);
                         }
+                        stopLoading();
                     },
                     error: function(data){
                         $('#server-error-file').html('File: ' + data.responseJSON.file);
@@ -299,16 +300,18 @@
                         $('#error-message').fadeIn(300).delay(45000).fadeOut(300, function(){
                             $('#server-error-file, #server-error-line, #server-error-message').html('');
                         });
+                        stopLoading();
                     }
                 });
                 if(res.status == 0){
+                    stopLoading();
                     $('#error-message').fadeIn(300).delay(2000).fadeOut(300);
                 }
             }else{
+                stopLoading();
                 $('#error-body-message').fadeIn(300).delay(4000).fadeOut(300);
             }
 
-            stopLoading();
             scrollTop();
             event.preventDefault();
         });
