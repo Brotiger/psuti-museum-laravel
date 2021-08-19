@@ -21,6 +21,9 @@ class PagesTableSeeder extends Seeder
             "Материально техническая база" => "MaterialAndTechnicalBase",
             "Академия АТИ" => "ATIAcademy",
             'Ассоциация "Телеинфо"' => "Teleinfo",
+            "Филиал в городе Оренбург" => "branchOrenburg",
+            "Филиал в городе Казань" => "branchKazan",
+            "Филиал в городе Ставрополь" => "branchStavropol",
         ];
 
         foreach($pages as $name => $alias){
