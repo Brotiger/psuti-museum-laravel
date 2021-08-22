@@ -6,6 +6,7 @@ use App\Http\Controllers\UnitController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\HeroController;
 use App\Http\Controllers\GraduateController;
 use App\Http\Middleware\fileCompressionMiddleware;
 
@@ -34,6 +35,13 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/employees/{site}/more/{id
 Route::middleware(['auth:sanctum', 'verified'])->get('/employees/{site}', [EmployeeController::class, "employees_list"])->where('site', 'pguty|psuti|ks')->name('employees_list');
 Route::middleware(['auth:sanctum', 'verified'])->get('/search_employee', [EmployeeController::class, "search_employee"])->name('search_employee');
 Route::middleware(['auth:sanctum', 'verified'])->post('/delete_employee', [EmployeeController::class, "delete_employee"])->name('delete_employee');
+
+Route::middleware(['auth:sanctum', 'verified'])->get('/hero', [HeroController::class, "index"])->name('hero');
+Route::middleware(['auth:sanctum', 'verified'])->post("/add_hero", [HeroController::class, "add_hero"])->name('add_hero');
+Route::middleware(['auth:sanctum', 'verified'])->get('/heroes/{site}', [HeroController::class, "heroes_list"])->where('site', 'pguty|psuti|ks')->name('heroes_list');
+Route::middleware(['auth:sanctum', 'verified'])->post('/delete_hero', [HeroController::class, "delete_hero"])->name('delete_hero');
+Route::middleware(['auth:sanctum', 'verified'])->get('/heroes/{site}/more/{id}', [HeroController::class, "edit_hero"])->where('site', 'pguty|psuti|ks')->name('edit_hero');
+Route::middleware(['auth:sanctum', 'verified'])->post("/update_hero", [HeroController::class, "update_hero"])->name('update_hero');
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/unit', [UnitController::class, 'index'])->name('unit');
 Route::middleware(['auth:sanctum', 'verified'])->get('/units/{site}/more/{id}', [UnitController::class, "edit_unit"])->where('site', 'pguty|psuti|ks')->name('edit_unit');

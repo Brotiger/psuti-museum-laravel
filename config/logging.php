@@ -124,6 +124,12 @@ return [
             'level' => 'info',
         ],
 
+        'hero' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/hero.log'),
+            'level' => 'info',
+        ],
+
         'user' => [
             'driver' => 'single',
             'path' => storage_path('logs/user.log'),

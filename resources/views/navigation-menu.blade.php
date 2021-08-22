@@ -16,6 +16,7 @@
                         <a href="{{ route('unit') }}">Добавить подразделение</a>
                         <a href="{{ route('event') }}">Добавить событие</a>
                         <a href="{{ route('graduate') }}">Добавить выпускников</a>
+                        <a href="{{ route('hero') }}">Добавить героя</a>
                     </div>
                 </div>
                 <div class="dropdown">
@@ -25,6 +26,7 @@
                         <a href="{{ route('units_list', [ 'site' => env('DB_SITE')]) }}">Список подразделений</a>
                         <a href="{{ route('events_list', [ 'site' => env('DB_SITE')]) }}">Список событий</a>
                         <a href="{{ route('graduates_list', [ 'site' => env('DB_SITE')]) }}">Список выпускников</a>
+                        <a href="{{ route('heroes_list', [ 'site' => env('DB_SITE')]) }}">Список героев</a>
                     </div>
                 </div>
                 <div class="dropdown">

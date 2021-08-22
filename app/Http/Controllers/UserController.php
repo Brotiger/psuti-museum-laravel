@@ -41,7 +41,7 @@ class UserController extends Controller
         $access = false;
         $root = false;
 
-        if(Auth::user()->rights['root'] || (Auth::user()->rights['unitAdmin'] != null && time() <= strtotime(Auth::user()->rights['unitAdmin'].' 23:59:59')) || (Auth::user()->rights['empAdmin'] != null && time() <= strtotime(Auth::user()->rights['empAdmin'].' 23:59:59')) || (Auth::user()->rights['eventAdmin'] != null && time() <= strtotime(Auth::user()->rights['eventAdmin'].' 23:59:59'))){
+        if(Auth::user()->rights['root'] || (Auth::user()->rights['heroAdmin'] != null && time() <= strtotime(Auth::user()->rights['heroAdmin'].' 23:59:59')) || (Auth::user()->rights['unitAdmin'] != null && time() <= strtotime(Auth::user()->rights['unitAdmin'].' 23:59:59')) || (Auth::user()->rights['empAdmin'] != null && time() <= strtotime(Auth::user()->rights['empAdmin'].' 23:59:59')) || (Auth::user()->rights['eventAdmin'] != null && time() <= strtotime(Auth::user()->rights['eventAdmin'].' 23:59:59'))){
             $access = true;
         }
 
@@ -129,6 +129,7 @@ class UserController extends Controller
             'unitAdmin' => false,
             'eventAdmin' => false,
             'graduateAdmin' => false,
+            'heroAdmin' => false,
         ];
 
         if($user->rights['empAdmin'] != null && time() <= strtotime($user->rights['empAdmin'].' 23:59:59')){
@@ -147,7 +148,11 @@ class UserController extends Controller
             $access['graduateAdmin'] = true;
         }
 
-        if((!$access['graduateAdmin'] && !$access['eventAdmin'] && !$access['unitAdmin'] && !$access['empAdmin'])){
+        if($user->rights['heroAdmin'] != null && time() <= strtotime($user->rights['heroAdmin'].' 23:59:59')){
+            $access['heroAdmin'] = true;
+        }
+
+        if((!$access['graduateAdmin'] && !$access['eventAdmin'] && !$access['unitAdmin'] && !$access['empAdmin'] && !$access['heroAdmin'])){
             if(!$user->rights['root']){
                 return redirect(route('users_list'));
             }
@@ -234,6 +239,12 @@ class UserController extends Controller
                     }
                 }
 
+                if($request->input("heroLimit")){
+                    if(Auth::user()->rights['heroAdmin'] == null || time() > strtotime(Auth::user()->rights['heroAdmin'])){
+                        return;
+                    }
+                }
+
                 if($editUser->first()->rights['root']){
                     return;
                 }
@@ -247,6 +258,10 @@ class UserController extends Controller
                 }
 
                 if($request->input("eventAdmin")){
+                    return;
+                }
+
+                if($request->input("heroAdmin")){
                     return;
                 }
 
@@ -281,6 +296,10 @@ class UserController extends Controller
                         $newLimitsInfo["graduateLimit"] = $request->input("graduateLimit");
                     }
 
+                    if($request->input("heroLimit")){
+                        $newLimitsInfo["heroLimit"] = $request->input("heroLimit");
+                    }
+
                     $editRights = UserRight::where("user_id", $request->input("id"));
 
                     $newRightsInfo = [];
@@ -299,6 +318,10 @@ class UserController extends Controller
 
                     if($request->input("graduateAdmin")){
                         $newRightsInfo["graduateAdmin"] = $request->input("graduateAdmin");
+                    }
+
+                    if($request->input("heroAdmin")){
+                        $newRightsInfo["heroAdmin"] = $request->input("heroAdmin");
                     }
 
                     if($request->input("pageAdmin")){

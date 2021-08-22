@@ -18,6 +18,7 @@ class CreateUserRightsTable extends Migration
             $table->timestamps();
             $table->boolean('root')->default(false);
             $table->date('empAdmin')->nullable();
+            $table->date('heroAdmin')->nullable();
             $table->date('unitAdmin')->nullable();
             $table->date('eventAdmin')->nullable();
             $table->date('pageAdmin')->nullable();

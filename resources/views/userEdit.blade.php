@@ -40,6 +40,10 @@
                     <div class="col-sm-9 mb-3">
                         <input class="form-control" type="date" id="graduateAdmin" data-field form-field value="{{ $editUser->rights->graduateAdmin }}">
                     </div>
+                    <label for="heroAdmin" class="col-3 col-form-label">Герои</label>
+                    <div class="col-sm-9 mb-3">
+                        <input class="form-control" type="date" id="heroAdmin" data-field form-field value="{{ $editUser->rights->heroAdmin }}">
+                    </div>
                     <label for="pageAdmin" class="col-3 col-form-label">Страницы</label>
                     <div class="col-sm-9">
                         <input class="form-control" type="date" id="pageAdmin" data-field form-field value="{{ $editUser->rights->pageAdmin }}">
@@ -71,8 +75,14 @@
                     @endif
                     @if($access['graduateAdmin'] || $root)
                         <label for="graduateLimit" class="col-3 col-form-label">Выпускники</label>
-                        <div class="col-sm-9">
+                        <div class="col-sm-9 mb-3">
                             <input class="form-control" type="number" id="graduateLimit" data-field form-field value="{{ $editUser->limits->graduateLimit }}">
+                        </div>
+                    @endif
+                    @if($access['heroAdmin'] || $root)
+                        <label for="heroLimit" class="col-3 col-form-label">Герои</label>
+                        <div class="col-sm-9">
+                            <input class="form-control" type="number" id="heroLimit" data-field form-field value="{{ $editUser->limits->heroLimit }}">
                         </div>
                     @endif
                 </div>

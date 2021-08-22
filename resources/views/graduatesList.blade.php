@@ -6,7 +6,7 @@
     <div class="container-fluid px-4">
         <div class="alert alert-danger" style="display: none" role="alert" id="error-message">Ошибка сервера, свяжитесь с системным администратором.</div>
         <div class="mt-5 dbList">
-            <h1 class="h1">Список добавленных вами выпускников</h1>
+            <h1 class="h1">Список {{ $admin? '' : 'добавленных вами' }} выпускников</h1>
             <table class="table table-hover">
                 <thead>
                     <tr>
