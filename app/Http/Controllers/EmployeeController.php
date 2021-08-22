@@ -84,8 +84,7 @@ class EmployeeController extends Controller
         return view('employees', $params);
     }
 
-    public function edit_employee($id = null){
-        $site = env('DB_SITE', 'pguty');
+    public function edit_employee($site = null, $id = null){
         $employees_search = Employee::orderBy('lastName')->limit(15)->get();
         $units_search = Unit::orderBy('fullUnitName')->limit(15)->get();
         $events_search = Event::orderBy('name')->limit(15)->get();
@@ -198,7 +197,7 @@ class EmployeeController extends Controller
         return true;
     }
 
-    public function employees_list(Request $request){
+    public function employees_list(Request $request, $site = null){
 
         $filter = [];
 
@@ -266,7 +265,7 @@ class EmployeeController extends Controller
         return view('employeesList', [
             'employees' => $employees,
             'next_query' => $next_query,
-            'site' => env('DB_SITE', 'pguty'),
+            'site' => $site,
             'admin' => $admin
         ]);
     }

@@ -46,7 +46,7 @@ class GraduateController extends Controller
         return view('graduateMore', $params);
     }
 
-    public function graduates_list(Request $request){
+    public function graduates_list(Request $request, $site = null){
         $filter = [];
 
         $admin = false;
@@ -129,7 +129,7 @@ class GraduateController extends Controller
         return view('graduatesList', [
             'graduates' => $graduates,
             'next_query' => $next_query,
-            'site' => env('DB_SITE', 'pguty'),
+            'site' => $site,
             'admin' => $admin
         ]);
     }

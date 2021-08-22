@@ -1,7 +1,7 @@
 <!-- ссылка на сотрудника -->
 <div class="form-group row modalAddHref p-3" style="display: none" id="modalEmp">
     <h4 class="h4 px-0">Добавление ссылки на сотрудника 
-    @if($site == 'pguty')
+    @if($site == 'pguty' || $site == 'psuti')
         ПГУТИ
     @else
         КС ПГУТИ
@@ -37,7 +37,7 @@
 <!-- ссылка на подразделение -->
 <div class="form-group row modalAddHref p-3" style="display: none" id="modalUnit">
     <h4 class="h4 px-0">Добавление ссылки на подразделение 
-        @if($site == 'pguty')
+        @if($site == 'pguty' || $site == 'psuti')
             ПГУТИ
         @else
             КС ПГУТИ
@@ -73,7 +73,7 @@
 <!-- ссылка на событие -->
 <div class="form-group row modalAddHref p-3" style="display: none" id="modalEvent">
     <h4 class="h4 px-0">Добавление ссылки на событие 
-        @if($site == 'pguty')
+        @if($site == 'pguty' || $site == 'psuti')
             ПГУТИ
         @else
             КС ПГУТИ

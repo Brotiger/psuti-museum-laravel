@@ -16,7 +16,7 @@
                         <th width="60"></th>
                     </tr>
                     <tr>
-                        <form method="GET" action="{{ route('events_list') }}">
+                        <form method="GET" action="{{ route('events_list', [ 'site' => env('DB_SITE')]) }}">
                             <th><input type="text" class="form-control" placeholder="Название события" filter-field autocomplete="off" name="name" value="{{ request()->input('name') }}"></th>
                             <th><input type="date" class="form-control" placeholder="С:" filter-field name="dateFrom" value="{{ request()->input('dateFrom') }}"></th><th><input type="date" class="form-control" placeholder="По:" filter-field name="dateTo" value="{{ request()->input('dateTo') }}"></th>
                             <th><button class="form-control btn btn-danger" id="reset"><i class="bi bi-arrow-counterclockwise"></i></button></th><th><button class="form-control btn btn-primary" id="search"><i class="bi bi-search"></i></button></th>

@@ -43,8 +43,7 @@ class EventController extends Controller
         ])->render();
     }
 
-    public function edit_event($id = null){
-        $site = env('DB_SITE', 'pguty');
+    public function edit_event($site = null, $id = null){
         $employees_search = Employee::orderBy('lastName')->limit(15)->get();
         $units_search = Unit::orderBy('fullUnitName')->limit(15)->get();
         $events_search = Event::orderBy('name')->limit(15)->get();
@@ -133,7 +132,7 @@ class EventController extends Controller
         return view('event', $params);
     }
 
-    public function events_list(Request $request){
+    public function events_list(Request $request, $site = null){
 
         $filter = [];
 
@@ -171,7 +170,7 @@ class EventController extends Controller
         return view('eventsList', [
             'events' => $events,
             'next_query' => $next_query,
-            'site' => env('DB_SITE', 'pguty'),
+            'site' => $site,
             'admin' => $admin
         ]);
     }

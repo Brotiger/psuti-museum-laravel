@@ -21,10 +21,10 @@
                 <div class="dropdown">
                     <button class="dropbtn">Списки</button>
                     <div class="dropdown-content">
-                        <a href="{{ route('employees_list') }}">Список сотрудников</a>
-                        <a href="{{ route('units_list') }}">Список подразделений</a>
-                        <a href="{{ route('events_list') }}">Список событий</a>
-                        <a href="{{ route('graduates_list') }}">Список выпускников</a>
+                        <a href="{{ route('employees_list', [ 'site' => env('DB_SITE')]) }}">Список сотрудников</a>
+                        <a href="{{ route('units_list', [ 'site' => env('DB_SITE')]) }}">Список подразделений</a>
+                        <a href="{{ route('events_list', [ 'site' => env('DB_SITE')]) }}">Список событий</a>
+                        <a href="{{ route('graduates_list', [ 'site' => env('DB_SITE')]) }}">Список выпускников</a>
                     </div>
                 </div>
                 <div class="dropdown">

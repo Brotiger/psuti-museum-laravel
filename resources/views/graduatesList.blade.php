@@ -21,7 +21,7 @@
                         <th width="60"></th>
                     </tr>
                     <tr>
-                        <form method="GET" action="{{route('graduates_list')}}">
+                        <form method="GET" action="{{route('graduates_list', [ 'site' => env('DB_SITE')])}}">
                             <th><input type="text" class="form-control" placeholder="Фамилия" filter-field id="lastName" autocomplete="off" name="lastName" value="{{ request()->input('lastName') }}"></th>
                             <th><input type="text" class="form-control" placeholder="Имя" filter-field id="firstName" autocomplete="off" name="firstName" value="{{ request()->input('firstName') }}"></th>
                             <th><input type="text" class="form-control" placeholder="Отчество" filter-field id="secondName" autocomplete="off" name="secondName" value="{{ request()->input('secondName') }}"></th>

@@ -19,7 +19,7 @@
                         <th width="60"></th>
                     </tr>
                     <tr>
-                        <form method="GET" action="{{route('units_list')}}">
+                        <form method="GET" action="{{route('units_list', [ 'site' => env('DB_SITE')])}}">
                             <th><input type="text" class="form-control" placeholder="Полное название подразделения" filter-field id="fullUnitName" autocomplete="off" name="fullUnitName" value="{{ request()->input('fullUnitName') }}"></th>
                             <th><input type="text" class="form-control" placeholder="Сокращенное название подразделения" filter-field id="shortUnitName" autocomplete="off" name="shortUnitName" value="{{ request()->input('shortUnitName') }}"></th>
                             <th><input type="text" class="form-control" placeholder="Тип подразделения" filter-field id="typeUnit" autocomplete="off" name="typeUnit" value="{{ request()->input('typeUnit') }}"></th>

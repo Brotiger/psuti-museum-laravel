@@ -43,8 +43,7 @@ class UnitController extends Controller
         ])->render();
     }
 
-    public function edit_unit($id = null){
-        $site = env('DB_SITE', 'pguty');
+    public function edit_unit($site = null, $id = null){
         $employees_search = Employee::orderBy('lastName')->limit(15)->get();
         $units_search = Unit::orderBy('fullUnitName')->limit(15)->get();
         $events_search = Event::orderBy('name')->limit(15)->get();
@@ -104,7 +103,7 @@ class UnitController extends Controller
         return view('unitsEdit', $params);
     }
 
-    public function units_list(Request $request){
+    public function units_list(Request $request, $site = null){
 
         $filter = [];
 
@@ -162,7 +161,7 @@ class UnitController extends Controller
         return view('unitsList', [
             'units' => $units,
             'next_query' => $next_query,
-            'site' => env('DB_SITE', 'pguty'),
+            'site' => $site,
             'admin' => $admin
         ]);
     }
