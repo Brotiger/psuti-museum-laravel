@@ -208,7 +208,22 @@ class EventController extends Controller
             $file_ext = env('FILE_EXT', null);
             if($file_ext != null) $file_ext = explode(',', $file_ext);
 
-            if(!trim($request->input("name")) ||  Event::where('name', $request->input("name"))->exists()) $errors[] = "name";
+            $existsFilter = [];
+
+            if(!trim($request->input("name"))){
+                $errors[] = "name";
+            }else{
+                $existsFilter[] = ['name', '=', $request->input("name")];
+
+                if($request->input("date")){
+                    $existsFilter[] = ['date', '=', $request->input("date")];
+                }
+
+                if(Event::where($existsFilter)->exists()){
+                    $errors[] = "name";
+                }
+            }
+            
             if($request->input("date") && !preg_match('~^[0-9]{4}-[0-9]{2}-[0-9]{2}$~', $request->input("date"))) $errors[] = "date";
 
             if($request->input("photo")){
