@@ -103,6 +103,44 @@ class EventController extends Controller
         return view('eventsEdit', $params);
     }
 
+    public function index_file(){
+        $params = [];
+        $access = false;
+
+        if(Auth::user()->rights['root']){
+            $access = true;
+        }
+
+        $params['access'] = $access;
+
+        return view('eventFile', $params);
+    }
+
+    public function add_event_file(Request $request){
+        $access = false;
+
+        if(Auth::user()->rights['root']){
+            $access = true;
+        }
+
+        if(!$access){
+            return; //если нет прав прервать выполнение запроса
+        }
+
+        $file = file_get_contents($request->file('file'), FILE_IGNORE_NEW_LINES);
+        $file = str_replace("\r", "", str_replace("\n", "", $file));
+        $file = preg_replace("/\s+/u", " ", $file);
+
+        preg_match_all('~<p class="MsoNormal"><b><span style="font-family:&quot;Times New Roman&quot;,&quot;serif&quot;">(.*?)<br> \[([0-9]{2}\.[0-9]{2}\.[0-9]{4})\]</span></b></p>~', $file, $matches);
+        //preg_match_all('~\[([0-9]{2}\.[0-9]{2}\.[0-9]{4})\]</span></b></p>~', $file, $matches);
+        //preg_match_all('~<p class="MsoNormal"><b><span style="font-family:&quot;Times New Roman&quot;,&quot;serif&quot;">(.+)<br>.+~', $file, $matches);
+       // preg_match_all('~Получение гранта фонда Темпус~', $file, $matches);
+        //return $file;
+        var_dump($matches);
+        //return $matches[0];
+        
+    }
+
     public function index(){
         $site = env('DB_SITE', 'pguty');
         $employees_search = Employee::orderBy('lastName')->limit(15)->get();

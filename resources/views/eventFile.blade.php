@@ -1,20 +1,21 @@
 <x-app-layout>
     <div class="container">
-        <div class="alert alert-success" style="display: none" role="alert" id="success-message">Выпускники успешно добавлены.<i class="bi bi-x-circle" close></i></div>
+        @if($access)
+        <div class="alert alert-success" style="display: none" role="alert" id="success-message">События успешно добавлены.<i class="bi bi-x-circle" close></i></div>
         <div class="alert alert-warning" style="display: none" role="alert" id="error-global-message">Ошибка! Некоторые поля заполненны не верно.<i class="bi bi-x-circle" close></i></div>
         <div class="alert alert-warning" style="display: none" role="alert" id="error-limit-message">Ошибка! Лимит на данную таблицу превышен, для увиличения лимита свяжитесь с администратором.<i class="bi bi-x-circle" close></i></div>
         <div class="alert alert-warning" style="display: none" role="alert" id="error-body-message">Ошибка! Тело запроса превышает максимум который может обработать web сервер, уменьшите вес прикрепляемого файла.<i class="bi bi-x-circle" close></i></div>
         <div class="alert alert-danger" style="display: none" role="alert" id="error-message">Ошибка сервера, сделайте скриншот данного сообщения и отправьте системнному администратором на следующий адрес - @php echo env('ADMIN_MAIL') @endphp.<div id="server-error-file"></div><div id="server-error-line"></div><div id="server-error-message"></div><i class="bi bi-x-circle" close></i></div>
         <form enctype="multipart/form-data" id="addGraduateForm" class="addGraduateForm mt-5">
-            <h1 class="h1">Добавление выпускников из файла</h1>
+            <h1 class="h1">Добавление событий из файла</h1>
             <div class="my-4">
                 <div class="row mb-1">
-                    <span class="offset-3 col-9"><small>Список выпускников должен быть уникальным, так же файл должен иметь расширение xlsx, иначе данное поле будет выделено красным</small></span>
+                    <span class="offset-3 col-9"><small>Список событий должен быть уникальным, так же файл должен иметь расширение html, иначе данное поле будет выделено красным</small></span>
                 </div>
                 <div class="row">
                     <label for="file" class="col-sm-3 col-form-label">Файл</label>
                     <div class="col-sm-9">
-                        <input type="file" name="file" id="file" form-field accept=".xlsx">
+                        <input type="file" name="file" id="file" form-field accept=".html">
                     </div>
                 </div>
             </div>
@@ -24,8 +25,14 @@
                 <button class="btn btn-primary mb-4" type="submit">Сохранить</button>
             </div>
         </form>
+        @else
+        <p class="text-center mt-5">
+            Данный раздел доступен только супер администратору
+        </p>
+        @endif
     </div>
 </x-app-layout>
+@if($access)
 <script src="/js/hideMessage.js"></script>
 <script>
     $(document).ready(function(){
@@ -49,7 +56,7 @@
             if(sizeCount < @php echo env("MAX_BODY_SIZE", 0) @endphp * 1024){
                 let res = $.ajax({
                     type: "POST",
-                    url: "{{ route('add_graduate') }}",
+                    url: "{{ route('add_event_file') }}",
                     cache: false,
                     contentType: false,
                     processData: false,
@@ -117,3 +124,4 @@
         }
     });
 </script>
+@endif

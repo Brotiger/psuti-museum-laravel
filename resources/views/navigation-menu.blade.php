@@ -15,7 +15,8 @@
                         <a href="{{ route('employee') }}">Добавить сотрудника</a>
                         <a href="{{ route('unit') }}">Добавить подразделение</a>
                         <a href="{{ route('event') }}">Добавить событие</a>
-                        <a href="{{ route('graduate') }}">Добавить выпускников</a>
+                        <a href="{{ route('event_file') }}">Добавить события из файла</a>
+                        <a href="{{ route('graduate') }}">Добавить выпускников из файла</a>
                         <a href="{{ route('hero') }}">Добавить героя</a>
                     </div>
                 </div>
