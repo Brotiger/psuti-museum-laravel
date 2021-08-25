@@ -132,11 +132,11 @@ class EventController extends Controller
         $file = preg_replace("/\s+/u", " ", $file);
 
         preg_match_all('~<p class="MsoNormal"><b><span style="font-family:&quot;Times New Roman&quot;,&quot;serif&quot;">(.*?)<br> \[([0-9]{2}\.[0-9]{2}\.[0-9]{4})\]</span></b></p>~', $file, $matches);
-        //preg_match_all('~\[([0-9]{2}\.[0-9]{2}\.[0-9]{4})\]</span></b></p>~', $file, $matches);
+        //preg_match_all('~<p class="MsoNormal"><b><span style="font-family:&quot;Times New Roman&quot;,&quot;serif&quot;">(.*?)<br>~', $file, $matches);
         //preg_match_all('~<p class="MsoNormal"><b><span style="font-family:&quot;Times New Roman&quot;,&quot;serif&quot;">(.+)<br>.+~', $file, $matches);
        // preg_match_all('~Получение гранта фонда Темпус~', $file, $matches);
         //return $file;
-        var_dump($matches);
+        var_dump($matches[1]);
         //return $matches[0];
         
     }
