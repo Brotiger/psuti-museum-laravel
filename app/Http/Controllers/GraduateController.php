@@ -26,7 +26,7 @@ class GraduateController extends Controller
 
             $admin = false;
 
-            if(Auth::user()->rights['root'] || (Auth::user()->rights['graduateAdmin'] != null && time() <= strtotime(Auth::user()->rights['graduateAdmin'].' 23:59:59'))){
+            if(Auth::user()->rights['root'] || (Auth::user()->rights['graduateFileAdmin'] != null && time() <= strtotime(Auth::user()->rights['graduateFileAdmin'].' 23:59:59'))){
                 $admin = true;
             }
 
@@ -51,7 +51,7 @@ class GraduateController extends Controller
 
         $admin = false;
 
-        if(Auth::user()->rights['root'] || (Auth::user()->rights['graduateAdmin'] != null && time() <= strtotime(Auth::user()->rights['graduateAdmin'].' 23:59:59'))){
+        if(Auth::user()->rights['root'] || (Auth::user()->rights['graduateFileAdmin'] != null && time() <= strtotime(Auth::user()->rights['graduateFileAdmin'].' 23:59:59'))){
             $admin = true;
         }
 
@@ -184,12 +184,12 @@ class GraduateController extends Controller
 
         $admin = false;
 
-        if(Auth::user()->rights['root'] || (Auth::user()->rights['graduateAdmin'] != null && time() <= strtotime(Auth::user()->rights['graduateAdmin'].' 23:59:59'))){
+        if(Auth::user()->rights['root'] || (Auth::user()->rights['graduateFileAdmin'] != null && time() <= strtotime(Auth::user()->rights['graduateFileAdmin'].' 23:59:59'))){
             $admin = true;
         }
 
         if(!$admin){
-            if($user->limits['graduateLimit'] <= 0){
+            if($user->limits['graduateFileLimit'] <= 0){
                 $response['errors'][] = 'limit'; 
                 return $response;
             }
@@ -213,8 +213,8 @@ class GraduateController extends Controller
                 $response['success'] = false;
             }else{
                 if(!$admin){
-                    if($user->limits['graduateLimit'] > 0){
-                        $user->limits->update(["graduateLimit" => $user->limits->graduateLimit - 1]);
+                    if($user->limits['graduateFileLimit'] > 0){
+                        $user->limits->update(["graduateFileLimit" => $user->limits->graduateFileLimit - 1]);
                     }
                 }
                 $response['success'] = true;

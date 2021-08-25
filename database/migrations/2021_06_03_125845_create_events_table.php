@@ -21,8 +21,8 @@ class CreateEventsTable extends Migration
             ->references("id")
             ->on("users")
             ->onDelete("set null");
-            $table->string('name');
-            $table->string('description')->nullable();
+            $table->text('name');
+            $table->text('description')->nullable();
             $table->date('date')->nullable();
         });
     }

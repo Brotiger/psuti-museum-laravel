@@ -128,7 +128,7 @@ class UserController extends Controller
             'empAdmin' => false,
             'unitAdmin' => false,
             'eventAdmin' => false,
-            'graduateAdmin' => false,
+            'graduateFileAdmin' => false,
             'heroAdmin' => false,
         ];
 
@@ -144,15 +144,15 @@ class UserController extends Controller
             $access['eventAdmin'] = true;
         }
 
-        if($user->rights['graduateAdmin'] != null && time() <= strtotime($user->rights['graduateAdmin'].' 23:59:59')){
-            $access['graduateAdmin'] = true;
+        if($user->rights['graduateFileAdmin'] != null && time() <= strtotime($user->rights['graduateFileAdmin'].' 23:59:59')){
+            $access['graduateFileAdmin'] = true;
         }
 
         if($user->rights['heroAdmin'] != null && time() <= strtotime($user->rights['heroAdmin'].' 23:59:59')){
             $access['heroAdmin'] = true;
         }
 
-        if((!$access['graduateAdmin'] && !$access['eventAdmin'] && !$access['unitAdmin'] && !$access['empAdmin'] && !$access['heroAdmin'])){
+        if((!$access['graduateFileAdmin'] && !$access['eventAdmin'] && !$access['unitAdmin'] && !$access['empAdmin'] && !$access['heroAdmin'])){
             if(!$user->rights['root']){
                 return redirect(route('users_list'));
             }
@@ -233,8 +233,14 @@ class UserController extends Controller
                     }
                 }
 
-                if($request->input("graduateLimit")){
-                    if(Auth::user()->rights['graduateAdmin'] == null || time() > strtotime(Auth::user()->rights['graduateAdmin'])){
+                if($request->input("eventFileLimit")){
+                    if(Auth::user()->rights['eventAdmin'] == null || time() > strtotime(Auth::user()->rights['eventAdmin'])){
+                        return;
+                    }
+                }
+
+                if($request->input("graduateFileLimit")){
+                    if(Auth::user()->rights['graduateFileAdmin'] == null || time() > strtotime(Auth::user()->rights['graduateFileAdmin'])){
                         return;
                     }
                 }
@@ -265,7 +271,7 @@ class UserController extends Controller
                     return;
                 }
 
-                if($request->input("graduateAdmin")){
+                if($request->input("graduateFileAdmin")){
                     return;
                 }
 
@@ -292,8 +298,12 @@ class UserController extends Controller
                         $newLimitsInfo["eventLimit"] = $request->input("eventLimit");
                     }
 
-                    if($request->input("graduateLimit")){
-                        $newLimitsInfo["graduateLimit"] = $request->input("graduateLimit");
+                    if($request->input("eventFileLimit")){
+                        $newLimitsInfo["eventFileLimit"] = $request->input("eventFileLimit");
+                    }
+
+                    if($request->input("graduateFileLimit")){
+                        $newLimitsInfo["graduateFileLimit"] = $request->input("graduateFileLimit");
                     }
 
                     if($request->input("heroLimit")){
@@ -316,8 +326,8 @@ class UserController extends Controller
                         $newRightsInfo["eventAdmin"] = $request->input("eventAdmin");
                     }
 
-                    if($request->input("graduateAdmin")){
-                        $newRightsInfo["graduateAdmin"] = $request->input("graduateAdmin");
+                    if($request->input("graduateFileAdmin")){
+                        $newRightsInfo["graduateFilAdmin"] = $request->input("graduateFileAdmin");
                     }
 
                     if($request->input("heroAdmin")){

@@ -117,28 +117,99 @@ class EventController extends Controller
     }
 
     public function add_event_file(Request $request){
-        $access = false;
+        $admin = false;
+        $errors = [];
 
-        if(Auth::user()->rights['root']){
-            $access = true;
+        $user = User::where("id", Auth::user()->id)->get()->first();
+
+        $response = [
+            "errors" => false,
+            "success" => false 
+        ];
+
+        if(Auth::user()->rights['root'] || (Auth::user()->rights['eventAdmin'] != null && time() <= strtotime(Auth::user()->rights['eventAdmin'].' 23:59:59'))){
+            $admin = true;
         }
-
-        if(!$access){
-            return; //если нет прав прервать выполнение запроса
-        }
-
-        $file = file_get_contents($request->file('file'), FILE_IGNORE_NEW_LINES);
-        $file = str_replace("\r", "", str_replace("\n", "", $file));
-        $file = preg_replace("/\s+/u", " ", $file);
-
-        preg_match_all('~<p class="MsoNormal"><b><span style="font-family:&quot;Times New Roman&quot;,&quot;serif&quot;">(.*?)<br> \[([0-9]{2}\.[0-9]{2}\.[0-9]{4})\]</span></b></p>~', $file, $matches);
-        //preg_match_all('~<p class="MsoNormal"><b><span style="font-family:&quot;Times New Roman&quot;,&quot;serif&quot;">(.*?)<br>~', $file, $matches);
-        //preg_match_all('~<p class="MsoNormal"><b><span style="font-family:&quot;Times New Roman&quot;,&quot;serif&quot;">(.+)<br>.+~', $file, $matches);
-       // preg_match_all('~Получение гранта фонда Темпус~', $file, $matches);
-        //return $file;
-        var_dump($matches[1]);
-        //return $matches[0];
         
+        if(!$admin){
+            if($user->limits['eventFileLimit'] <= 0){
+                $errors[] = 'limit';
+                $response['errors'] = $errors;
+                return $response;
+            }
+        }
+
+        $validator = Validator::make($request->all(), [
+            'file' => 'required|file|mimes:txt'
+        ])->validate();
+
+        if(!$validator) $errors[] = "file";
+
+        if(empty($errors)){
+            $handle = fopen($request->file('file'), "r");
+            
+            if ($handle) {
+                $prev = '';
+
+                $description = '';
+                $name = '';
+                $date = '';
+
+                while (($line = fgets($handle)) !== false) {
+                    if(!preg_match('~^[\r\n]+~', $line)){
+
+                        $result = preg_match('~^\[([0-9]{2}\.[0-9]{2}\.[0-9]{4})\]\r\n$~', $line, $matche);
+
+                        if($matche){
+                            $description = substr($description, 0, -1 * strlen($prev));
+
+                            if($description && $name && $date){
+                                $description = trim(preg_replace("/\s+/u", " ",str_replace("\r", "", str_replace("\n", "", $description))));
+                                $name = trim(preg_replace("/\s+/u", " ",str_replace("\r", "", str_replace("\n", "", $name))));
+
+                                if(!Event::where([
+                                    ['date', '=', $date],
+                                    ['name', '=', $name]
+                                ])->exists()){
+                                    $new_event = new Event;
+                                    $new_event->name = $name;
+                                    $new_event->date = $date;
+                                    $new_event->description = $description;
+                                    $new_event->save();
+                                }
+                            }
+
+                            $date = '';
+                            $name = '';
+                            $description = '';
+
+                            preg_match('~^([0-9]{2}).([0-9]{2}).([0-9]{4})$~', $matche[1], $dateMatche);
+
+                            $date = $dateMatche[3] . '-' . $dateMatche[2] . '-' . $dateMatche[1];
+                            $name = $prev;
+                        }else if($date){
+                            $description .= $line;
+                        }
+
+                        $prev = $line;
+                    }
+                }
+
+                fclose($handle);
+            }
+
+            $response['success'] = true;
+
+            if(!$admin){
+                if($user->limits['eventFileLimit'] > 0){
+                    $user->limits->update(["eventFileLimit" => $user->limits->eventFileLimit - 1]);
+                }
+            }
+        }else{
+            $response['errors'] = $errors;
+        }
+
+        return $response;
     }
 
     public function index(){

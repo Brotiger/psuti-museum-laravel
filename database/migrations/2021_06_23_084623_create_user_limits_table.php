@@ -19,7 +19,8 @@ class CreateUserLimitsTable extends Migration
             $table->integer('empLimit')->default(1);
             $table->integer('heroLimit')->default(0);
             $table->integer('unitLimit')->default(0);
-            $table->integer('graduateLimit')->default(0);
+            $table->integer('graduateFileLimit')->default(0);
+            $table->integer('eventFileLimit')->default(0);
             $table->integer('eventLimit')->default(0);
             $table->bigInteger("user_id")->unsigned();
             $table->foreign("user_id")

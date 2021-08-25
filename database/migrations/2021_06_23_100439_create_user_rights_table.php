@@ -22,7 +22,7 @@ class CreateUserRightsTable extends Migration
             $table->date('unitAdmin')->nullable();
             $table->date('eventAdmin')->nullable();
             $table->date('pageAdmin')->nullable();
-            $table->date('graduateAdmin')->nullable();
+            $table->date('graduateFileAdmin')->nullable();
             $table->bigInteger("user_id")->unsigned();
             $table->foreign("user_id")
             ->references("id")

@@ -1,6 +1,5 @@
 <x-app-layout>
     <div class="container">
-        @if($access)
         <div class="alert alert-success" style="display: none" role="alert" id="success-message">События успешно добавлены.<i class="bi bi-x-circle" close></i></div>
         <div class="alert alert-warning" style="display: none" role="alert" id="error-global-message">Ошибка! Некоторые поля заполненны не верно.<i class="bi bi-x-circle" close></i></div>
         <div class="alert alert-warning" style="display: none" role="alert" id="error-limit-message">Ошибка! Лимит на данную таблицу превышен, для увиличения лимита свяжитесь с администратором.<i class="bi bi-x-circle" close></i></div>
@@ -15,7 +14,7 @@
                 <div class="row">
                     <label for="file" class="col-sm-3 col-form-label">Файл</label>
                     <div class="col-sm-9">
-                        <input type="file" name="file" id="file" form-field accept=".html">
+                        <input type="file" name="file" id="file" form-field accept=".txt">
                     </div>
                 </div>
             </div>
@@ -25,14 +24,8 @@
                 <button class="btn btn-primary mb-4" type="submit">Сохранить</button>
             </div>
         </form>
-        @else
-        <p class="text-center mt-5">
-            Данный раздел доступен только супер администратору
-        </p>
-        @endif
     </div>
 </x-app-layout>
-@if($access)
 <script src="/js/hideMessage.js"></script>
 <script>
     $(document).ready(function(){
@@ -124,4 +117,3 @@
         }
     });
 </script>
-@endif

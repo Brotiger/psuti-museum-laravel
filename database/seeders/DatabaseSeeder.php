@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
             UsersTableSeeder::class,
             EmployeesTableSeeder::class,
             //GraduatesTableSeeder::class,
-            EventsTableSeeder::class,
+            //EventsTableSeeder::class,
             UnitsTableSeeder::class,
         ]);
     }

@@ -9,5 +9,5 @@ class UserLimit extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['empLimit', 'eventLimit', 'unitLimit', 'graduateLimit'];
+    protected $fillable = ['empLimit', 'eventLimit', 'unitLimit', 'graduateFileLimit', 'eventFileLimit'];
 }

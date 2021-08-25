@@ -36,9 +36,9 @@
                     <div class="col-sm-9 mb-3">
                         <input class="form-control" type="date" id="eventAdmin" data-field form-field value="{{ $editUser->rights->eventAdmin }}">
                     </div>
-                    <label for="graduateAdmin" class="col-3 col-form-label">Выпускники</label>
+                    <label for="graduateFileAdmin" class="col-3 col-form-label">Выпускники</label>
                     <div class="col-sm-9 mb-3">
-                        <input class="form-control" type="date" id="graduateAdmin" data-field form-field value="{{ $editUser->rights->graduateAdmin }}">
+                        <input class="form-control" type="date" id="graduateFileAdmin" data-field form-field value="{{ $editUser->rights->graduateFileAdmin }}">
                     </div>
                     <label for="heroAdmin" class="col-3 col-form-label">Герои</label>
                     <div class="col-sm-9 mb-3">
@@ -73,10 +73,16 @@
                             <input class="form-control" type="number" id="eventLimit" data-field form-field value="{{ $editUser->limits->eventLimit }}">
                         </div>
                     @endif
-                    @if($access['graduateAdmin'] || $root)
-                        <label for="graduateLimit" class="col-3 col-form-label">Выпускники</label>
+                    @if($access['eventAdmin'] || $root)
+                        <label for="eventFileLimit" class="col-3 col-form-label">События (Файл)</label>
                         <div class="col-sm-9 mb-3">
-                            <input class="form-control" type="number" id="graduateLimit" data-field form-field value="{{ $editUser->limits->graduateLimit }}">
+                            <input class="form-control" type="number" id="eventFileLimit" data-field form-field value="{{ $editUser->limits->eventFileLimit }}">
+                        </div>
+                    @endif
+                    @if($access['graduateFileAdmin'] || $root)
+                        <label for="graduateFileLimit" class="col-3 col-form-label">Выпускники (Файл)</label>
+                        <div class="col-sm-9 mb-3">
+                            <input class="form-control" type="number" id="graduateFileLimit" data-field form-field value="{{ $editUser->limits->graduateFileLimit }}">
                         </div>
                     @endif
                     @if($access['heroAdmin'] || $root)

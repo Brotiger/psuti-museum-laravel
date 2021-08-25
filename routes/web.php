@@ -49,8 +49,8 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/units/{site}', [UnitContr
 Route::middleware(['auth:sanctum', 'verified'])->get('/search_unit', [UnitController::class, "search_unit"])->name('search_unit');
 Route::middleware(['auth:sanctum', 'verified'])->post('/delete_unit', [UnitController::class, "delete_unit"])->name('delete_unit');
 
-//Route::middleware(['auth:sanctum', 'verified'])->get('/event_file', [EventController::class, 'index_file'])->name('event_file');
-//Route::middleware(['auth:sanctum', 'verified'])->post('/add_event_file', [EventController::class, 'add_event_file'])->name('add_event_file');
+Route::middleware(['auth:sanctum', 'verified'])->get('/event_file', [EventController::class, 'index_file'])->name('event_file');
+Route::middleware(['auth:sanctum', 'verified'])->post('/add_event_file', [EventController::class, 'add_event_file'])->name('add_event_file');
 Route::middleware(['auth:sanctum', 'verified'])->get('/event', [EventController::class, 'index'])->name('event');
 Route::middleware(['auth:sanctum', 'verified'])->get('/events/{site}', [EventController::class, 'events_list'])->where('site', 'pguty|psuti|ks')->name('events_list');
 Route::middleware(['auth:sanctum', 'verified'])->post('/add_event', [EventController::class, 'add_event'])->name('add_event');
