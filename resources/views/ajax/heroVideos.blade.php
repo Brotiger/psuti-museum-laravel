@@ -11,7 +11,7 @@
         <div class="form-group mb-3 row">
             <label for="videoName_{{ $index }}" class="col-3 col-form-label">Название видео</label>
             <div class="col-sm-9">
-                <input class="form-control videoName" type="text" id="videoName_{{ $index }}" placeholder="Название видео" autocomplete="off" disabled value="{{ $video->videoName }}">
+                <input class="form-control videoName" type="text" maxlength="191" id="videoName_{{ $index }}" placeholder="Название видео" autocomplete="off" disabled value="{{ $video->videoName }}">
             </div>
         </div>
         <div class="form-group mb-3 row">

@@ -19,20 +19,20 @@
                     <div class="row">
                         <label for="fullUnitName" class="col-sm-3 col-form-label">Полное название подразделения*</label>
                         <div class="col-sm-9">
-                            <input type="text" class="form-control" id="fullUnitName" placeholder="Полное название подразделения" data-field form-field autocomplete="off" value="{{ !empty($unit)? $unit->fullUnitName : '' }}">
+                            <input type="text" maxlength="191" class="form-control" id="fullUnitName" placeholder="Полное название подразделения" data-field form-field autocomplete="off" value="{{ !empty($unit)? $unit->fullUnitName : '' }}">
                         </div>
                     </div>
                 </div>
                 <div class="mb-3 row">
                     <label for="shortUnitName" class="col-sm-3 col-form-label">Сокращенное название подразделения</label>
                     <div class="col-sm-9">
-                        <input type="text" class="form-control" id="shortUnitName" placeholder="Сокращенное название подразделения" data-field form-field autocomplete="off" value="{{ !empty($unit)? $unit->shortUnitName : '' }}">
+                        <input type="text" maxlength="191" class="form-control" id="shortUnitName" placeholder="Сокращенное название подразделения" data-field form-field autocomplete="off" value="{{ !empty($unit)? $unit->shortUnitName : '' }}">
                     </div>
                 </div>
                 <div class="mb-3 row">
                     <label for="typeUnit" class="col-sm-3 col-form-label">Тип подразделения</label>
                     <div class="col-sm-9">
-                        <input type="text" class="form-control" id="typeUnit" placeholder="Тип подразделения" data-field form-field autocomplete="off" value="{{ !empty($unit)? $unit->typeUnit : '' }}">
+                        <input type="text" maxlength="191" class="form-control" id="typeUnit" placeholder="Тип подразделения" data-field form-field autocomplete="off" value="{{ !empty($unit)? $unit->typeUnit : '' }}">
                     </div>
                 </div>
                 <div class="form-group mb-3 row">
@@ -77,7 +77,7 @@
                         <div class="form-group mb-3 row">
                             <label for="photoName_{{ $index }}" class="col-3 col-form-label">Название фотографии</label>
                             <div class="col-sm-9">
-                                <input class="form-control photoName" type="text" id="photoName_{{ $index }}" placeholder="Название фотографии" autocomplete="off" disabled value="{{ $photo->photoName }}">
+                                <input class="form-control photoName" maxlength="191" type="text" id="photoName_{{ $index }}" placeholder="Название фотографии" autocomplete="off" disabled value="{{ $photo->photoName }}">
                             </div>
                         </div>
                         <div class="form-group mb-3 row">
@@ -111,7 +111,7 @@
                         <div class="form-group mb-3 row">
                             <label for="videoName_{{ $index }}" class="col-3 col-form-label">Название видео</label>
                             <div class="col-sm-9">
-                                <input class="form-control videoName" type="text" id="videoName_{{ $index }}" placeholder="Название видео" autocomplete="off" disabled value="{{ $video->videoName }}">
+                                <input class="form-control videoName" type="text" maxlength="191" id="videoName_{{ $index }}" placeholder="Название видео" autocomplete="off" disabled value="{{ $video->videoName }}">
                             </div>
                         </div>
                         <div class="form-group mb-3 row">
@@ -188,7 +188,7 @@
                 + '<div class="form-group mb-3 row">'
                 + '<label for="photoName_'+ photoCount +'" class="col-3 col-form-label">Название фотографии</label>'
                     + '<div class="col-sm-9">'
-                        + '<input class="form-control photoName" type="text" id="photoName_'+ photoCount +'" placeholder="Название фотографии" autocomplete="off">'
+                        + '<input class="form-control photoName" type="text" maxlength="191" id="photoName_'+ photoCount +'" placeholder="Название фотографии" autocomplete="off">'
                     + '</div>'
                 + '</div>'
                 + '<div class="form-group mb-3 row">'
@@ -210,13 +210,13 @@
                 + '<div class="form-group mb-3 row">'
                     + '<label for="video_'+ videoCount +'" class="col-3 col-form-label">Видео*</label>'
                     + '<div class="col-sm-9">'
-                        + '<input class="form-control video" type="text" id="video_'+ videoCount +'" placeholder="Ссылка на видео с YouTube" autocomplete="off" class="video">'
+                        + '<input class="form-control video" type="text" maxlength="191" id="video_'+ videoCount +'" placeholder="Ссылка на видео с YouTube" autocomplete="off" class="video">'
                     + '</div>'
                 + '</div>'
                 + '<div class="form-group mb-3 row">'
                 + '<label for="videoName_'+ videoCount +'" class="col-3 col-form-label">Название видео</label>'
                     + '<div class="col-sm-9">'
-                        + '<input class="form-control videoName" type="text" id="videoName_'+ videoCount +'" placeholder="Название видео" autocomplete="off">'
+                        + '<input class="form-control videoName" type="text" maxlength="191" id="videoName_'+ videoCount +'" placeholder="Название видео" autocomplete="off">'
                     + '</div>'
                 + '</div>'
                 + '<div class="form-group mb-3 row">'

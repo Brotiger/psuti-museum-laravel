@@ -59,7 +59,7 @@
                         <div class="form-group mb-3 row">
                             <label for="photoName_{{ $index }}" class="col-3 col-form-label">Название фотографии</label>
                             <div class="col-sm-9">
-                                <input class="form-control photoName" type="text" id="photoName_{{ $index }}" placeholder="Название фотографии" autocomplete="off" disabled value="{{ $photo->photoName }}">
+                                <input class="form-control photoName" type="text" maxlength="191" id="photoName_{{ $index }}" placeholder="Название фотографии" autocomplete="off" disabled value="{{ $photo->photoName }}">
                             </div>
                         </div>
                         <div class="form-group mb-3 row">
@@ -93,7 +93,7 @@
                         <div class="form-group mb-3 row">
                             <label for="videoName_{{ $index }}" class="col-3 col-form-label">Название видео</label>
                             <div class="col-sm-9">
-                                <input class="form-control videoName" type="text" id="videoName_{{ $index }}" placeholder="Название видео" autocomplete="off" disabled value="{{ $video->videoName }}">
+                                <input class="form-control videoName" type="text" maxlength="191" id="videoName_{{ $index }}" placeholder="Название видео" autocomplete="off" disabled value="{{ $video->videoName }}">
                             </div>
                         </div>
                         <div class="form-group mb-3 row">
@@ -170,7 +170,7 @@
                 + '<div class="form-group mb-3 row">'
                 + '<label for="photoName_'+ photoCount +'" class="col-3 col-form-label">Название фотографии</label>'
                     + '<div class="col-sm-9">'
-                        + '<input class="form-control photoName" type="text" id="photoName_'+ photoCount +'" placeholder="Название фотографии" autocomplete="off">'
+                        + '<input class="form-control photoName" type="text" maxlength="191" id="photoName_'+ photoCount +'" placeholder="Название фотографии" autocomplete="off">'
                     + '</div>'
                 + '</div>'
                 + '<div class="form-group mb-3 row">'
@@ -192,13 +192,13 @@
                 + '<div class="form-group mb-3 row">'
                     + '<label for="video_'+ videoCount +'" class="col-3 col-form-label">Видео*</label>'
                     + '<div class="col-sm-9">'
-                        + '<input class="form-control video" type="text" id="video_'+ videoCount +'" placeholder="Ссылка на видео с YouTube" autocomplete="off" class="video">'
+                        + '<input class="form-control video" type="text" maxlength="191" id="video_'+ videoCount +'" placeholder="Ссылка на видео с YouTube" autocomplete="off" class="video">'
                     + '</div>'
                 + '</div>'
                 + '<div class="form-group mb-3 row">'
                 + '<label for="videoName_'+ videoCount +'" class="col-3 col-form-label">Название видео</label>'
                     + '<div class="col-sm-9">'
-                        + '<input class="form-control videoName" type="text" id="videoName_'+ videoCount +'" placeholder="Название видео" autocomplete="off">'
+                        + '<input class="form-control videoName" type="text" maxlength="191" id="videoName_'+ videoCount +'" placeholder="Название видео" autocomplete="off">'
                     + '</div>'
                 + '</div>'
                 + '<div class="form-group mb-3 row">'

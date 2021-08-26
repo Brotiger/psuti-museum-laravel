@@ -11,7 +11,7 @@
     <div class="form-group mb-3 row">
     <label for="photoName_{{ $index }}" class="col-3 col-form-label">Название фотографии</label>
         <div class="col-sm-9">
-            <input class="form-control photoName" type="text" id="photoName_{{ $index }}" placeholder="Название фотографии" autocomplete="off" value="{{ $photo->photoName }}" disabled>
+            <input class="form-control photoName" type="text" maxlength="191" id="photoName_{{ $index }}" placeholder="Название фотографии" autocomplete="off" value="{{ $photo->photoName }}" disabled>
         </div>
     </div>
     <div class="form-group mb-3 row">

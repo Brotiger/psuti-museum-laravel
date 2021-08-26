@@ -28,19 +28,19 @@
                 <div class="mb-3 row">
                     <label for="lastName" class="col-sm-3 col-form-label">Фамилия*</label>
                     <div class="col-sm-9">
-                        <input type="text" class="form-control" id="lastName" placeholder="Фамилия" data-field form-field autocomplete="off">
+                        <input type="text" class="form-control" id="lastName" maxlength='191' placeholder="Фамилия" data-field form-field autocomplete="off">
                     </div>
                 </div>
                 <div class="mb-3 row">
                     <label for="firstName" class="col-sm-3 col-form-label">Имя*</label>
                     <div class="col-sm-9">
-                        <input type="text" class="form-control" id="firstName" placeholder="Имя" data-field form-field autocomplete="off">
+                        <input type="text" class="form-control" id="firstName" maxlength='191' placeholder="Имя" data-field form-field autocomplete="off">
                     </div>
                 </div>
                 <div class="mb-3 row">
                     <label for="secondName" class="col-sm-3 col-form-label">Отчество</label>
                     <div class="col-sm-9">
-                        <input type="text" class="form-control" id="secondName" placeholder="Отчество" data-field form-field autocomplete="off">
+                        <input type="text" class="form-control" id="secondName" maxlength='191' placeholder="Отчество" data-field form-field autocomplete="off">
                     </div>
                 </div>
                 <div class="form-group mb-3 row">
@@ -247,13 +247,13 @@
                 + '<div class="form-group mb-3 row">'
                 + '<label for="university_'+ educationCount +'" class="col-3 col-form-label">ВУЗ*</label>'
                     + '<div class="col-sm-9">'
-                        + '<input class="form-control university" type="text" id="university_'+ educationCount +'" placeholder="ВУЗ" autocomplete="off">'
+                        + '<input class="form-control university" maxlength="191" type="text" id="university_'+ educationCount +'" placeholder="ВУЗ" autocomplete="off">'
                     + '</div>'
                 + '</div>'
                 + '<div class="form-group mb-3 row">'
                 + '<label for="specialty_'+ educationCount +'" class="col-3 col-form-label">Специальность</label>'
                     + '<div class="col-sm-9">'
-                        + '<input class="form-control specialty" type="text" id="specialty_'+ educationCount +'" placeholder="Специальность" autocomplete="off">'
+                        + '<input class="form-control specialty" maxlength="191" type="text" id="specialty_'+ educationCount +'" placeholder="Специальность" autocomplete="off">'
                     + '</div>'
                 + '</div>'
                 + '<div class="form-group mb-3 row">'
@@ -274,7 +274,7 @@
                 + '<div class="form-group mb-3 row">'
                 + '<label for="unit_'+ unitCount +'" class="col-3 col-form-label">Подразделение*</label>'
                     + '<div class="col-sm-9">'
-                        + '<input type="text" class="search-select form-control mb-3" placeholder="Фильтр списка подразделений">'
+                        + '<input type="text" class="search-select form-control mb-3" maxlength="191" placeholder="Фильтр списка подразделений">'
                         + '<select class="unit custom-select custom-select-lg form-control border border-secondary rounded-0" id="unit_'+ unitCount +'">'
                         + '<option value="">Не выбрано</option>'
                         @foreach($units as $unit)
@@ -286,7 +286,7 @@
                 + '<div class="form-group mb-3 row">'
                 + '<label for="post_'+ unitCount +'" class="col-3 col-form-label">Должность</label>'
                     + '<div class="col-sm-9">'
-                        + '<input class="form-control post" type="text" id="post_'+ unitCount +'" placeholder="Должность" autocomplete="off">'
+                        + '<input class="form-control post" type="text" maxlength="191" id="post_'+ unitCount +'" placeholder="Должность" autocomplete="off">'
                     + '</div>'
                 + '</div>'
                 + '<div class="form-group mb-3 row">'
@@ -307,7 +307,7 @@
                 + '<div class="form-group mb-3 row">'
                 + '<label for="degree_'+ academicDegreeCount +'" class="col-3 col-form-label">Ученая степень*</label>'
                     + '<div class="col-sm-9">'
-                        + '<input class="form-control degree" type="text" id="degree_'+ academicDegreeCount +'" placeholder="Ученая степень" autocomplete="off">'
+                        + '<input class="form-control degree" maxlength="191" type="text" id="degree_'+ academicDegreeCount +'" placeholder="Ученая степень" autocomplete="off">'
                     + '</div>'
                 + '</div>'
                 + '<div class="form-group mb-3 row">'
@@ -319,13 +319,13 @@
                 + '<div class="form-group mb-3 row">'
                 + '<label for="topic_'+ academicDegreeCount +'" class="col-3 col-form-label">Тема диссертации</label>'
                     + '<div class="col-sm-9">'
-                        + '<input class="form-control topic" type="text" id="topic_'+ academicDegreeCount +'" placeholder="Тема диссертации" autocomplete="off">'
+                        + '<input class="form-control topic" type="text" maxlength="191" id="topic_'+ academicDegreeCount +'" placeholder="Тема диссертации" autocomplete="off">'
                     + '</div>'
                 + '</div>'
                 + '<div class="form-group mb-3 row">'
                 + '<label for="universityDefense_'+ academicDegreeCount +'" class="col-3 col-form-label">ВУЗ</label>'
                     + '<div class="col-sm-9">'
-                        + '<input class="form-control universityDefense" type="text" id="universityDefense_'+ academicDegreeCount +'" placeholder="ВУЗ" autocomplete="off">'
+                        + '<input class="form-control universityDefense" maxlength="191" type="text" id="universityDefense_'+ academicDegreeCount +'" placeholder="ВУЗ" autocomplete="off">'
                     + '</div>'
                 + '</div>'
                 + '<button class="btn btn-danger delete" type="button">Удалить</button>'
@@ -340,7 +340,7 @@
                 + '<div class="form-group mb-3 row">'
                 + '<label for="title_'+ academicTitleCount +'" class="col-3 col-form-label">Ученое звание*</label>'
                     + '<div class="col-sm-9">'
-                        + '<input class="form-control title" type="text" id="title_'+ academicTitleCount +'" placeholder="Ученое звание" autocomplete="off">'
+                        + '<input class="form-control title" maxlength="191" type="text" id="title_'+ academicTitleCount +'" placeholder="Ученое звание" autocomplete="off">'
                     + '</div>'
                 + '</div>'
                 + '<div class="form-group mb-3 row">'
@@ -361,7 +361,7 @@
                 + '<div class="form-group mb-3 row">'
                 + '<label for="reward_'+ academicRewardCount +'" class="col-3 col-form-label">Награда*</label>'
                     + '<div class="col-sm-9">'
-                        + '<input class="form-control reward" type="text" id="reward_'+ academicRewardCount +'" placeholder="Награда" autocomplete="off">'
+                        + '<input class="form-control reward" maxlength="191" type="text" id="reward_'+ academicRewardCount +'" placeholder="Награда" autocomplete="off">'
                     + '</div>'
                 + '</div>'
                 + '<div class="form-group mb-3 row">'
@@ -382,7 +382,7 @@
                 + '<div class="form-group mb-3 row">'
                 + '<label for="attainment_'+ attainmentCount +'" class="col-3 col-form-label">Достижение*</label>'
                     + '<div class="col-sm-9">'
-                        + '<input class="form-control attainment" type="text" id="attainment_'+ attainmentCount +'" placeholder="Достижение" autocomplete="off">'
+                        + '<input class="form-control attainment" maxlength="191" type="text" id="attainment_'+ attainmentCount +'" placeholder="Достижение" autocomplete="off">'
                     + '</div>'
                 + '</div>'
                 + '<div class="form-group mb-3 row">'
@@ -414,7 +414,7 @@
                 + '<div class="form-group mb-3 row">'
                 + '<label for="photoName_'+ photoCount +'" class="col-3 col-form-label">Название фотографии</label>'
                     + '<div class="col-sm-9">'
-                        + '<input class="form-control photoName" type="text" id="photoName_'+ photoCount +'" placeholder="Название фотографии" autocomplete="off">'
+                        + '<input class="form-control photoName" maxlength="191" type="text" id="photoName_'+ photoCount +'" placeholder="Название фотографии" autocomplete="off">'
                     + '</div>'
                 + '</div>'
                 + '<div class="form-group mb-3 row">'
@@ -435,13 +435,13 @@
             + '<div class="form-group mb-3 row">'
                 + '<label for="video_'+ videoCount +'" class="col-3 col-form-label">Видео*</label>'
                     + '<div class="col-sm-9">'
-                        + '<input class="form-control video" type="text" id="video_'+ videoCount +'" placeholder="Ссылка на видео с YouTube" autocomplete="off" class="video">'
+                        + '<input class="form-control video" type="text" maxlength="191" id="video_'+ videoCount +'" placeholder="Ссылка на видео с YouTube" autocomplete="off" class="video">'
                     + '</div>'
                 + '</div>'
                 + '<div class="form-group mb-3 row">'
                 + '<label for="videoName_'+ videoCount +'" class="col-3 col-form-label">Название видео</label>'
                     + '<div class="col-sm-9">'
-                        + '<input class="form-control videoName" type="text" id="videoName_'+ videoCount +'" placeholder="Название видео" autocomplete="off">'
+                        + '<input class="form-control videoName" maxlength="191" type="text" id="videoName_'+ videoCount +'" placeholder="Название видео" autocomplete="off">'
                     + '</div>'
                 + '</div>'
                 + '<div class="form-group mb-3 row">'

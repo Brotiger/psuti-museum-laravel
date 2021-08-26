@@ -26,7 +26,7 @@ class GraduateController extends Controller
 
             $admin = false;
 
-            if(Auth::user()->rights['root'] || (Auth::user()->rights['graduateFileAdmin'] != null && time() <= strtotime(Auth::user()->rights['graduateFileAdmin'].' 23:59:59'))){
+            if(Auth::user()->rights['root'] || (Auth::user()->rights['graduateAdmin'] != null && time() <= strtotime(Auth::user()->rights['graduateAdmin'].' 23:59:59'))){
                 $admin = true;
             }
 
@@ -51,7 +51,7 @@ class GraduateController extends Controller
 
         $admin = false;
 
-        if(Auth::user()->rights['root'] || (Auth::user()->rights['graduateFileAdmin'] != null && time() <= strtotime(Auth::user()->rights['graduateFileAdmin'].' 23:59:59'))){
+        if(Auth::user()->rights['root'] || (Auth::user()->rights['graduateAdmin'] != null && time() <= strtotime(Auth::user()->rights['graduateAdmin'].' 23:59:59'))){
             $admin = true;
         }
 
@@ -184,7 +184,7 @@ class GraduateController extends Controller
 
         $admin = false;
 
-        if(Auth::user()->rights['root'] || (Auth::user()->rights['graduateFileAdmin'] != null && time() <= strtotime(Auth::user()->rights['graduateFileAdmin'].' 23:59:59'))){
+        if(Auth::user()->rights['root'] || (Auth::user()->rights['graduateAdmin'] != null && time() <= strtotime(Auth::user()->rights['graduateAdmin'].' 23:59:59'))){
             $admin = true;
         }
 

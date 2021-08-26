@@ -9,9 +9,9 @@
     </h4>
     <small class="mb-3 px-0">На выбор предлагаются первые 15 совпадений, если в списке нету того что вы искали, попробуйте задать параметры для поиска более конкретно</small>
     <div class="px-0">
-        <input type="text" class="search-select form-control mb-3 searchField" placeholder="Фамилия" id="searchLastNameHref">
-        <input type="text" class="search-select form-control mb-3 searchField" placeholder="Имя" id="searchFirstNameHref">
-        <input type="text" class="search-select form-control mb-3 searchField" placeholder="Отчество" id="searchSecondNameHref">
+        <input type="text" maxlength="191" class="search-select form-control mb-3 searchField" placeholder="Фамилия" id="searchLastNameHref">
+        <input type="text" maxlength="191" class="search-select form-control mb-3 searchField" placeholder="Имя" id="searchFirstNameHref">
+        <input type="text" maxlength="191" class="search-select form-control mb-3 searchField" placeholder="Отчество" id="searchSecondNameHref">
         <div class="px-0">
             <input type="button" class="btn btn-danger mb-3 resetSearchHref" value="Сбросить">
             <input type="button" class="btn btn-primary mb-3" value="Поиск" id="searchEmp">
@@ -45,9 +45,9 @@
     </h4>
     <small class="mb-3 px-0">На выбор предлагаются первые 15 совпадений, если в списке нету того что вы искали, попробуйте задать параметры для поиска более конкретно</small>
     <div class="px-0">
-        <input type="text" class="search-select form-control mb-3 searchField" placeholder="Полное название подразделения" id="fullUnitNameHref">
-        <input type="text" class="search-select form-control mb-3 searchField" placeholder="Сокращенное название подразделения" id="shortUnitNameHref">
-        <input type="text" class="search-select form-control mb-3 searchField" placeholder="Тип подразделения" id="typeUnitHref">
+        <input type="text" maxlength="191" class="search-select form-control mb-3 searchField" placeholder="Полное название подразделения" id="fullUnitNameHref">
+        <input type="text" maxlength="191" class="search-select form-control mb-3 searchField" placeholder="Сокращенное название подразделения" id="shortUnitNameHref">
+        <input type="text" maxlength="191" class="search-select form-control mb-3 searchField" placeholder="Тип подразделения" id="typeUnitHref">
         <div class="px-0">
             <input type="button" class="btn btn-danger mb-3 resetSearchHref" value="Сбросить">
             <input type="button" class="btn btn-primary mb-3" value="Поиск" id="searchUnit">
@@ -81,7 +81,7 @@
     </h4>
     <small class="mb-3 px-0">На выбор предлагаются первые 15 совпадений, если в списке нету того что вы искали, попробуйте задать параметры для поиска более конкретно</small>
     <div class="px-0">
-        <input type="text" class="search-select form-control mb-3 searchField" placeholder="Название события" id="eventNameHref">
+        <input type="text" maxlength="191" class="search-select form-control mb-3 searchField" placeholder="Название события" id="eventNameHref">
         <label class="mb-1 px-0">Дата события</label>
         <input type="date" class="search-select form-control mb-3 searchField" placeholder="С" id="eventDateFromHref">
         <input type="date" class="search-select form-control mb-3 searchField" placeholder="По" id="eventDateToHref">

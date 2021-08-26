@@ -3,7 +3,7 @@
         <div class="form-group mb-3 row">
             <label for="title_{{ $index }}" class="col-3 col-form-label">Заголовок</label>
             <div class="col-sm-9">
-                <input class="form-control title" type="text" id="title_{{ $index }}" placeholder="Заголовок" autocomplete="off" value="{{ $post->title }}" @php if(!$access) echo "disabled" @endphp>
+                <input class="form-control title" type="text" maxlength="191" id="title_{{ $index }}" placeholder="Заголовок" autocomplete="off" value="{{ $post->title }}" @php if(!$access) echo "disabled" @endphp>
             </div>
         </div>
         <div class="form-group mb-3 row">

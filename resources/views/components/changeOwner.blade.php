@@ -19,8 +19,8 @@
     <h4 class="h4 px-0">Смена владельца записи</h4>
     <small class="mb-3 px-0">На выбор предлагаются первые 15 совпадений, если в списке нету того что вы искали, попробуйте задать параметры для поиска более конкретно</small>
     <div class="px-0">
-        <input type="text" class="search-select form-control mb-3 searchField" placeholder="ФИО" id="searchUserByName">
-        <input type="text" class="search-select form-control mb-3 searchField" placeholder="Email" id="searchUserByEmail">
+        <input type="text" maxlength="191" class="search-select form-control mb-3 searchField" placeholder="ФИО" id="searchUserByName">
+        <input type="text" maxlength="191" class="search-select form-control mb-3 searchField" placeholder="Email" id="searchUserByEmail">
         <div class="px-0">
             <input type="button" class="btn btn-danger mb-3 resetAddUser" value="Сбросить">
             <input type="button" class="btn btn-primary mb-3" value="Поиск" id="searchUser">

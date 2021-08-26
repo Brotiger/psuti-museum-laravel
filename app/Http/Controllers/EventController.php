@@ -174,6 +174,7 @@ class EventController extends Controller
                                     $new_event = new Event;
                                     $new_event->name = $name;
                                     $new_event->date = $date;
+                                    $new_event->addUserId = Auth::user()->id;
                                     $new_event->description = $description;
                                     $new_event->save();
                                 }

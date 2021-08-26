@@ -128,7 +128,7 @@ class UserController extends Controller
             'empAdmin' => false,
             'unitAdmin' => false,
             'eventAdmin' => false,
-            'graduateFileAdmin' => false,
+            'graduateAdmin' => false,
             'heroAdmin' => false,
         ];
 
@@ -144,15 +144,15 @@ class UserController extends Controller
             $access['eventAdmin'] = true;
         }
 
-        if($user->rights['graduateFileAdmin'] != null && time() <= strtotime($user->rights['graduateFileAdmin'].' 23:59:59')){
-            $access['graduateFileAdmin'] = true;
+        if($user->rights['graduateAdmin'] != null && time() <= strtotime($user->rights['graduateAdmin'].' 23:59:59')){
+            $access['graduateAdmin'] = true;
         }
 
         if($user->rights['heroAdmin'] != null && time() <= strtotime($user->rights['heroAdmin'].' 23:59:59')){
             $access['heroAdmin'] = true;
         }
 
-        if((!$access['graduateFileAdmin'] && !$access['eventAdmin'] && !$access['unitAdmin'] && !$access['empAdmin'] && !$access['heroAdmin'])){
+        if((!$access['graduateAdmin'] && !$access['eventAdmin'] && !$access['unitAdmin'] && !$access['empAdmin'] && !$access['heroAdmin'])){
             if(!$user->rights['root']){
                 return redirect(route('users_list'));
             }
@@ -240,7 +240,7 @@ class UserController extends Controller
                 }
 
                 if($request->input("graduateFileLimit")){
-                    if(Auth::user()->rights['graduateFileAdmin'] == null || time() > strtotime(Auth::user()->rights['graduateFileAdmin'])){
+                    if(Auth::user()->rights['graduateAdmin'] == null || time() > strtotime(Auth::user()->rights['graduateAdmin'])){
                         return;
                     }
                 }
@@ -271,7 +271,7 @@ class UserController extends Controller
                     return;
                 }
 
-                if($request->input("graduateFileAdmin")){
+                if($request->input("graduateAdmin")){
                     return;
                 }
 
@@ -326,8 +326,8 @@ class UserController extends Controller
                         $newRightsInfo["eventAdmin"] = $request->input("eventAdmin");
                     }
 
-                    if($request->input("graduateFileAdmin")){
-                        $newRightsInfo["graduateFilAdmin"] = $request->input("graduateFileAdmin");
+                    if($request->input("graduateAdmin")){
+                        $newRightsInfo["graduateAdmin"] = $request->input("graduateAdmin");
                     }
 
                     if($request->input("heroAdmin")){
