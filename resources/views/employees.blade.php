@@ -3,7 +3,7 @@
         <div class="alert alert-success" style="display: none" role="alert" id="success-message">Сотрудник успешно добавлен.<i class="bi bi-x-circle" close></i></div>
         <div class="alert alert-warning" style="display: none" role="alert" id="error-global-message">Ошибка! Некоторые поля заполненны не верно.<i class="bi bi-x-circle" close></i></div>
         <div class="alert alert-warning" style="display: none" role="alert" id="error-limit-message">Ошибка! Лимит на данную таблицу превышен, для увиличения лимита свяжитесь с администратором.<i class="bi bi-x-circle" close></i></div>
-        <div class="alert alert-warning" style="display: none" role="alert" id="error-csrf">Сессия устарела, перезагрузите страницу.<i class="bi bi-x-circle" close></i></div>
+        <div class="alert alert-warning" style="display: none" role="alert" id="error-csrf">Вы слишком долго бездействовали, ваша сессия устарела, перезагрузите страницу.<i class="bi bi-x-circle" close></i></div>
         <div class="alert alert-warning" style="display: none" role="alert" id="error-body-message">Ошибка! Тело запроса превышает максимум который может обработать web сервер, сократите количество прикрепляемых файлов.<i class="bi bi-x-circle" close></i></div>
         <div class="alert alert-danger" style="display: none" role="alert" id="error-message">Ошибка сервера, сделайте скриншот данного сообщения и отправьте системнному администратором на следующий адрес - @php echo env('ADMIN_MAIL') @endphp.<div id="server-error-file"></div><div id="server-error-line"></div><div id="server-error-message"></div><i class="bi bi-x-circle" close></i></div>
         @include('components.addHref')
