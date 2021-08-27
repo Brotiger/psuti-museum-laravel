@@ -4,6 +4,7 @@
         <div class="alert alert-warning" style="display: none" role="alert" id="error-global-message">Ошибка! Некоторые поля заполненны не верно.<i class="bi bi-x-circle" close></i></div>
         <div class="alert alert-warning" style="display: none" role="alert" id="error-body-message">Ошибка! Тело запроса превышает максимум который может обработать web сервер, сократите количество прикрепляемых файлов.<i class="bi bi-x-circle" close></i></div>
         <div class="alert alert-danger" style="display: none" role="alert" id="error-message">Ошибка сервера, сделайте скриншот данного сообщения и отправьте системнному администратором на следующий адрес - @php echo env('ADMIN_MAIL') @endphp.<div id="server-error-file"></div><div id="server-error-line"></div><div id="server-error-message"></div><i class="bi bi-x-circle" close></i></div>
+        <div class="alert alert-warning" style="display: none" role="alert" id="error-csrf">Сессия устарела, перезагрузите страницу.<i class="bi bi-x-circle" close></i></div>
         @include('components.addHref')
         <form enctype="multipart/form-data" id="addEmpForm" class="editEmpForm mt-5">
             <h1 class="h1">Редактирование сотрудника</h1>
@@ -924,13 +925,17 @@
                         stopLoading();
                     },
                     error: function(data){
-                        $('#server-error-file').html('File: ' + data.responseJSON.file);
-                        $('#server-error-line').html('Line: ' + data.responseJSON.line);
-                        $('#server-error-message').html('Message: ' + data.responseJSON.message);
+                        if(data.responseJSON.message == 'CSRF token mismatch.'){
+                            $('#error-csrf').fadeIn(300).delay(3500).fadeOut(300);
+                        }else{
+                            $('#server-error-file').html('File: ' + data.responseJSON.file);
+                            $('#server-error-line').html('Line: ' + data.responseJSON.line);
+                            $('#server-error-message').html('Message: ' + data.responseJSON.message);
 
-                        $('#error-message').fadeIn(300).delay(45000).fadeOut(300, function(){
-                            $('#server-error-file, #server-error-line, #server-error-message').html('');
-                        });
+                            $('#error-message').fadeIn(300).delay(45000).fadeOut(300, function(){
+                                $('#server-error-file, #server-error-line, #server-error-message').html('');
+                            });
+                        }
                         stopLoading();
                     }
                 });

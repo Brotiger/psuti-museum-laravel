@@ -5,6 +5,7 @@
         <div class="alert alert-warning" style="display: none" role="alert" id="error-limit-message">Ошибка! Лимит на данную таблицу превышен, для увиличения лимита свяжитесь с администратором.<i class="bi bi-x-circle" close></i></div>
         <div class="alert alert-warning" style="display: none" role="alert" id="error-body-message">Ошибка! Тело запроса превышает максимум который может обработать web сервер, уменьшите вес прикрепляемого файла.<i class="bi bi-x-circle" close></i></div>
         <div class="alert alert-danger" style="display: none" role="alert" id="error-message">Ошибка сервера, сделайте скриншот данного сообщения и отправьте системнному администратором на следующий адрес - @php echo env('ADMIN_MAIL') @endphp.<div id="server-error-file"></div><div id="server-error-line"></div><div id="server-error-message"></div><i class="bi bi-x-circle" close></i></div>
+        <div class="alert alert-warning" style="display: none" role="alert" id="error-csrf">Сессия устарела, перезагрузите страницу.<i class="bi bi-x-circle" close></i></div>
         <form enctype="multipart/form-data" id="addGraduateForm" class="addGraduateForm mt-5">
             <h1 class="h1">Добавление выпускников из файла</h1>
             <div class="my-4">
@@ -80,6 +81,8 @@
                         if(data.status == 422){
                             $("#file").addClass("errorField");
                             $('#error-global-message').fadeIn(300).delay(2000).fadeOut(300);
+                        }else if(data.responseJSON.message == 'CSRF token mismatch.'){
+                            $('#error-csrf').fadeIn(300).delay(3500).fadeOut(300);
                         }else{
                             $('#server-error-file').html('File: ' + data.responseJSON.file);
                             $('#server-error-line').html('Line: ' + data.responseJSON.line);
