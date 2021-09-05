@@ -164,8 +164,17 @@ class EventController extends Controller
                             $description = substr($description, 0, -1 * strlen($prev));
 
                             if($description && $name && $date){
-                                $description = trim(preg_replace("/\s+/u", " ",str_replace("\r", "", str_replace("\n", "", $description))));
-                                $name = trim(preg_replace("/\s+/u", " ",str_replace("\r", "", str_replace("\n", "", $name))));
+                                $description = preg_replace("/\s+/u", " ",str_replace("\r", "", str_replace("\n", " ", $description)));
+                                $name = preg_replace("/\s+/u", " ",str_replace("\r", "", str_replace("\n", " ", $name)));
+
+                                $description = trim($description);
+                                $name = trim($name);
+
+                                $description = preg_replace('/(<br>\s?)+$/', '', $description);
+                                $description = preg_replace('/^(<br>\s?)+/', '', $description);
+
+                                $name = preg_replace('/(<br>\s?)+$/', '', $name);
+                                $name = preg_replace('/^(<br>\s?)+/', '', $name);
 
                                 if(!Event::where([
                                     ['date', '=', $date],
@@ -189,6 +198,15 @@ class EventController extends Controller
                             $date = $dateMatche[3] . '-' . $dateMatche[2] . '-' . $dateMatche[1];
                             $name = $prev;
                         }else if($date){
+                            /*if(preg_match('/^[0-9]+\) /', $line) || preg_match('/^-|–|·|([0-9]+\.) /', $line) || preg_match('/^[0-9]{2}\.[0-9]{2}-[0-9]{2}\.[0-9]{2}/', $line)){
+                                $line = '<br>' . $line;
+                            }else if(preg_match('/^<br>[0-9]+\) /', $prev) || preg_match('/^<br>-|–|·|([0-9]+\.) /', $prev) || preg_match('/^[0-9]{2}\.[0-9]{2}-[0-9]{2}\.[0-9]{2}/', $prev)){
+                                $line = '<br>' . $line;
+                            }*/
+                            if(trim($line)){
+                                $line = '<br>' . $line;
+                            }
+
                             $description .= $line;
                         }
 
